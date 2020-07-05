@@ -62,6 +62,7 @@ public class QuestionActivity extends AppCompatActivity {
         Q_num = new int[numOfQuiz];
         learningTime = new long[numOfQuiz];
         confidenceData = new int[numOfQuiz];
+
         quizSet = quiz.GetQuizSet(numOfQuiz);
 
         questionView = findViewById(R.id.Question);
@@ -149,12 +150,11 @@ public class QuestionActivity extends AppCompatActivity {
         if(Select_Answer.equals(Right_Answer)){
             alertTitle = "正解!";
             Result[count] = 1;
-            Q_num[count] = Integer.valueOf(quizSet[count][7]).intValue();
         }else{
             alertTitle = "不正解...";
             Result[count] = 0;
-            Q_num[count] = Integer.valueOf(quizSet[count][7]).intValue();
         }
+        Q_num[count] = Integer.valueOf(quizSet[count][7]).intValue();
         // ダイアログを作成
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(alertTitle);
@@ -216,26 +216,26 @@ public class QuestionActivity extends AppCompatActivity {
     }
 
     public String getXXX(String target){
-        int midleindex = 0;
-        int lastindex = target.length();
+        int middleIndex = 0;
+        int lastIndex = target.length();
         if(!target.contains("\n")){
             if(target.contains(")")){
-                midleindex =  target.indexOf(")");
-                if(midleindex < 10) {
+                middleIndex =  target.indexOf(")");
+                if(middleIndex < 10) {
                     if(target.contains("、")){
                         if(target.indexOf("、") < 5){
 
                         }else{
-                            midleindex =  target.indexOf("、");
+                            middleIndex =  target.indexOf("、");
                         }
                     }
                 }
             }
             else if(target.contains("、")){
-                midleindex =  target.indexOf("、");
+                middleIndex =  target.indexOf("、");
             }
 
-            return  (target.substring(0, midleindex+1) + "\n" + target.substring(midleindex+1, lastindex));
+            return  (target.substring(0, middleIndex+1) + "\n" + target.substring(middleIndex+1, lastIndex));
         }else{return  target;}
     }
 

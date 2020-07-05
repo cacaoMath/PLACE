@@ -1315,6 +1315,7 @@ public class Quiz {
             {"1299", "constant", "不変の", "adj", "0"},
             {"1300", "impact", "衝撃、影響", "n", "0"},
     };
+
     private String Verb[][] = new String[509][5];
     private String Noun[][] = new String[496][5];
     private String Adjective[][] = new String[268][5];
@@ -1388,37 +1389,37 @@ public class Quiz {
         String type = quizData[Integer.valueOf(num).intValue() - 1][3];
         Random random = new Random();
         String temp[] = new String[4];
-        int keepnum[] = {-1, -1, -1};
+        int keepNum[] = {-1, -1, -1};
         int i = 0;
         switch(type) {
             case "n":
                 while(i != 3) {
                     int randomNum = random.nextInt(Noun.length);
                     if(Noun[randomNum][0] != num){
-                        if (randomNum != keepnum[0] && randomNum != keepnum[1]){
-                            keepnum[i] = randomNum;
+                        if (randomNum != keepNum[0] && randomNum != keepNum[1]){
+                            keepNum[i] = randomNum;
                             i++;
                         }
                     }
                 }
-                temp[0] = Noun[keepnum[0]][2];
-                temp[1] = Noun[keepnum[1]][2];
-                temp[2] = Noun[keepnum[2]][2];
+                temp[0] = Noun[keepNum[0]][2];
+                temp[1] = Noun[keepNum[1]][2];
+                temp[2] = Noun[keepNum[2]][2];
                 break;
 
             case "v":
                 while(i != 3) {
                     int randomNum = random.nextInt(Verb.length);
                     if(Verb[randomNum][0] != num){
-                        if (randomNum != keepnum[0] && randomNum != keepnum[1]){
-                            keepnum[i] = randomNum;
+                        if (randomNum != keepNum[0] && randomNum != keepNum[1]){
+                            keepNum[i] = randomNum;
                             i++;
                         }
                     }
                 }
-                temp[0] = Verb[keepnum[0]][2];
-                temp[1] = Verb[keepnum[1]][2];
-                temp[2] = Verb[keepnum[2]][2];
+                temp[0] = Verb[keepNum[0]][2];
+                temp[1] = Verb[keepNum[1]][2];
+                temp[2] = Verb[keepNum[2]][2];
                 break;
 
             case "adj":
@@ -1426,30 +1427,30 @@ public class Quiz {
                 while(i != 3) {
                     int randomNum = random.nextInt(Adjective.length);
                     if(Adjective[randomNum][0] != num){
-                        if (randomNum != keepnum[0] && randomNum != keepnum[1]){
-                            keepnum[i] = randomNum;
+                        if (randomNum != keepNum[0] && randomNum != keepNum[1]){
+                            keepNum[i] = randomNum;
                             i++;
                         }
                     }
                 }
-                temp[0] = Adjective[keepnum[0]][2];
-                temp[1] = Adjective[keepnum[1]][2];
-                temp[2] = Adjective[keepnum[2]][2];
+                temp[0] = Adjective[keepNum[0]][2];
+                temp[1] = Adjective[keepNum[1]][2];
+                temp[2] = Adjective[keepNum[2]][2];
                 break;
 
             case "adv":
                 while(i != 3) {
                     int randomNum = random.nextInt(Adverb.length);
                     if(Adverb[randomNum][0] != num){
-                        if (randomNum != keepnum[0] && randomNum != keepnum[1]){
-                            keepnum[i] = randomNum;
+                        if (randomNum != keepNum[0] && randomNum != keepNum[1]){
+                            keepNum[i] = randomNum;
                             i++;
                         }
                     }
                 }
-                temp[0] = Adverb[keepnum[0]][2];
-                temp[1] = Adverb[keepnum[1]][2];
-                temp[2] = Adverb[keepnum[2]][2];
+                temp[0] = Adverb[keepNum[0]][2];
+                temp[1] = Adverb[keepNum[1]][2];
+                temp[2] = Adverb[keepNum[2]][2];
                 break;
             default:
                 if(Other[0][0] == num){

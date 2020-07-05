@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class ResultActivity extends AppCompatActivity {
     protected static final String TAG = ResultActivity.class.getSimpleName();
     private TextView numtasks, rightper, numremem, AIremem, sumall;
-    private Button detailBtn, homeBtn, restartBtn;
+    private Button homeBtn, restartBtn;
     private int sum_of_remember, AInoremember, sum_of_all;
     private Quiz quiz;
     private long[] Learning_time;
@@ -45,7 +45,6 @@ public class ResultActivity extends AppCompatActivity {
         sumall = findViewById(R.id.resulttext5);
         homeBtn = findViewById(R.id.homeBtn);
         restartBtn = findViewById(R.id.restartBtn);
-        detailBtn = findViewById(R.id.detailBtn);
         //storage = new DataStorage(this); NCBCのやつ
         quiz = new Quiz();
         Known_words = new ArrayList<>();    Mistakes_words = new ArrayList<>(); AI_words = new ArrayList<>();
@@ -91,18 +90,6 @@ public class ResultActivity extends AppCompatActivity {
                 Intent restartIntent = new Intent(getApplicationContext(), QuestionActivity.class);
                 startActivity(restartIntent);
                 Log.d(TAG, "onClick:back_btn");
-            }
-        });
-
-        detailBtn.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                Intent detailIntent = new Intent(getApplicationContext(), DetailActivity.class);
-                detailIntent.putExtra("Known", Known_words);
-                detailIntent.putExtra("Mistake", Mistakes_words);
-                detailIntent.putExtra("AI", AI_words);
-                startActivity(detailIntent);
-                Log.d(TAG, "onClick:detail_btn");
             }
         });
 

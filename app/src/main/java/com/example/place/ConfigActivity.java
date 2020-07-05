@@ -42,7 +42,7 @@ public class ConfigActivity extends AppCompatActivity {
             @Override
             public void onClick(View view){
                 Sum_question = question_spinner.getSelectedItem().toString();
-                saveConfig();
+                //saveConfig();
                 Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(mainIntent);
             }
