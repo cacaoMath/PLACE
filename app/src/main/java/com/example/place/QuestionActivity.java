@@ -11,6 +11,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -25,6 +26,8 @@ import java.util.Calendar;
 
 public class QuestionActivity extends AppCompatActivity {
     protected static final String TAG = QuestionActivity.class.getSimpleName();
+    private boolean eventFlag; //ボタン操作で二重タップを防ぐため
+
     private int numOfQuiz = 10; //後々はユーザーに決めてもらう
     private int count;
     private Quiz quiz;
@@ -71,54 +74,8 @@ public class QuestionActivity extends AppCompatActivity {
         ansBtn3 = findViewById(R.id.ansBtn3);
         ansBtn4 = findViewById(R.id.ansBtn4);
 
-        showNextQuiz();
+        showNextQuiz(); //第１問目表示用
 
-        ansBtn1.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                Select_Answer = ansBtn1.getText().toString();
-                secondTime.setTimeInMillis(System.currentTimeMillis()); // 現在時刻を取得
-
-                checkAnswer();
-                Log.d(TAG, "onClick:Ans_btn1");
-            }
-        });
-
-        ansBtn2.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                Select_Answer = ansBtn2.getText().toString();
-                secondTime.setTimeInMillis(System.currentTimeMillis()); // 現在時刻を取得
-
-                checkAnswer();
-
-                Log.d(TAG, "onClick:Ans_btn2");
-            }
-        });
-
-        ansBtn3.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                Select_Answer = ansBtn3.getText().toString();
-                secondTime.setTimeInMillis(System.currentTimeMillis()); // 現在時刻を取得
-
-                checkAnswer();
-
-                Log.d(TAG, "onClick:Ans_btn3");
-            }
-        });
-
-        ansBtn4.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                Select_Answer = ansBtn4.getText().toString();
-                secondTime.setTimeInMillis(System.currentTimeMillis()); // 現在時刻を取得
-
-                checkAnswer();
-
-                Log.d(TAG, "onClick:Ans_btn4");
-            }
-        });
     }
 
     @Override
@@ -143,7 +100,24 @@ public class QuestionActivity extends AppCompatActivity {
                 }).show();
     }
 
-    public void checkAnswer(){
+    public void checkAnswer(View view){
+        Button answerBtn = findViewById(view.getId());
+        Select_Answer = answerBtn.getText().toString();
+        secondTime.setTimeInMillis(System.currentTimeMillis()); // 現在時刻を取得
+
+        //ボタン(イベント)連打防止処理
+        if(eventFlag) return;
+        else{
+            eventFlag = true;
+            //n秒後にフラグをtrueにする
+            new Handler().postDelayed(new Runnable() {
+                public void run() {
+                    eventFlag = false;
+                }
+            }, 1000L);
+        }
+
+        Log.d(TAG, "onClick:Ans_btn1");
         learningTime[count] =  secondTime.getTimeInMillis() - firstTime.getTimeInMillis() ;
 
         String alertTitle;
@@ -317,7 +291,7 @@ public class QuestionActivity extends AppCompatActivity {
         private void DoNext(int value){
             QuestionActivity qActivity = (QuestionActivity) getActivity();
             qActivity.SetConfidence(value);
-            qActivity.checkAnswer();
+            //qActivity.checkAnswer();
         }
     }
 }
