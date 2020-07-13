@@ -5,12 +5,14 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.hardware.Sensor;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.settlingmeasurement.Sensing;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
@@ -29,7 +31,8 @@ public class MainActivity extends AppCompatActivity {
     protected static final String TAG = MainActivity.class.getSimpleName();
     private Quiz quiz;  //英単語問題データクラス
     private  int numOfCorrect;  //正解数
-    DataTransferJv dataTransfer = new DataTransferJv();
+    DataTransferKt dataTransfer = new DataTransferKt();
+    ActivityRecognition activityRecognition;
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -44,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
         Button configBtn = findViewById(R.id.config_btn);
         Button vocabBtn = findViewById(R.id.vocabulary_btn);
 
+        Sensing sensing = new Sensing(this);
+        activityRecognition = new ActivityRecognition(this);
+
         numOfCorrect = 0;
         quiz = new Quiz();
         this.UpdateMemory();//まだよくわからない
@@ -54,12 +60,25 @@ public class MainActivity extends AppCompatActivity {
         unknownBtn.setText("Unknown\n"+unknownWords);
 
 
+        unknownBtn.setOnClickListener(view ->{
+            sensing.start("");
+        });
+
+        rememberBtn.setOnClickListener(view -> {
+            sensing.stop();
+        });
+
+        activityRecognition.startTracking();
+
+
+
         startBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
                 //問題画面へ遷移
                 Intent qIntent = new Intent(getApplicationContext(), QuestionActivity.class);
                 startActivity(qIntent);
+
                 Log.d(TAG, "onClick:start_btn");
             }
         });
@@ -77,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
         configBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
+                dataTransfer.test(); //firebase Test
                 //設定画面へ遷移
                 Intent configIntent = new Intent(getApplicationContext(), ConfigActivity.class);
                 startActivity(configIntent);
@@ -84,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        dataTransfer.test();
+
 
     }
 

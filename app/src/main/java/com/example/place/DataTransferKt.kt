@@ -18,11 +18,11 @@ class DataTransferKt {
             "middle" to "Mathison",
             "last" to "Turing",
             "born" to 1912,
-            "time" to LocalDateTime.now()
+            "time" to LocalDateTime.now().nano
     )
 
-    @JvmOverloads
     fun test(){
+        Log.d(TAG,"this is Kotlin!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         // Add a new document with a generated ID
         db.collection("users")
                 .add(user)

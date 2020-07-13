@@ -6,4 +6,9 @@
     <string name="unknownBtn">Unknown</string>
     <string name="vocabBtn">Vocabulary</string>
     <string name="configBtn">Config</string>
+
+    <!--for  InputNoteActivity-->
+    <string name="tvLabel">ラベルデータ</string>
+    <string name="tvMeta">その他のメタデータ等</string>
+    <string name="setBtn">保存する</string>
 </resources>

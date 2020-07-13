@@ -17,6 +17,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.settlingmeasurement.Sensing;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -27,6 +29,7 @@ import java.util.Calendar;
 public class QuestionActivity extends AppCompatActivity {
     protected static final String TAG = QuestionActivity.class.getSimpleName();
     private boolean eventFlag; //ボタン操作で二重タップを防ぐため
+    private boolean isConfident = true;
 
     private int numOfQuiz = 10; //後々はユーザーに決めてもらう
     private int count;
@@ -47,6 +50,9 @@ public class QuestionActivity extends AppCompatActivity {
     private int[] confidenceData;
     protected IntentFilter intentFilter = new IntentFilter();
 
+    private  Sensing sensing; //センサデータ計測
+
+
     //デバイスステータス取得用
     private BroadcastReceiver sb = null;
 
@@ -54,6 +60,8 @@ public class QuestionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question);
+
+        sensing = new Sensing(this);
 
         firstTime = Calendar.getInstance(); secondTime = Calendar.getInstance();
         count = 0;
@@ -75,6 +83,7 @@ public class QuestionActivity extends AppCompatActivity {
         ansBtn4 = findViewById(R.id.ansBtn4);
 
         showNextQuiz(); //第１問目表示用
+        sensing.start(""); //計測開始
 
     }
 
@@ -95,16 +104,13 @@ public class QuestionActivity extends AppCompatActivity {
                         Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(mainIntent);
 
+                        sensing.stop();
                         finish();
                     }
                 }).show();
     }
 
-    public void checkAnswer(View view){
-        Button answerBtn = findViewById(view.getId());
-        Select_Answer = answerBtn.getText().toString();
-        secondTime.setTimeInMillis(System.currentTimeMillis()); // 現在時刻を取得
-
+    public void pushButton(View view){
         //ボタン(イベント)連打防止処理
         if(eventFlag) return;
         else{
@@ -116,6 +122,20 @@ public class QuestionActivity extends AppCompatActivity {
                 }
             }, 1000L);
         }
+        if(isConfident){
+            DialogFragment newFragment = new ConfidenceDialogFragment(view);
+            newFragment.show(getSupportFragmentManager(), "Confidence");
+        }else{
+            checkAnswer(view);
+        }
+    }
+
+    public void checkAnswer(View view){
+        Button answerBtn = findViewById(view.getId());
+        Select_Answer = answerBtn.getText().toString();
+        secondTime.setTimeInMillis(System.currentTimeMillis()); // 現在時刻を取得
+
+
 
         Log.d(TAG, "onClick:Ans_btn1");
         learningTime[count] =  secondTime.getTimeInMillis() - firstTime.getTimeInMillis() ;
@@ -139,6 +159,8 @@ public class QuestionActivity extends AppCompatActivity {
                 if (count == numOfQuiz - 1) {
                     // 結果画面へ移動
                     Intent resultIntent = new Intent(getApplicationContext(), ResultActivity.class);
+
+                    sensing.stop();//計測ストップ
                     resultIntent.putExtra("Result", Result);
                     resultIntent.putExtra("Q_number", Q_num);
                     resultIntent.putExtra("Learning_Time", learningTime);
@@ -263,6 +285,10 @@ public class QuestionActivity extends AppCompatActivity {
 
     public static class ConfidenceDialogFragment extends DialogFragment{
         private String[] menuList = {"もう完璧！！","選択肢があればなんとか...","なんとなく"};
+        private View btnView;
+        public ConfidenceDialogFragment(View view){
+            this.btnView = view;
+        }
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState){
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -291,7 +317,7 @@ public class QuestionActivity extends AppCompatActivity {
         private void DoNext(int value){
             QuestionActivity qActivity = (QuestionActivity) getActivity();
             qActivity.SetConfidence(value);
-            //qActivity.checkAnswer();
+            qActivity.checkAnswer(btnView);
         }
     }
 }
