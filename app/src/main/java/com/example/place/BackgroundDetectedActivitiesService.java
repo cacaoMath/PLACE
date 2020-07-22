@@ -35,7 +35,6 @@ public class BackgroundDetectedActivitiesService extends Service {
             return BackgroundDetectedActivitiesService.this;
         }
     }
-
     //最初だけ呼ばれる初期化のみ
     @Override
     public void onCreate() {
