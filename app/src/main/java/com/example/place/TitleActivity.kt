@@ -50,6 +50,7 @@ class TitleActivity : AppCompatActivity() {
         }
     }
 
+    //Sign Up
     fun createAccount(email :String, password : String){
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
