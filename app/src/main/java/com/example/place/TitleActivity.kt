@@ -6,6 +6,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -19,6 +20,7 @@ class TitleActivity : AppCompatActivity() {
 
     var userEmail: String? = null
     var userPassword: String? = null
+    private var tvLog: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +30,7 @@ class TitleActivity : AppCompatActivity() {
         val etUserPassword = findViewById<EditText>(R.id.etUserPassword)
         val signUpBtn = findViewById<Button>(R.id.signUpBtn)
         val signInBtn = findViewById<Button>(R.id.signInBtn)
+        tvLog = findViewById<TextView>(R.id.tvLog)
 
 
         // Initialize Firebase Auth
@@ -52,15 +55,38 @@ class TitleActivity : AppCompatActivity() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = auth.currentUser
-        updateUI(currentUser)
+
+        //ログインしているとホームへ移行
+        if(currentUser != null){
+            Log.d(TAG,"This account is OK. Auto Signed In.")
+            //ホーム画面へ遷移
+            val mainIntent = Intent(applicationContext, MainActivity::class.java)
+            startActivity(mainIntent)
+        }
+        else{
+            tvLog?.text = "Please Sign Up or Sign In"
+        }
     }
 
 
-    fun updateUI(user : FirebaseUser?){
+    fun signUpMsg(user : FirebaseUser?){
         if(user != null){
-            Log.d(TAG,"this user is exist")
+            Log.d(TAG,"sign up : this user is exist")
+            tvLog?.text = "Made your account"
         }else{
-            Log.d(TAG,"this user isn't exist")
+            Log.d(TAG,"sign up : Error")
+            tvLog?.text = "Error"
+        }
+
+    }
+
+    fun signInMsg(user : FirebaseUser?){
+        if(user != null){
+            Log.d(TAG,"sign In : this user is exist")
+            tvLog?.text = "Sign In success"
+        }else{
+            Log.d(TAG,"sign In : There is NO account your e-mail")
+            tvLog?.text = "NO account your e-mail. Please Sign Up."
         }
 
     }
@@ -69,23 +95,27 @@ class TitleActivity : AppCompatActivity() {
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
-                        // Sign in success, update UI with the signed-in user's information
+                        // Sign up success, update UI with the signed-in user's information
                         Log.d(TAG, "createUserWithEmail:success")
                         val user = auth.currentUser
-                        updateUI(user)
+                        signUpMsg(user)
 
+                        //サインアップ完了でメール送信
                         user?.sendEmailVerification()
                                 ?.addOnCompleteListener { task ->
                                     if (task.isSuccessful) {
                                         Log.d(TAG, "Email sent.")
                                     }
                                 }
+                        // 登録後ホームへ移行
+                        val mainIntent = Intent(applicationContext, MainActivity::class.java)
+                        startActivity(mainIntent)
                     } else {
-                        // If sign in fails, display a message to the user.
+                        // If sign up fails, display a message to the user.
                         Log.w(TAG, "createUserWithEmail:failure", task.exception)
                         Toast.makeText(baseContext, "Authentication failed.",
                                 Toast.LENGTH_SHORT).show()
-                        updateUI(null)
+                        signUpMsg(null)
                     }
 
                     // ...
@@ -99,7 +129,7 @@ class TitleActivity : AppCompatActivity() {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "signInWithEmail:success")
                         val user = auth.currentUser
-                        updateUI(user)
+                        signInMsg(user)
                         Log.d(TAG, "password " + password)
                         //ホーム画面へ遷移
                         val mainIntent = Intent(applicationContext, MainActivity::class.java)
@@ -110,7 +140,7 @@ class TitleActivity : AppCompatActivity() {
                         Log.d(TAG, "password " + password)
                         Toast.makeText(baseContext, "Authentication failed.",
                                 Toast.LENGTH_SHORT).show()
-                        updateUI(null)
+                        signInMsg(null)
                         // ...
                     }
 
