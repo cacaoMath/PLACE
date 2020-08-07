@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         Button startBtn = findViewById(R.id.start_btn);
         Button configBtn = findViewById(R.id.config_btn);
         Button vocabBtn = findViewById(R.id.vocabulary_btn);
+        Button metaBtn = findViewById(R.id.meta_btn);
 
         Sensing sensing = new Sensing(this);
         activityRecognition = new ActivityRecognition(this);
@@ -104,6 +105,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        metaBtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                //設定画面へ遷移
+                Intent inputMetaIntent = new Intent(getApplicationContext(), InputNoteActivity.class);
+                startActivity(inputMetaIntent);
+                Log.d(TAG, "onClick:meta_btn");
+            }
+        });
 
 
     }

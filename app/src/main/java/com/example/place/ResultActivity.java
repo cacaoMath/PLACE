@@ -1,9 +1,11 @@
 package com.example.place;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,6 +27,7 @@ public class ResultActivity extends AppCompatActivity {
     private int sum_of_remember, AInoremember, sum_of_all;
     private Quiz quiz;
     private long[] Learning_time;
+    private DataTransferKt dt = new DataTransferKt();
     private int[] Condidence_data;
     //private DataStorage storage;
 
@@ -32,10 +35,14 @@ public class ResultActivity extends AppCompatActivity {
     ArrayList<Integer> Mistakes_words;;
     ArrayList<Integer> AI_words;
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
+
+
+        dt.SendResultData();    //テストの結果をfireStoreに送信
 
         AInoremember = 0;   sum_of_remember = 0;    sum_of_all = 0;
         numtasks = findViewById(R.id.resulttext1);

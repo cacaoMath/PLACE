@@ -94,5 +94,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="保存" />
+
+        <Button
+            android:id="@+id/signoutBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SIGN OUT" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

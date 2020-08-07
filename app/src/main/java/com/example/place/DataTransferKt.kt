@@ -14,6 +14,7 @@ class DataTransferKt {
     val db = FirebaseFirestore.getInstance()
 
     val user = Firebase.auth.currentUser
+    val metaData = MetaData.getInstance()
 
 
 
@@ -24,12 +25,36 @@ class DataTransferKt {
             "email" to user?.email,
             "uid" to user?.uid
     )
+    @RequiresApi(Build.VERSION_CODES.O)
+    private val resultData = hashMapOf(
+            "right" to 10,
+            "label" to metaData.labelData,
+            "other" to metaData.otherData,
+            "uid" to user?.uid,
+            "sensingDataFileName" to metaData.sensingFilePath
+    )
+
 
     fun test(){
         Log.d(TAG,"this is Kotlin!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         // Add a new document with a generated ID
         db.collection("users")
                 .add(userData)
+                .addOnSuccessListener { documentReference ->
+                    Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                }
+                .addOnFailureListener { e ->
+                    Log.w(TAG, "Error adding document", e)
+                }
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun SendResultData(){
+        Log.d(TAG,"sent result test data")
+        // Add a new document with a generated ID
+        db.collection("results")
+                .add(resultData)
                 .addOnSuccessListener { documentReference ->
                     Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
                 }

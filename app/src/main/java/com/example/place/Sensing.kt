@@ -9,6 +9,8 @@ import android.os.Build
 import android.os.Environment
 import android.util.Log
 import androidx.annotation.RequiresApi
+import com.example.place.MetaData
+import com.example.place.MetaData.Companion.getInstance
 import java.io.File
 import java.nio.charset.StandardCharsets
 
@@ -17,6 +19,7 @@ import java.nio.charset.StandardCharsets
  */
 class Sensing(context: Context) : SensorEventListener {
     private val TAG = this::class.java.simpleName
+    private val metadata = MetaData.getInstance()
 
     private val sensorManager: SensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     public var stateMeasurement = false
@@ -46,9 +49,14 @@ class Sensing(context: Context) : SensorEventListener {
         if(!(directory.exists() and directory.isDirectory))
             if(!directory.mkdir()) return
 
+
+
         // labelの保存
         val unixtime = System.currentTimeMillis()
         val meta = "${unixtime}_$label"
+        //metadataにファイル名も保存
+        metadata.sensingFilePath = meta
+
         Log.d(TAG, "file mane meta data: $meta")
         accelerateFile = File(directory, "accelerate_$meta.txt")
         gyroFile = File(directory, "gyro_$meta.txt")
@@ -67,7 +75,9 @@ class Sensing(context: Context) : SensorEventListener {
         sensorManager.registerListener(this, accel, SensorManager.SENSOR_DELAY_FASTEST)
         sensorManager.registerListener(this, gyro, SensorManager.SENSOR_DELAY_FASTEST)
         stateMeasurement = true
-        Log.d(TAG, "[Start Sensing]")}
+        Log.d(TAG, "[Start Sensing]")
+
+    }
 
     fun stop() {
         sensorManager.unregisterListener(this)

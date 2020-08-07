@@ -12,6 +12,9 @@ import android.widget.CompoundButton;
 import android.widget.Spinner;
 import android.widget.Switch;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.ktx.Firebase;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -23,7 +26,7 @@ public class ConfigActivity extends AppCompatActivity {
     protected static final String TAG = ConfigActivity.class.getSimpleName();
     private Spinner question_spinner;
     private Switch confident_switch;
-    private Button config_save_btn;
+    private Button config_save_btn, signout_btn;
     private String Sum_question, Switch_label;
 
 
@@ -35,6 +38,8 @@ public class ConfigActivity extends AppCompatActivity {
         question_spinner = findViewById(R.id.Sum_of_task_spinner);
         confident_switch = findViewById(R.id.confidence_switch);
         config_save_btn = findViewById(R.id.config_save_btn);
+        signout_btn = findViewById(R.id.signoutBtn);
+
 
         checkStorage();
 
@@ -45,6 +50,16 @@ public class ConfigActivity extends AppCompatActivity {
                 //saveConfig();
                 Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(mainIntent);
+            }
+        });
+
+        signout_btn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                FirebaseAuth.getInstance().signOut();
+                //saveConfig();
+                Intent titleIntent = new Intent(getApplicationContext(), TitleActivity.class);
+                startActivity(titleIntent);
             }
         });
 
