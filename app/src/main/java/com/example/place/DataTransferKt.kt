@@ -7,6 +7,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import java.time.LocalDateTime
+import java.util.ArrayList
 
 class DataTransferKt {
     val TAG = "DataTransfer"
@@ -50,11 +51,22 @@ class DataTransferKt {
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun SendResultData(){
+    fun SendResultData(learning_time: LongArray, confidence_data: IntArray, known_words: ArrayList<Int>, mistakes_words: ArrayList<Int>, q_number: IntArray){
         Log.d(TAG,"sent result test data")
+        val result  = hashMapOf(
+                "LearningTime" to learning_time.toList(),
+                "Q_Number" to q_number.toList(),
+                "KnownWords" to known_words.toList(),
+                "MistakeWords" to mistakes_words.toList(),
+                "ConfidenceData" to confidence_data.toList(),
+                "label" to metaData.labelData,
+                "other" to metaData.otherData,
+                "uid" to user?.uid,
+                "sensingDataFileName" to metaData.sensingFilePath
+        )
         // Add a new document with a generated ID
         db.collection("results")
-                .add(resultData)
+                .add(result)
                 .addOnSuccessListener { documentReference ->
                     Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
                 }

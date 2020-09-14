@@ -28,7 +28,7 @@ public class ResultActivity extends AppCompatActivity {
     private Quiz quiz;
     private long[] Learning_time;
     private DataTransferKt dt = new DataTransferKt();
-    private int[] Condidence_data;
+    private int[] Confidence_data;
     //private DataStorage storage;
 
     ArrayList<Integer> Known_words;
@@ -42,7 +42,7 @@ public class ResultActivity extends AppCompatActivity {
         setContentView(R.layout.activity_result);
 
 
-        dt.SendResultData();    //テストの結果をfireStoreに送信
+
 
         AInoremember = 0;   sum_of_remember = 0;    sum_of_all = 0;
         numtasks = findViewById(R.id.resulttext1);
@@ -54,20 +54,22 @@ public class ResultActivity extends AppCompatActivity {
         restartBtn = findViewById(R.id.restartBtn);
         //storage = new DataStorage(this); NCBCのやつ
         quiz = new Quiz();
-        Known_words = new ArrayList<>();    Mistakes_words = new ArrayList<>(); AI_words = new ArrayList<>();
+        //Known_words = new ArrayList<>();    Mistakes_words = new ArrayList<>(); AI_words = new ArrayList<>();
 
         //確信度についての保存変数
         int[] result = getIntent().getExtras().getIntArray("Result");
         int score = getResult(result);
         int[] Q_number = getIntent().getExtras().getIntArray("Q_number");
         Learning_time = getIntent().getExtras().getLongArray("Learning_Time");
-        Condidence_data = getIntent().getExtras().getIntArray("Confidence_data");
+        Confidence_data = getIntent().getExtras().getIntArray("Confidence_data");
         Known_words = new ArrayList();
         Mistakes_words = new ArrayList();
         AI_words = new ArrayList();
 
+
         this.getResultDetail(Q_number, result);
 
+        Log.d(TAG, "data value"+Learning_time[0]);
         numtasks.setText(""+result.length);
         double percent = ((double)score / (double)result.length) * 100;
         rightper.setText(""+percent + "%");
@@ -75,6 +77,8 @@ public class ResultActivity extends AppCompatActivity {
         numremem.setText(""+sum_of_remember);
         AIremem.setText(""+AInoremember);
         sumall.setText(""+sum_of_all);
+
+
 
         /*
         if(checkConfig()){
@@ -100,7 +104,8 @@ public class ResultActivity extends AppCompatActivity {
             }
         });
 
-
+        //ここでfirestoreに１セット終了時の結果を送る
+        dt.SendResultData(Learning_time, Confidence_data, Known_words, Mistakes_words, Q_number);    //テストの結果をfireStoreに送信
     }
 
     @Override
