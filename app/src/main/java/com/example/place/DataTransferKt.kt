@@ -36,17 +36,30 @@ class DataTransferKt {
     )
 
 
-    fun test(){
-        Log.d(TAG,"this is Kotlin!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    //Word data input to firestore
+    fun test(data : Array<Array<String>>){
+        Log.d(TAG,"test"+data.toList()[1][1])
         // Add a new document with a generated ID
-        db.collection("users")
-                .add(userData)
-                .addOnSuccessListener { documentReference ->
-                    Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-                }
-                .addOnFailureListener { e ->
-                    Log.w(TAG, "Error adding document", e)
-                }
+
+
+        for(wordItem in data.toList() ){
+            db.collection("vocabulary")
+                    .document(wordItem[0])
+                    .set(hashMapOf(
+                            "Number" to wordItem[0],
+                            "EnglishWords" to wordItem[1],
+                            "Japanese" to wordItem[2],
+                            "Part of speech" to wordItem[3],
+                            "Memorize" to "0"))
+                    .addOnSuccessListener { documentReference ->
+                        Log.d(TAG, "DocumentSnapshot added with ID: ")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w(TAG, "Error adding document", e)
+                    }
+
+        }
+
     }
 
 
@@ -61,6 +74,7 @@ class DataTransferKt {
                 "ConfidenceData" to confidence_data.toList(),
                 "label" to metaData.labelData,
                 "other" to metaData.otherData,
+                "QuestionPattern" to metaData.quizPattern,
                 "uid" to user?.uid,
                 "sensingDataFileName" to metaData.sensingFilePath
         )

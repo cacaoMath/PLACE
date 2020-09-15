@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         quiz = new Quiz();
         this.UpdateMemory();//まだよくわからない
 
+
         //記憶数によって表示を変化させる
         int unknownWords = 1300 - numOfCorrect;
         rememberBtn.setText("Remember\n"+numOfCorrect);
@@ -97,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         configBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                dataTransfer.test(); //firebase Test
+                //dataTransfer.test(); //firebase Test
                 //設定画面へ遷移
                 Intent configIntent = new Intent(getApplicationContext(), ConfigActivity.class);
                 startActivity(configIntent);
