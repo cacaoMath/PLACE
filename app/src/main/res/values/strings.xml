@@ -9,6 +9,22 @@
 
     <!--for  InputNoteActivity-->
     <string name="tvLabel">ラベルデータ</string>
+    <string name="spLabel">問題パターン</string>
     <string name="tvMeta">その他のメタデータ等</string>
     <string name="setBtn">保存する</string>
+
+
+    <!-- メタデータ入力用 -->
+    <string-array name="patternList">
+        <item>A1</item>
+        <item>B1</item>
+        <item>C1</item>
+        <item>D1</item>
+        <item>E1</item>
+        <item>A2</item>
+        <item>B2</item>
+        <item>C2</item>
+        <item>D2</item>
+        <item>E2</item>
+    </string-array>
 </resources>

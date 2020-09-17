@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private  int numOfCorrect;  //正解数
     DataTransferKt dataTransfer = new DataTransferKt();
     ActivityRecognition activityRecognition;
+    MetaData metaData = MetaData.getInstance();
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -78,8 +79,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view){
                 //問題画面へ遷移
-                Intent qIntent = new Intent(getApplicationContext(), QuestionActivity.class);
-                startActivity(qIntent);
+                //メタデータを選択しないと遷移しないようにする
+                if(metaData.getQuizPattern() != null){
+                    Intent qIntent = new Intent(getApplicationContext(), QuestionActivity.class);
+                    startActivity(qIntent);
+                }
+
 
                 Log.d(TAG, "onClick:start_btn");
             }
@@ -109,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         metaBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                //設定画面へ遷移
+                //メタデータ入力画面へ遷移
                 Intent inputMetaIntent = new Intent(getApplicationContext(), InputNoteActivity.class);
                 startActivity(inputMetaIntent);
                 Log.d(TAG, "onClick:meta_btn");

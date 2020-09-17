@@ -73,10 +73,11 @@ class DataTransferKt {
                 "MistakeWords" to mistakes_words.toList(),
                 "ConfidenceData" to confidence_data.toList(),
                 "label" to metaData.labelData,
-                "other" to metaData.otherData,
-                "QuestionPattern" to metaData.quizPattern,
+                "otherData" to metaData.otherData,
+                "questionPattern" to metaData.quizPattern,
                 "uid" to user?.uid,
-                "sensingDataFileName" to metaData.sensingFilePath
+                "device" to Build.MODEL,
+                "sensingDataFileName" to metaData.sensingFilePath + metaData.labelData
         )
         // Add a new document with a generated ID
         db.collection("results")
@@ -88,5 +89,5 @@ class DataTransferKt {
                     Log.w(TAG, "Error adding document", e)
                 }
     }
-
+    
 }

@@ -176,7 +176,7 @@ public class Quiz {
             {"160", "permit～", "(公的機関などが)～に/～を許可する", "v", "0"},
             {"161", "afford～", "(canを伴い)～する余裕がある", "v", "0"},
             {"162", "eventually", "最終的に", "adv", "0"},
-            {"163", "remove～", "～を取り除く", "v", "0"},
+            {"163", "remove～", "～を取り除く","v", "0"},
             {"164", "motive", "動機", "n", "0"},
             {"165", "feed～", "～に食べ物を与える", "v", "0"},
             {"166", "operate～", "～を操作する", "v", "0"},
@@ -1363,6 +1363,82 @@ public class Quiz {
         // listに値を入れる。この段階では昇順
         for(int i = 0 ; i < 1300 ; i++) {
             list.add(i);
+        }
+        // シャッフルして、順番を変える
+        Collections.shuffle(list);
+
+        for(int i = 0; i < sum ; i++){
+            String[] ans = GetOtherAnswer(quizData[list.get(i)][0]);
+            temp[i][6] = ans[3];//解答
+            List<String> answer = Arrays.asList(ans);
+            Collections.shuffle(answer);
+            temp[i][0] = "Q" + i;//問題の番号
+            temp[i][1] = quizData[list.get(i)][1];//問題英単語
+            temp[i][2] = answer.get(0);//選択肢1
+            temp[i][3] = answer.get(1);//選択肢2
+            temp[i][4] = answer.get(2);//選択肢3
+            temp[i][5] = answer.get(3);//選択肢4
+            temp[i][7] = quizData[list.get(i)][0];//問題英単語
+        }
+        return temp;
+    }
+
+    //Quizの出題範囲を限定するための処理
+    public String[][] GetQuizSet(int sum, String quizPattern){
+        String temp[][] = new String[sum][8];
+        ArrayList<Integer> list = new ArrayList<Integer>();
+
+
+        int Q_Num;
+        int Q_endNum;
+        switch (quizPattern){
+            case "A1":
+                Q_Num = 0;
+                Q_endNum = 50;
+                break;
+            case "B1":
+                Q_Num = 100;
+                Q_endNum = 150;
+                break;
+            case "C1":
+                Q_Num = 200;
+                Q_endNum = 250;
+                break;
+            case "D1":
+                Q_Num = 300;
+                Q_endNum = 350;
+                break;
+            case "E1":
+                Q_Num = 400;
+                Q_endNum = 450;
+                break;
+            case "A2":
+                Q_Num = 500;
+                Q_endNum = 550;
+                break;
+            case "B2":
+                Q_Num = 600;
+                Q_endNum = 650;
+                break;
+            case "C2":
+                Q_Num = 700;
+                Q_endNum = 750;
+                break;
+            case "D2":
+                Q_Num = 800;
+                Q_endNum = 850;
+                break;
+            case "E2":
+                Q_Num = 900;
+                Q_endNum = 950;
+                break;
+            default:
+                Q_Num = 0;
+                Q_endNum = 1300;
+        }
+        // listに値を入れる。この段階では昇順
+        for(; Q_Num < Q_endNum ; Q_Num++) {
+            list.add(Q_Num);
         }
         // シャッフルして、順番を変える
         Collections.shuffle(list);

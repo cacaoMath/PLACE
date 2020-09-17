@@ -14,6 +14,7 @@ class MetaData : Application() {
     companion object {
         private var instance : MetaData? = null
 
+        @JvmStatic
         fun  getInstance(): MetaData {
             if (instance == null)
                 instance = MetaData()

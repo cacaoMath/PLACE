@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.settlingmeasurement.Sensing;
@@ -37,6 +38,7 @@ public class QuestionActivity extends AppCompatActivity {
     private int count;
     private Quiz quiz;
     private String[][] quizSet;
+    private MetaData metaData = MetaData.getInstance();
 
     private TextView questionView;
     private Button ansBtn1;
@@ -66,6 +68,7 @@ public class QuestionActivity extends AppCompatActivity {
 
         sensing = new Sensing(this);
 
+
         firstTime = Calendar.getInstance(); secondTime = Calendar.getInstance();
         count = 0;
         quiz = new Quiz();
@@ -77,7 +80,7 @@ public class QuestionActivity extends AppCompatActivity {
         learningTime = new long[numOfQuiz];
         confidenceData = new int[numOfQuiz];
 
-        quizSet = quiz.GetQuizSet(numOfQuiz);
+        quizSet = quiz.GetQuizSet(numOfQuiz, metaData.getQuizPattern());
 
         questionView = findViewById(R.id.Question);
         ansBtn1 = findViewById(R.id.ansBtn1);
