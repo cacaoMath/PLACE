@@ -23,6 +23,8 @@ public class DetectedActivitiesIntentService extends IntentService {
         super.onCreate();
     }
 
+
+
     @Override
     public void onHandleIntent(Intent intent){
         ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);
