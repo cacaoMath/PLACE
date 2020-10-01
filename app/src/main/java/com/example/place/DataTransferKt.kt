@@ -67,17 +67,17 @@ class DataTransferKt {
     fun SendResultData(learning_time: LongArray, confidence_data: IntArray, known_words: ArrayList<Int>, mistakes_words: ArrayList<Int>, q_number: IntArray){
         Log.d(TAG,"sent result test data")
         val result  = hashMapOf(
-                "LearningTime" to learning_time.toList(),
-                "Q_Number" to q_number.toList(),
-                "KnownWords" to known_words.toList(),
-                "MistakeWords" to mistakes_words.toList(),
-                "ConfidenceData" to confidence_data.toList(),
-                "label" to metaData.labelData,
-                "otherData" to metaData.otherData,
-                "questionPattern" to metaData.quizPattern,
-                "uid" to user?.uid,
-                "device" to Build.MODEL,
-                "sensingDataFileName" to metaData.sensingFilePath + metaData.labelData
+                "learningTime" to learning_time.toList(),
+                "q_Number" to q_number.toList(),
+                "knownWords" to known_words.toList(),
+                "mistakeWords" to mistakes_words.toList(),
+                "confidenceData" to confidence_data.toList(),
+                "Label" to metaData.labelData,
+                "OtherData" to metaData.otherData,
+                "QuestionPattern" to metaData.quizPattern,
+                "Uid" to user?.uid,
+                "Device" to Build.MODEL,
+                "SensingDataFileName" to metaData.sensingFilePath + metaData.labelData
         )
         // Add a new document with a generated ID
         db.collection("results")
