@@ -33,8 +33,6 @@ public class MainActivity extends AppCompatActivity {
     protected static final String TAG = MainActivity.class.getSimpleName();
     private Quiz quiz;  //英単語問題データクラス
     private  int numOfCorrect;  //正解数
-    DataTransferKt dataTransfer = new DataTransferKt();
-    ActivityRecognition activityRecognition;
     MetaData metaData = MetaData.getInstance();
 
 
@@ -51,8 +49,6 @@ public class MainActivity extends AppCompatActivity {
         Button vocabBtn = findViewById(R.id.vocabulary_btn);
         Button metaBtn = findViewById(R.id.meta_btn);
 
-        Sensing sensing = new Sensing(this);
-        activityRecognition = new ActivityRecognition(this);
 
         numOfCorrect = 0;
         quiz = new Quiz();
@@ -63,17 +59,6 @@ public class MainActivity extends AppCompatActivity {
         int unknownWords = 1200 - numOfCorrect;
         rememberBtn.setText("Remember\n"+numOfCorrect);
         unknownBtn.setText("Unknown\n"+unknownWords);
-
-
-        unknownBtn.setOnClickListener(view ->{
-            sensing.start("");
-        });
-
-        rememberBtn.setOnClickListener(view -> {
-            sensing.stop();
-        });
-
-        activityRecognition.startTracking();
 
 
 
