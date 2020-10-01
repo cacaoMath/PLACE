@@ -132,7 +132,7 @@ class LoginActivity : AppCompatActivity() {
                         Log.d(TAG, "signIn:success")
                         val user = auth.currentUser
                         signInMsg(user)
-                        Log.d(TAG, "password " + password)
+                        //Log.d(TAG, "password " + password)
                         //ホーム画面へ遷移
                         val mainIntent = Intent(applicationContext, MainActivity::class.java)
                         startActivity(mainIntent)

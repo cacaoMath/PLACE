@@ -9,8 +9,10 @@ import android.hardware.Sensor;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.settlingmeasurement.Sensing;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -58,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         //記憶数によって表示を変化させる
-        int unknownWords = 1300 - numOfCorrect;
+        int unknownWords = 1200 - numOfCorrect;
         rememberBtn.setText("Remember\n"+numOfCorrect);
         unknownBtn.setText("Unknown\n"+unknownWords);
 
@@ -83,8 +85,12 @@ public class MainActivity extends AppCompatActivity {
                 if(metaData.getQuizPattern() != null){
                     Intent qIntent = new Intent(getApplicationContext(), QuestionActivity.class);
                     startActivity(qIntent);
+                }else{
+                    Toast toast = Toast.makeText(getApplicationContext(),"メタデータを入力して下さい",Toast.LENGTH_LONG);
+                    // 位置調整
+                    toast.setGravity(Gravity.CENTER, 0, -200);
+                    toast.show();
                 }
-
 
                 Log.d(TAG, "onClick:start_btn");
             }
