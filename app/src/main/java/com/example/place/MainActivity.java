@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         //記憶数によって表示を変化させる
-        int unknownWords = 1200 - numOfCorrect;
+        int unknownWords = quiz.getQuizData().length - numOfCorrect;
         rememberBtn.setText("Remember\n"+numOfCorrect);
         unknownBtn.setText("Unknown\n"+unknownWords);
 
@@ -118,9 +118,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-
-
     public String readFile(String file){
         String text = null;
 
@@ -146,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
         String text = readFile("MyMemory");
         if (text == null) {
         } else {
-            String[] temp = text.split(",", 1300);
+            String[] temp = text.split(",", quiz.getQuizData().length);
             for (int i = 0; i < quiz.getQuizData().length; i++) {
                 if (temp[i].equals("1")) {
                     quiz.setMemory(i, true);
