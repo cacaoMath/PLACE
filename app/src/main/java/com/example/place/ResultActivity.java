@@ -29,7 +29,6 @@ public class ResultActivity extends AppCompatActivity {
     private long[] Learning_time;
     private DataTransferKt dt = new DataTransferKt();
     private int[] Confidence_data;
-    //private DataStorage storage;
 
     ArrayList<Integer> Known_words;
     ArrayList<Integer> Mistakes_words;;
@@ -52,9 +51,7 @@ public class ResultActivity extends AppCompatActivity {
         sumall = findViewById(R.id.resulttext5);
         homeBtn = findViewById(R.id.homeBtn);
         restartBtn = findViewById(R.id.restartBtn);
-        //storage = new DataStorage(this); NCBCのやつ
         quiz = new Quiz();
-        //Known_words = new ArrayList<>();    Mistakes_words = new ArrayList<>(); AI_words = new ArrayList<>();
 
         //確信度についての保存変数
         int[] result = getIntent().getExtras().getIntArray("Result");

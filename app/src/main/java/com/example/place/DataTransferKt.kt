@@ -10,12 +10,12 @@ import java.time.LocalDateTime
 import java.util.ArrayList
 
 class DataTransferKt {
-    val TAG = "DataTransfer"
+    private val TAG = "DataTransfer"
     // Access a Cloud Firestore instance from your Activity
-    val db = FirebaseFirestore.getInstance()
+    private val db = FirebaseFirestore.getInstance()
 
-    val user = Firebase.auth.currentUser
-    val metaData = MetaData.getInstance()
+    private val user = Firebase.auth.currentUser
+    private val metaData = MetaData.getInstance()
 
 
 

@@ -18,7 +18,7 @@ public class VocabActivity extends AppCompatActivity {
     protected static final String TAG = VocabActivity.class.getSimpleName();
     TextView text[][];
     private Quiz quiz;
-    private String[][] quizset;
+    private String[][] quizSet;
     private ArrayList<Integer> Known_words_list;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +30,7 @@ public class VocabActivity extends AppCompatActivity {
         quiz = new Quiz();
         Known_words_list = new ArrayList<>();
         this.UpdateMemory();
-        quizset = quiz.getQuizData();
+        quizSet = quiz.getQuizData();
         text= new TextView[Known_words_list.size()][2];
 
         for(int i = 0; i < Known_words_list.size(); i++){
@@ -38,8 +38,8 @@ public class VocabActivity extends AppCompatActivity {
             layout.addView(view);
             text[i][0] = view.findViewById(R.id.Subtext1);
             text[i][1] = view.findViewById(R.id.Subtext2);
-            text[i][0].setText("・"+quizset[Known_words_list.get(i)][1]);
-            text[i][1].setText("「"+ quizset[Known_words_list.get(i)][2] + "」");
+            text[i][0].setText("・"+ quizSet[Known_words_list.get(i)][1]);
+            text[i][1].setText("「"+ quizSet[Known_words_list.get(i)][2] + "」");
 
         }
 
