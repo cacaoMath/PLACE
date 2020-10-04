@@ -18,7 +18,7 @@ class TitleActivity : AppCompatActivity() {
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
 
-        // ここでfinish()を呼ばないとMainActivityでAndroidの戻るボタンを押すとスプラッシュ画面に戻ってしまう
+        // ここでfinish()を呼ばないと遷移後のActivityでAndroidの戻るボタンを押すとスプラッシュ画面に戻ってしまう
         finish()
     }
 
@@ -26,8 +26,8 @@ class TitleActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_title)
 
-        // スプラッシュ表示1000ms(1秒)後にrunnableを呼んでMainActivityへ遷移させる
-        handler.postDelayed(runnable, 1000)
+        // スプラッシュ表示Nms(N秒)後にrunnableを呼んでTitleActivityへ遷移させる
+        handler.postDelayed(runnable, 2000)
     }
 
     override fun onStop() {

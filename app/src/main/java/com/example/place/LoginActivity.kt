@@ -4,10 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -20,6 +17,7 @@ class LoginActivity : AppCompatActivity() {
 
     var userEmail: String? = null
     var userPassword: String? = null
+    private var progressBar: ProgressBar? = null
     private var tvLog: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,12 +28,13 @@ class LoginActivity : AppCompatActivity() {
         val etUserPassword = findViewById<EditText>(R.id.etUserPassword)
         val signUpBtn = findViewById<Button>(R.id.signUpBtn)
         val signInBtn = findViewById<Button>(R.id.signInBtn)
+        progressBar = findViewById<ProgressBar>(R.id.progressBar)
         tvLog = findViewById<TextView>(R.id.tvLog)
 
 
         // Initialize Firebase Auth
         auth = Firebase.auth
-
+        progressBar?.visibility = ProgressBar.INVISIBLE
 
         signInBtn.setOnClickListener{
             if(!TextUtils.isEmpty(etUserEmail.text.toString()) && !TextUtils.isEmpty(etUserPassword.text.toString()) ){
@@ -70,6 +69,7 @@ class LoginActivity : AppCompatActivity() {
 
 
     private fun signUpMsg(user : FirebaseUser?){
+        progressBar?.visibility = ProgressBar.INVISIBLE
         if(user != null){
             Log.d(TAG,"sign up : this user is exist")
             tvLog?.text = "Made your account"
@@ -81,6 +81,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun signInMsg(user : FirebaseUser?){
+        progressBar?.visibility = ProgressBar.INVISIBLE
         if(user != null){
             Log.d(TAG,"sign In : this user is exist")
             tvLog?.text = "Sign In success"
@@ -93,6 +94,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun signUp(email :String, password : String){
         tvLog?.text = "Now Loading. Please wait ..."
+        progressBar?.visibility = ProgressBar.VISIBLE
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
@@ -109,8 +111,7 @@ class LoginActivity : AppCompatActivity() {
                                     }
                                 }
                         // 登録後ホームへ移行
-                        val mainIntent = Intent(applicationContext, MainActivity::class.java)
-                        startActivity(mainIntent)
+                        gotoMain()
                     } else {
                         // If sign up fails, display a message to the user.
                         Log.w(TAG, "createUserWithEmail:failure", task.exception)
@@ -125,6 +126,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun signIn(email :String, password : String){
         tvLog?.text = "Now Loading. Please wait ..."
+        progressBar?.visibility = ProgressBar.VISIBLE
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
@@ -133,9 +135,7 @@ class LoginActivity : AppCompatActivity() {
                         val user = auth.currentUser
                         signInMsg(user)
                         //Log.d(TAG, "password " + password)
-                        //ホーム画面へ遷移
-                        val mainIntent = Intent(applicationContext, MainActivity::class.java)
-                        startActivity(mainIntent)
+                        gotoMain()
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signIn:failure", task.exception)
@@ -148,6 +148,12 @@ class LoginActivity : AppCompatActivity() {
 
                     // ...
                 }
+    }
+
+    private fun gotoMain(){
+        //ホーム画面へ遷移
+        val mainIntent = Intent(applicationContext, MainActivity::class.java)
+        startActivity(mainIntent)
     }
 
     fun getUid(){
