@@ -60,6 +60,7 @@ public class ConfigActivity extends AppCompatActivity {
                 //saveConfig();
                 Intent titleIntent = new Intent(getApplicationContext(), TitleActivity.class);
                 startActivity(titleIntent);
+                finish();
             }
         });
 
