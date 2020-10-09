@@ -3,6 +3,7 @@ package com.example.place
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
@@ -80,7 +81,7 @@ class DataTransferKt {
                 "SensingDataFileName" to metaData.sensingFilePath + metaData.labelData
         )
         // Add a new document with a generated ID
-        db.collection("results")
+        db.collection("results").document(user!!.uid).collection("data")
                 .add(result)
                 .addOnSuccessListener { documentReference ->
                     Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
@@ -89,5 +90,23 @@ class DataTransferKt {
                     Log.w(TAG, "Error adding document", e)
                 }
     }
-    
+
+    fun getUid() : FirebaseUser?{
+        val user = Firebase.auth.currentUser
+        user?.let {
+            // Name, email address, and profile photo Url
+            val name = user.displayName
+            val email = user.email
+            val photoUrl = user.photoUrl
+
+            // Check if user's email is verified
+            val emailVerified = user.isEmailVerified
+
+            // The user's ID, unique to the Firebase project. Do NOT use this value to
+            // authenticate with your backend server, if you have one. Use
+            // FirebaseUser.getToken() instead.
+            val uid = user.uid
+        }
+        return user
+    }
 }

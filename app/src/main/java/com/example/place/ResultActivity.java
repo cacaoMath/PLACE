@@ -1,7 +1,9 @@
 package com.example.place;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,9 +24,9 @@ import java.util.ArrayList;
 
 public class ResultActivity extends AppCompatActivity {
     protected static final String TAG = ResultActivity.class.getSimpleName();
-    private TextView numtasks, rightper, numremem, AIremem, sumall;
-    private Button homeBtn, restartBtn;
-    private int sum_of_remember, AInoremember, sum_of_all;
+    private TextView numtasks, rightper;
+    private Button restartBtn;
+    private int sum_of_remember, AInoremember, sum_of_all;//PLACEにはいらない？気がするのでとりあえず放置
     private Quiz quiz;
     private long[] Learning_time;
     private DataTransferKt dt = new DataTransferKt();
@@ -39,6 +41,8 @@ public class ResultActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolBar);
+        setSupportActionBar(myToolbar);
 
 
 
@@ -46,10 +50,6 @@ public class ResultActivity extends AppCompatActivity {
         AInoremember = 0;   sum_of_remember = 0;    sum_of_all = 0;
         numtasks = findViewById(R.id.resulttext1);
         rightper = findViewById(R.id.resulttext2);
-        numremem = findViewById(R.id.resulttext3);
-        AIremem = findViewById(R.id.resulttext4);
-        sumall = findViewById(R.id.resulttext5);
-        homeBtn = findViewById(R.id.homeBtn);
         restartBtn = findViewById(R.id.restartBtn);
         quiz = new Quiz();
 
@@ -71,10 +71,6 @@ public class ResultActivity extends AppCompatActivity {
         double percent = ((double)score / (double)result.length) * 100;
         rightper.setText(""+percent + "%");
         saveMemory(Q_number, result);
-        numremem.setText(""+sum_of_remember);
-        AIremem.setText(""+AInoremember);
-        sumall.setText(""+sum_of_all);
-
 
 
         /*
@@ -83,21 +79,26 @@ public class ResultActivity extends AppCompatActivity {
         }
         */
 
-        homeBtn.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(homeIntent);
-                Log.d(TAG, "onClick:back_btn");
-            }
-        });
+        myToolbar.setNavigationIcon(R.drawable.round_home_black_18dp);
+
+        myToolbar.setNavigationOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // ナビゲーションアイコンクリック時の処理
+                        Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
+                        startActivity(homeIntent);
+                        Log.d(TAG, "onClick:home_btn");
+                    }
+                });
+
 
         restartBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
                 Intent restartIntent = new Intent(getApplicationContext(), QuestionActivity.class);
                 startActivity(restartIntent);
-                Log.d(TAG, "onClick:back_btn");
+                Log.d(TAG, "onClick:restart");
             }
         });
 

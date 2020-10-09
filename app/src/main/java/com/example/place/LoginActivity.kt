@@ -13,10 +13,10 @@ import com.google.firebase.ktx.Firebase
 
 class LoginActivity : AppCompatActivity() {
     private val TAG = this::class.java.simpleName
-    private lateinit var auth: FirebaseAuth
 
-    var userEmail: String? = null
-    var userPassword: String? = null
+    // Initialize Firebase Auth
+    private var auth : FirebaseAuth = Firebase.auth
+
     private var progressBar: ProgressBar? = null
     private var tvLog: TextView? = null
 
@@ -32,13 +32,13 @@ class LoginActivity : AppCompatActivity() {
         tvLog = findViewById<TextView>(R.id.tvLog)
 
 
-        // Initialize Firebase Auth
-        auth = Firebase.auth
+
         progressBar?.visibility = ProgressBar.INVISIBLE
 
         signInBtn.setOnClickListener{
             if(!TextUtils.isEmpty(etUserEmail.text.toString()) && !TextUtils.isEmpty(etUserPassword.text.toString()) ){
                 signIn(etUserEmail.text.toString(), etUserPassword.text.toString())
+                finish()
             }
 
         }
@@ -46,6 +46,7 @@ class LoginActivity : AppCompatActivity() {
         signUpBtn.setOnClickListener{
             if(!TextUtils.isEmpty(etUserEmail.text.toString()) && !TextUtils.isEmpty(etUserPassword.text.toString())){
                 signUp(etUserEmail.text.toString(), etUserPassword.text.toString())
+                finish()
             }
         }
     }
@@ -61,10 +62,15 @@ class LoginActivity : AppCompatActivity() {
             //ホーム画面へ遷移
             val mainIntent = Intent(applicationContext, MainActivity::class.java)
             startActivity(mainIntent)
+            finish()
         }
         else{
             tvLog?.text = "Please Sign Up or Sign In"
         }
+    }
+
+    override fun onBackPressed() {
+        //無記入で何もしないようにする
     }
 
 
@@ -156,22 +162,6 @@ class LoginActivity : AppCompatActivity() {
         startActivity(mainIntent)
     }
 
-    fun getUid(){
-        val user = Firebase.auth.currentUser
-        user?.let {
-            // Name, email address, and profile photo Url
-            val name = user.displayName
-            val email = user.email
-            val photoUrl = user.photoUrl
 
-            // Check if user's email is verified
-            val emailVerified = user.isEmailVerified
-
-            // The user's ID, unique to the Firebase project. Do NOT use this value to
-            // authenticate with your backend server, if you have one. Use
-            // FirebaseUser.getToken() instead.
-            val uid = user.uid
-        }
-    }
 
 }

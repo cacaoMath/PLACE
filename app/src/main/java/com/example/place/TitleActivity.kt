@@ -30,6 +30,10 @@ class TitleActivity : AppCompatActivity() {
         handler.postDelayed(runnable, 2000)
     }
 
+    override fun onBackPressed() {
+        //無記入で何もしないようにする
+    }
+
     override fun onStop() {
         super.onStop()
 

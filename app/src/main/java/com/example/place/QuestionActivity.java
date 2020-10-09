@@ -1,10 +1,5 @@
 package com.example.place;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -17,8 +12,12 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.TextView;
+
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
 
 import com.example.settlingmeasurement.Sensing;
 
@@ -65,6 +64,8 @@ public class QuestionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolBar);
+        setSupportActionBar(myToolbar);
 
         sensing = new Sensing(this);
 
