@@ -27,4 +27,18 @@
         <item>D2</item>
         <item>E2</item>
     </string-array>
+
+    <!-- ユーザーアンケート　mLearningの経験 -->
+    <string-array name="mLearningExp">
+        <item>使ったことがない</item>
+        <item>たまに使う</item>
+        <item>毎日使う</item>
+    </string-array>
+
+    <!-- ユーザーアンケート　mLearningの経験 -->
+    <string-array name="Environment">
+        <item>机に座って使う</item>
+        <item>外出先(乗車中や歩行中)に使う</item>
+        <item>寝転んで使う</item>
+    </string-array>
 </resources>

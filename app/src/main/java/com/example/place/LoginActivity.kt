@@ -38,16 +38,14 @@ class LoginActivity : AppCompatActivity() {
         signInBtn.setOnClickListener{
             if(!TextUtils.isEmpty(etUserEmail.text.toString()) && !TextUtils.isEmpty(etUserPassword.text.toString()) ){
                 signIn(etUserEmail.text.toString(), etUserPassword.text.toString())
-                finish()
+
             }
 
         }
 
         signUpBtn.setOnClickListener{
-            if(!TextUtils.isEmpty(etUserEmail.text.toString()) && !TextUtils.isEmpty(etUserPassword.text.toString())){
-                signUp(etUserEmail.text.toString(), etUserPassword.text.toString())
-                finish()
-            }
+            val signupIntent = Intent(applicationContext, SignupActivity::class.java)
+            startActivity(signupIntent)
         }
     }
 
@@ -74,17 +72,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
 
-    private fun signUpMsg(user : FirebaseUser?){
-        progressBar?.visibility = ProgressBar.INVISIBLE
-        if(user != null){
-            Log.d(TAG,"sign up : this user is exist")
-            tvLog?.text = "Made your account"
-        }else{
-            Log.d(TAG,"sign up : Error")
-            tvLog?.text = "Error"
-        }
 
-    }
 
     private fun signInMsg(user : FirebaseUser?){
         progressBar?.visibility = ProgressBar.INVISIBLE
@@ -98,37 +86,6 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    private fun signUp(email :String, password : String){
-        tvLog?.text = "Now Loading. Please wait ..."
-        progressBar?.visibility = ProgressBar.VISIBLE
-        auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful) {
-                        // Sign up success, update UI with the signed-in user's information
-                        Log.d(TAG, "createUserWithEmail:success")
-                        val user = auth.currentUser
-                        signUpMsg(user)
-
-                        //サインアップ完了でメール送信
-                        user?.sendEmailVerification()
-                                ?.addOnCompleteListener { task ->
-                                    if (task.isSuccessful) {
-                                        Log.d(TAG, "Email sent.")
-                                    }
-                                }
-                        // 登録後ホームへ移行
-                        gotoMain()
-                    } else {
-                        // If sign up fails, display a message to the user.
-                        Log.w(TAG, "createUserWithEmail:failure", task.exception)
-                        Toast.makeText(baseContext, "Authentication failed.",
-                                Toast.LENGTH_SHORT).show()
-                        signUpMsg(null)
-                    }
-
-                    // ...
-                }
-    }
 
     private fun signIn(email :String, password : String){
         tvLog?.text = "Now Loading. Please wait ..."
@@ -160,6 +117,7 @@ class LoginActivity : AppCompatActivity() {
         //ホーム画面へ遷移
         val mainIntent = Intent(applicationContext, MainActivity::class.java)
         startActivity(mainIntent)
+        finish()
     }
 
 
