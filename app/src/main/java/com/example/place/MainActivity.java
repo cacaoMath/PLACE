@@ -52,10 +52,10 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
 
 
-        Button unknownBtn = findViewById(R.id.unknown_btn);
-        Button rememberBtn = findViewById(R.id.remember_btn);
+        //Button unknownBtn = findViewById(R.id.unknown_btn);
+        //Button rememberBtn = findViewById(R.id.remember_btn);
         Button startBtn = findViewById(R.id.start_btn);
-        Button vocabBtn = findViewById(R.id.vocabulary_btn);
+        //Button vocabBtn = findViewById(R.id.vocabulary_btn);
         Button metaBtn = findViewById(R.id.meta_btn);
 
 
@@ -66,8 +66,8 @@ public class MainActivity extends AppCompatActivity {
 
         //記憶数によって表示を変化させる
         int unknownWords = quiz.getQuizData().length - numOfCorrect;
-        rememberBtn.setText("Remember\n"+numOfCorrect);
-        unknownBtn.setText("Unknown\n"+unknownWords);
+        //rememberBtn.setText("Remember\n"+numOfCorrect);
+        //unknownBtn.setText("Unknown\n"+unknownWords);
 
 
 
@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        /*
         vocabBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
@@ -99,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "onClick:vocab_btn");
             }
         });
+        :
+         */
 
 
         metaBtn.setOnClickListener(new View.OnClickListener(){

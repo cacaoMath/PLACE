@@ -7,8 +7,9 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
-import java.util.ArrayList
+import java.util.*
 
 class DataTransferKt {
     private val TAG = "DataTransfer"
@@ -80,11 +81,12 @@ class DataTransferKt {
                 "Device" to Build.MODEL,
                 "SensingDataFileName" to metaData.sensingFilePath + metaData.labelData
         )
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         // Add a new document with a generated ID
-        db.collection("results").document(user!!.uid).collection("data")
-                .add(result)
+        db.collection("androidResults").document(user!!.uid).collection("data").document(timeStamp)
+                .set(result)
                 .addOnSuccessListener { documentReference ->
-                    Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                    Log.d(TAG, "DocumentSnapshot added with ID: ${timeStamp}")
                 }
                 .addOnFailureListener { e ->
                     Log.w(TAG, "Error adding document", e)

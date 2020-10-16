@@ -29,6 +29,7 @@ android {
 }
 
 apply plugin: 'com.google.gms.google-services'  // Google Play services Gradle plugin
+apply plugin: "kotlin-android-extensions"
 
 dependencies {
     implementation 'com.google.firebase:firebase-core:17.0.0'
