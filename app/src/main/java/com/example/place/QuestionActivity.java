@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class QuestionActivity extends AppCompatActivity {
@@ -33,7 +34,7 @@ public class QuestionActivity extends AppCompatActivity {
     private boolean eventFlag; //ボタン操作で二重タップを防ぐため
     private boolean isConfident = true;
 
-    private int numOfQuiz = 10; //後々はユーザーに決めてもらう
+    private int numOfQuiz = 30; //後々はユーザーに決めてもらう
     private int count;
     private Quiz quiz;
     private String[][] quizSet;
@@ -52,6 +53,7 @@ public class QuestionActivity extends AppCompatActivity {
     private long[] learningTime;
     private int[] confidenceData;
     protected IntentFilter intentFilter = new IntentFilter();
+    private DataTransferKt dt = new DataTransferKt();
 
     private  Sensing sensing; //センサデータ計測
 
@@ -96,6 +98,17 @@ public class QuestionActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed(){
+        ArrayList<Integer> Known_words = new ArrayList();
+        ArrayList<Integer> Mistakes_words = new ArrayList();
+
+        for (int i = 0; i < Q_num.length; i++) {
+            if(Result[i] == 0){
+                Mistakes_words.add(Q_num[i]);
+            }else{
+                Known_words.add(Q_num[i]);
+            }
+        }
+
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("確認");
         builder.setMessage("学習の途中ですが，\n終了してよろしいですか？")
@@ -106,8 +119,11 @@ public class QuestionActivity extends AppCompatActivity {
                     }
                 })
                 .setNegativeButton("はい", new DialogInterface.OnClickListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
                     public void onClick(DialogInterface dialogInterface, int id) {
+
+                        dt.SendResultData(learningTime, confidenceData, Known_words, Mistakes_words, Q_num);
                         Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(mainIntent);
 

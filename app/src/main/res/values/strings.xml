@@ -40,5 +40,6 @@
         <item>机に座って使う</item>
         <item>外出先(乗車中や歩行中)に使う</item>
         <item>寝転んで使う</item>
+        <item>使ったことがない</item>
     </string-array>
 </resources>

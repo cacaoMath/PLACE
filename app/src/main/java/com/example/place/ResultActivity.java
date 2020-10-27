@@ -113,19 +113,13 @@ public class ResultActivity extends AppCompatActivity {
 
     //スクロールビューに表示する結果を取得するメソッド
     public void getResultDetail(int[] Q_num, int[] result){
-        StringBuilder sbuilder = new StringBuilder();
 
         for (int i = 0; i < Q_num.length; i++) {
             if(result[i] == 0){
                 Mistakes_words.add(Q_num[i]);
             }else{
-                if(Learning_time[i] < 6000){
-                    sum_of_remember++;
-                    Known_words.add(Q_num[i]);
-                }else{
-                    AInoremember++;
-                    AI_words.add(Q_num[i]);
-                }
+                sum_of_remember++;
+                Known_words.add(Q_num[i]);
             }
         }
     }

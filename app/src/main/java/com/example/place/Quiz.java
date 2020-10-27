@@ -1297,35 +1297,35 @@ public class Quiz {
                 Q_Num = 0;
                 Q_endNum = 50;
                 break;
-            case "B1":
+            case "A2":
                 Q_Num = 100;
                 Q_endNum = 150;
                 break;
-            case "C1":
+            case "B1":
                 Q_Num = 200;
                 Q_endNum = 250;
                 break;
-            case "D1":
+            case "B2":
                 Q_Num = 300;
                 Q_endNum = 350;
                 break;
-            case "E1":
+            case "C1":
                 Q_Num = 400;
                 Q_endNum = 450;
                 break;
-            case "A2":
+            case "C2":
                 Q_Num = 500;
                 Q_endNum = 550;
                 break;
-            case "B2":
+            case "D1":
                 Q_Num = 600;
                 Q_endNum = 650;
                 break;
-            case "C2":
+            case "D2":
                 Q_Num = 700;
                 Q_endNum = 750;
                 break;
-            case "D2":
+            case "E1":
                 Q_Num = 800;
                 Q_endNum = 850;
                 break;
