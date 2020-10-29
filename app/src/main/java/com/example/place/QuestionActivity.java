@@ -82,6 +82,10 @@ public class QuestionActivity extends AppCompatActivity {
         Q_num = new int[numOfQuiz];
         learningTime = new long[numOfQuiz];
         confidenceData = new int[numOfQuiz];
+        //確信度の初期値が中断した場合ややこしいので-1にする
+        for(int i = 0; i <numOfQuiz; i++){
+            confidenceData[i] = -1;
+        }
 
         quizSet = quiz.GetQuizSet(numOfQuiz, metaData.getQuizPattern());
 
@@ -294,7 +298,7 @@ public class QuestionActivity extends AppCompatActivity {
         //内部ストレージに存在しているかで分岐
         String text = readFile("MyConfig");
         if (text == null) {
-            numOfQuiz = 10;
+            numOfQuiz = 30;
         } else {
             String[] temp = text.split(",", 2);
             numOfQuiz = Integer.valueOf(temp[0]);

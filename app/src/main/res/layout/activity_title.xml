@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:visibility="visible"
+    android:background="@color/colorBg"
     tools:context=".TitleActivity">
 
 
@@ -13,6 +14,7 @@
         android:layout_width="214dp"
         android:layout_height="95dp"
         android:layout_marginTop="108dp"
+        android:fontFamily="@font/din1451alt"
         android:text="@string/app_name"
         android:textAlignment="center"
         android:textSize="64sp"
