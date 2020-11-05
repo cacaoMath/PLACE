@@ -99,9 +99,10 @@
         android:id="@+id/envSpn"
         android:layout_width="252dp"
         android:layout_height="34dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="28dp"
         android:entries="@array/Environment"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.352"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
