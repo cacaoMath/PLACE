@@ -18,13 +18,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.settlingmeasurement.Sensing;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.ktx.Firebase;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -39,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
     protected static final String TAG = MainActivity.class.getSimpleName();
     private Quiz quiz;  //英単語問題データクラス
     private  int numOfCorrect;  //正解数
+    private FirebaseAuth mAuth;
+
     AlertDialog alertDialog;
     MetaData metaData = MetaData.getInstance();
 
@@ -51,6 +57,11 @@ public class MainActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolBar);
         setSupportActionBar(myToolbar);
 
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        TextView currentUserTxt = findViewById(R.id.currentUserTxt);
+        currentUserTxt.setText(currentUser.getEmail() + "\nでログインしています．");
 
         //Button unknownBtn = findViewById(R.id.unknown_btn);
         //Button rememberBtn = findViewById(R.id.remember_btn);

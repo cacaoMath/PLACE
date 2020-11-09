@@ -76,7 +76,8 @@ class SignupActivity : AppCompatActivity() {
                                 .add(
                                         hashMapOf(
                                                 "mLearningExp" to mlSpn.selectedItem,
-                                                "mLearningEnvironment" to envSpn.selectedItem
+                                                "mLearningEnvironment" to envSpn.selectedItem,
+                                                "e-mail" to user.email
                                         )
                                 )
                                 .addOnSuccessListener { documentReference ->

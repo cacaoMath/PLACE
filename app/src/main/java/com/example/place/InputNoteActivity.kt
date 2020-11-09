@@ -23,13 +23,20 @@ class InputNoteActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_input_note)
 
-        var etLabel = findViewById<EditText>(R.id.etLabel)
+        var labelSpn = findViewById<Spinner>(R.id.labelSpn)
         var etMeta = findViewById<EditText>(R.id.etMeta)
         var setLabelBtn = findViewById<Button>(R.id.setLabelBtn)
         var qstSpn = findViewById<Spinner>(R.id.qstSpn)
 
         if(metaData.labelData != null){
-            etLabel.setText(metaData.labelData)
+            val strArray = resources.getStringArray(R.array.labelList)
+            var index = 0
+            for (item in strArray){
+                if(item == metaData.labelData){
+                    qstSpn.setSelection(index)
+                }
+                index++
+            }
         }
         if(metaData.otherData != null){
             etMeta.setText(metaData.otherData)
@@ -47,8 +54,7 @@ class InputNoteActivity : AppCompatActivity() {
         }
 
         setLabelBtn.setOnClickListener{
-            Log.d("aa", etLabel.text.toString() + etMeta.text.toString())
-            metaData.labelData = etLabel.text.toString()
+            metaData.labelData = labelSpn.selectedItem as String
             metaData.otherData = etMeta.text.toString()
             metaData.quizPattern = qstSpn.selectedItem as String
             val mainIntent = Intent(applicationContext, MainActivity::class.java)
