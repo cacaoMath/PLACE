@@ -41,6 +41,7 @@ class SignupActivity : AppCompatActivity() {
             if(etSignupPass.text.toString().length > 6){
                 loadingBar?.visibility = ProgressBar.VISIBLE
                 signUp(etSignupEmail.text.toString(), etSignupPass.text.toString())
+                createAccountBtn.isEnabled = false
             }else{
                 Toast.makeText(baseContext, "パスワードは7文字以上にしてください",
                         Toast.LENGTH_SHORT).show()
@@ -106,6 +107,8 @@ class SignupActivity : AppCompatActivity() {
                                 Toast.LENGTH_SHORT).show()
                         loadingBar?.visibility = ProgressBar.INVISIBLE
                         signUpMsg(null)
+                        createAccountBtn.isEnabled = true
+
                     }
 
                     // ...

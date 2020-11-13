@@ -19,6 +19,8 @@ class LoginActivity : AppCompatActivity() {
 
     private var progressBar: ProgressBar? = null
     private var tvLog: TextView? = null
+    private lateinit var signInBtn: Button
+    private  lateinit var signUpBtn: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,8 +28,8 @@ class LoginActivity : AppCompatActivity() {
 
         val etUserEmail = findViewById<EditText>(R.id.etUserEmail)
         val etUserPassword = findViewById<EditText>(R.id.etUserPassword)
-        val signUpBtn = findViewById<Button>(R.id.signUpBtn)
-        val signInBtn = findViewById<Button>(R.id.signInBtn)
+        signUpBtn = findViewById<Button>(R.id.signUpBtn)
+        signInBtn = findViewById<Button>(R.id.signInBtn)
         progressBar = findViewById<ProgressBar>(R.id.progressBar)
         tvLog = findViewById<TextView>(R.id.tvLog)
 
@@ -38,6 +40,8 @@ class LoginActivity : AppCompatActivity() {
         signInBtn.setOnClickListener{
             if(!TextUtils.isEmpty(etUserEmail.text.toString()) && !TextUtils.isEmpty(etUserPassword.text.toString()) ){
                 signIn(etUserEmail.text.toString(), etUserPassword.text.toString())
+                signInBtn.isEnabled = false
+                signUpBtn.isEnabled = false
 
             }
 
@@ -98,6 +102,7 @@ class LoginActivity : AppCompatActivity() {
                         val user = auth.currentUser
                         signInMsg(user)
                         //Log.d(TAG, "password " + password)
+
                         gotoMain()
                     } else {
                         // If sign in fails, display a message to the user.
@@ -106,6 +111,8 @@ class LoginActivity : AppCompatActivity() {
                         Toast.makeText(baseContext, "Authentication failed.",
                                 Toast.LENGTH_SHORT).show()
                         signInMsg(null)
+                        signInBtn.isEnabled = true
+                        signUpBtn.isEnabled = true
                         // ...
                     }
 

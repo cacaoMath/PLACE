@@ -5,7 +5,12 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.AlarmManagerCompat;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -35,6 +40,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,10 +72,7 @@ public class MainActivity extends AppCompatActivity {
         TextView currentUserTxt = findViewById(R.id.currentUserTxt);
         currentUserTxt.setText(currentUser.getEmail() + "\nでログインしています．");
 
-        //Button unknownBtn = findViewById(R.id.unknown_btn);
-        //Button rememberBtn = findViewById(R.id.remember_btn);
         Button startBtn = findViewById(R.id.start_btn);
-        //Button vocabBtn = findViewById(R.id.vocabulary_btn);
         Button metaBtn = findViewById(R.id.meta_btn);
 
 
@@ -75,11 +81,6 @@ public class MainActivity extends AppCompatActivity {
         this.UpdateMemory();//まだよくわからない
 
 
-        //記憶数によって表示を変化させる
-        int unknownWords = quiz.getQuizData().length - numOfCorrect;
-        //rememberBtn.setText("Remember\n"+numOfCorrect);
-        //unknownBtn.setText("Unknown\n"+unknownWords);
-
 
 
         startBtn.setOnClickListener(new View.OnClickListener(){
@@ -87,11 +88,12 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view){
                 //問題画面へ遷移
                 //メタデータを選択しないと遷移しないようにする
-                if(metaData.getQuizPattern() != null){
+                if(metaData.getQuizPattern() != null ){
+                    startMeasurementAlarm();
                     Intent qIntent = new Intent(getApplicationContext(), QuestionActivity.class);
                     startActivity(qIntent);
                 }else{
-                    Toast toast = Toast.makeText(getApplicationContext(),"メタデータを入力して下さい",Toast.LENGTH_LONG);
+                    Toast toast = Toast.makeText(getApplicationContext(),"メタデータを入力して下さい.",Toast.LENGTH_LONG);
                     // 位置調整
                     toast.setGravity(Gravity.CENTER, 0, -200);
                     toast.show();
@@ -101,19 +103,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /*
-        vocabBtn.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                //MyWords画面へ遷移
-                Intent vocabIntent = new Intent(getApplicationContext(), VocabActivity.class);
-                startActivity(vocabIntent);
-                Log.d(TAG, "onClick:vocab_btn");
-            }
-        });
-        :
-
-         */
 
 
         metaBtn.setOnClickListener(new View.OnClickListener(){
@@ -128,6 +117,51 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+    //10分計測のためのアラームをセットする
+    private void startMeasurementAlarm(){
+
+            // 時間をセットする
+            Calendar calendar = Calendar.getInstance();
+            // Calendarを使って現在の時間をミリ秒で取得
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            // 5秒後に設定
+            calendar.add(Calendar.SECOND, 10*60);
+
+            //時間精度デバック用
+            final DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS");
+            final Date date = new Date(System.currentTimeMillis());
+            Log.d("alarmCheck_start", df.format(date));
+
+            //暗黙的なBroadCast
+            Intent intent = new Intent("STOP");
+            PendingIntent pending = PendingIntent.getBroadcast(
+                    getApplicationContext(), 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+            // アラームをセットする
+            AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+            if(am != null) {
+//                        am.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pending);
+                AlarmManagerCompat.setExact(am, AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pending);
+
+                Toast.makeText(getApplicationContext(),
+                        "計測を始めます.", Toast.LENGTH_SHORT).show();
+            }
+
+    }
+
+    private void cancelMeasurementAlarm(){
+        Toast.makeText(getApplicationContext(), "中断しました", Toast.LENGTH_SHORT).show();
+        // アラームの削除
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+        Intent intent = new Intent("STOP");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
+
+        pendingIntent.cancel();
+        alarmManager.cancel(pendingIntent);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -170,6 +204,12 @@ public class MainActivity extends AppCompatActivity {
                 }).show();
     }
 
+    public class mainActivityABReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+        }
+    }
 
 
 

@@ -27,7 +27,7 @@ class TitleActivity : AppCompatActivity() {
         setContentView(R.layout.activity_title)
 
         // スプラッシュ表示Nms(N秒)後にrunnableを呼んでTitleActivityへ遷移させる
-        handler.postDelayed(runnable, 2000)
+        handler.postDelayed(runnable, 1000)
     }
 
     override fun onBackPressed() {

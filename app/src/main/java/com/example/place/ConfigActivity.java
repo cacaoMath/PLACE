@@ -48,8 +48,7 @@ public class ConfigActivity extends AppCompatActivity {
             public void onClick(View view){
                 //Sum_question = question_spinner.getSelectedItem().toString();
                 //saveConfig();
-                Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(mainIntent);
+                finish();
             }
         });
 

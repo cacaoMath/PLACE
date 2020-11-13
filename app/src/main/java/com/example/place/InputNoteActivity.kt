@@ -1,14 +1,12 @@
 package com.example.place
 
-import android.app.ActionBar
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
-import android.widget.SpinnerAdapter
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_input_note.*
 
 
 /*
@@ -33,7 +31,7 @@ class InputNoteActivity : AppCompatActivity() {
             var index = 0
             for (item in strArray){
                 if(item == metaData.labelData){
-                    qstSpn.setSelection(index)
+                    labelSpn.setSelection(index)
                 }
                 index++
             }
@@ -57,10 +55,22 @@ class InputNoteActivity : AppCompatActivity() {
             metaData.labelData = labelSpn.selectedItem as String
             metaData.otherData = etMeta.text.toString()
             metaData.quizPattern = qstSpn.selectedItem as String
-            val mainIntent = Intent(applicationContext, MainActivity::class.java)
-            startActivity(mainIntent)
+//            val mainIntent = Intent(applicationContext, MainActivity::class.java)
+//            startActivity(mainIntent)
+            finish()
         }
 
 
+
+
+    }
+
+    //戻るでも同じ挙動にする
+    override fun onBackPressed() {
+        metaData.labelData = labelSpn.selectedItem as String
+        metaData.otherData = etMeta.text.toString()
+        metaData.quizPattern = qstSpn.selectedItem as String
+
+        finish()
     }
 }

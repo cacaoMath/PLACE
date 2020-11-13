@@ -5,14 +5,21 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.AlarmManager;
+import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -20,7 +27,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class ResultActivity extends AppCompatActivity {
     protected static final String TAG = ResultActivity.class.getSimpleName();
@@ -31,6 +41,8 @@ public class ResultActivity extends AppCompatActivity {
     private long[] Learning_time;
     private DataTransferKt dt = new DataTransferKt();
     private int[] Confidence_data;
+
+    resultActivityABReceiver myReceiver = new resultActivityABReceiver();
 
     ArrayList<Integer> Known_words;
     ArrayList<Integer> Mistakes_words;;
@@ -73,11 +85,6 @@ public class ResultActivity extends AppCompatActivity {
         saveMemory(Q_number, result);
 
 
-        /*
-        if(checkConfig()){
-            storage.SaveConfidence(Q_number, Learning_time, Condidence_data);
-        }
-        */
 
         myToolbar.setNavigationIcon(R.drawable.round_home_black_18dp);
 
@@ -85,10 +92,30 @@ public class ResultActivity extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
                         // ナビゲーションアイコンクリック時の処理
-                        Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivity(homeIntent);
-                        Log.d(TAG, "onClick:home_btn");
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+                        builder.setTitle("確認");
+                        builder.setMessage("ホームに戻ると計測が中止されます．\nよろしいですか？")
+                                .setPositiveButton("いいえ", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int id) {
+
+                                    }
+                                })
+                                .setNegativeButton("はい", new DialogInterface.OnClickListener() {
+                                    @RequiresApi(api = Build.VERSION_CODES.O)
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int id) {
+
+                                        cancelMeasurementAlarm();
+                                        Log.d(TAG, "onClick:home_btn");
+                                        finish();
+
+                                    }
+                                }).show();
+
+
                     }
                 });
 
@@ -99,11 +126,26 @@ public class ResultActivity extends AppCompatActivity {
                 Intent restartIntent = new Intent(getApplicationContext(), QuestionActivity.class);
                 startActivity(restartIntent);
                 Log.d(TAG, "onClick:restart");
+                finish();
             }
         });
 
         //ここでfirestoreに１セット終了時の結果を送る
         dt.SendResultData(Learning_time, Confidence_data, Known_words, Mistakes_words, Q_number);    //テストの結果をfireStoreに送信
+    }
+
+    @Override
+    public void onResume() {
+
+        super.onResume();
+        registerReceiver(myReceiver, new IntentFilter("STOP"));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // ブロードキャストレシーバーを解除する
+        unregisterReceiver(myReceiver);
     }
 
     @Override
@@ -198,19 +240,50 @@ public class ResultActivity extends AppCompatActivity {
         }
         return text;
     }
-    //確信度の取得がOnであるかをチェック
-    public boolean checkConfig(){
-        boolean flag = true;
-        String text = readFile("MyConfig");
-        if(text != null){
-            String[] temp = text.split(",", 2);
-            if(temp[1].equals("On")){
-                flag = true;
-            }else{
-                flag = false;
-            }
+
+    //ホームを押すと１０分のカウントを解除する
+    private void cancelMeasurementAlarm(){
+        Toast.makeText(getApplicationContext(), "中止しました", Toast.LENGTH_SHORT).show();
+        // アラームの削除
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+        Intent intent = new Intent("STOP");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
+
+        pendingIntent.cancel();
+        alarmManager.cancel(pendingIntent);
+    }
+
+    //10分間の時間を計測・終了を伝える
+    public class resultActivityABReceiver extends BroadcastReceiver {
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            final DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SS");
+            final Date date = new Date(System.currentTimeMillis());
+            Log.d("alarmCheck_stop", df.format(date));
+
+            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("計測終了");
+            builder.setMessage("10分が経過したので計測を終了します．\nお疲れさまでした．")
+                    .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                        @RequiresApi(api = Build.VERSION_CODES.O)
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int id) {
+
+
+                            Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
+                            //時間精度デバック用
+
+                            //startActivity(mainIntent);
+                            finish();
+                        }
+                    }).show();
+
+
+            //Toast.makeText(context, "終了してください ", Toast.LENGTH_LONG).show();
         }
-        return flag;
     }
 
 }

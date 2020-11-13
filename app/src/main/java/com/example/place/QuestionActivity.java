@@ -1,8 +1,11 @@
 package com.example.place;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -10,9 +13,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,8 +31,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class QuestionActivity extends AppCompatActivity {
     protected static final String TAG = QuestionActivity.class.getSimpleName();
@@ -52,10 +60,11 @@ public class QuestionActivity extends AppCompatActivity {
     private Calendar firstTime, secondTime;
     private long[] learningTime;
     private int[] confidenceData;
-    protected IntentFilter intentFilter = new IntentFilter();
     private DataTransferKt dt = new DataTransferKt();
 
     private  Sensing sensing; //センサデータ計測
+
+    qActivityABReceiver myReceiver = new qActivityABReceiver();
 
 
     //デバイスステータス取得用
@@ -68,6 +77,8 @@ public class QuestionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_question);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolBar);
         setSupportActionBar(myToolbar);
+
+
 
         sensing = new Sensing(this);
 
@@ -99,7 +110,19 @@ public class QuestionActivity extends AppCompatActivity {
         sensing.start(""); //計測開始
 
     }
+    @Override
+    public void onResume() {
 
+        super.onResume();
+        registerReceiver(myReceiver, new IntentFilter("STOP"));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // ブロードキャストレシーバーを解除する
+        unregisterReceiver(myReceiver);
+    }
     @Override
     public void onBackPressed(){
         ArrayList<Integer> Known_words = new ArrayList();
@@ -115,7 +138,7 @@ public class QuestionActivity extends AppCompatActivity {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("確認");
-        builder.setMessage("学習の途中ですが，\n終了してよろしいですか？")
+        builder.setMessage("計測が中止されます．\nよろしいですか？")
                 .setPositiveButton("いいえ", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int id) {
@@ -128,8 +151,7 @@ public class QuestionActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialogInterface, int id) {
 
                         dt.SendResultData(learningTime, confidenceData, Known_words, Mistakes_words, Q_num);
-                        Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivity(mainIntent);
+                        cancelMeasurementAlarm();
 
                         sensing.stop();
                         finish();
@@ -193,6 +215,7 @@ public class QuestionActivity extends AppCompatActivity {
                     resultIntent.putExtra("Learning_Time", learningTime);
                     resultIntent.putExtra("Confidence_data", confidenceData);
                     startActivity(resultIntent);
+                    finish();//追加
                 } else {
                     count++;
                     showNextQuiz();
@@ -308,6 +331,66 @@ public class QuestionActivity extends AppCompatActivity {
     public void SetConfidence(int value){
         confidenceData[count] = value;
     }
+
+    private void cancelMeasurementAlarm(){
+        Toast.makeText(getApplicationContext(), "中断しました", Toast.LENGTH_SHORT).show();
+        // アラームの削除
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+        Intent intent = new Intent("STOP");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
+
+        pendingIntent.cancel();
+        alarmManager.cancel(pendingIntent);
+    }
+
+
+    //10分間の時間を計測・終了を伝える
+    public class qActivityABReceiver extends BroadcastReceiver {
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            ArrayList<Integer> Known_words = new ArrayList();
+            ArrayList<Integer> Mistakes_words = new ArrayList();
+
+            for (int i = 0; i < Q_num.length; i++) {
+                if(Result[i] == 0){
+                    Mistakes_words.add(Q_num[i]);
+                }else{
+                    Known_words.add(Q_num[i]);
+                }
+            }
+
+            dt.SendResultData(learningTime, confidenceData, Known_words, Mistakes_words, Q_num);
+            sensing.stop();
+            final DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SS");
+            final Date date = new Date(System.currentTimeMillis());
+            Log.d("alarmCheck_stop", df.format(date));
+
+            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("計測終了");
+            builder.setMessage("10分が経過したので計測を終了します．\nお疲れさまでした．")
+                    .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                        @RequiresApi(api = Build.VERSION_CODES.O)
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int id) {
+
+
+                            Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
+                            //時間精度デバック用
+
+                            //startActivity(mainIntent);
+                            finish();
+                        }
+                    }).show();
+
+
+            //Toast.makeText(context, "終了してください ", Toast.LENGTH_LONG).show();
+        }
+    }
+
+
 
 
     public static class ConfidenceDialogFragment extends DialogFragment{
