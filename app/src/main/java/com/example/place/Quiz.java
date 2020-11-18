@@ -356,7 +356,7 @@ public class Quiz {
                 break;
 
             default:
-                Q_Num = 150;
+                Q_Num = 0;
                 Q_endNum = quizData.length;
         }
         // listに値を入れる。この段階では昇順
