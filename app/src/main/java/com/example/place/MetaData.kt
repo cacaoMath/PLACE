@@ -2,12 +2,15 @@ package com.example.place
 
 import android.app.Application
 
-//ラベルデータを保持する用のデータクラス
+//ラベルデータやプログラムを保持する用のデータクラス
 class MetaData : Application() {
     var labelData: String? = null
     var otherData: String? = null
     var sensingFilePath : String? = null
     var quizPattern : String ? = null
+
+    //
+    var dataList : MutableList<HashMap<String, Any?>> = arrayListOf()
 
 
     //グローバルに変数を保存する用

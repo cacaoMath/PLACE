@@ -41,6 +41,7 @@ public class ResultActivity extends AppCompatActivity {
     private long[] Learning_time;
     private DataTransferKt dt = new DataTransferKt();
     private int[] Confidence_data;
+    //private MetaData metaData = MetaData.getInstance();
 
     resultActivityABReceiver myReceiver = new resultActivityABReceiver();
 
@@ -130,8 +131,8 @@ public class ResultActivity extends AppCompatActivity {
             }
         });
 
-        //ここでfirestoreに１セット終了時の結果を送る
-        dt.SendResultData(Learning_time, Confidence_data, Known_words, Mistakes_words, Q_number);    //テストの結果をfireStoreに送信
+        //ここでfirestoreに１セット終了時の結果を追加する．
+        dt.addResultData(Learning_time, Confidence_data, Known_words, Mistakes_words, Q_number);    //テストの結果をfireStoreに送信
     }
 
     @Override

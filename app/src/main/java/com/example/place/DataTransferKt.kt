@@ -10,6 +10,7 @@ import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.util.*
+import kotlin.collections.HashMap
 
 class DataTransferKt {
     private val TAG = "DataTransfer"
@@ -28,14 +29,7 @@ class DataTransferKt {
             "email" to user?.email,
             "uid" to user?.uid
     )
-    @RequiresApi(Build.VERSION_CODES.O)
-    private val resultData = hashMapOf(
-            "right" to 10,
-            "label" to metaData.labelData,
-            "other" to metaData.otherData,
-            "uid" to user?.uid,
-            "sensingDataFileName" to metaData.sensingFilePath
-    )
+
 
 
     //Word data input to firestore
@@ -64,10 +58,7 @@ class DataTransferKt {
 
     }
 
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun SendResultData(learning_time: LongArray, confidence_data: IntArray, known_words: ArrayList<Int>, mistakes_words: ArrayList<Int>, q_number: IntArray){
-        Log.d(TAG,"sent result test data")
+    fun addResultData(learning_time: LongArray, confidence_data: IntArray, known_words: ArrayList<Int>, mistakes_words: ArrayList<Int>, q_number: IntArray){
         val result  = hashMapOf(
                 "learningTime" to learning_time.toList(),
                 "q_Number" to q_number.toList(),
@@ -81,16 +72,43 @@ class DataTransferKt {
                 "Device" to Build.MODEL,
                 "SensingDataFileName" to metaData.sensingFilePath + metaData.labelData
         )
+        metaData.dataList?.add(result)
+        Log.d(TAG,"ResultData added to \" dataList \" ${metaData.dataList.size}")
+    }
+
+
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun SendResultData(){
+        Log.d(TAG,"sent result test data")
+
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        // Add a new document with a generated ID
-        db.collection("androidResults").document(user!!.uid).collection("data").document(timeStamp)
-                .set(result)
-                .addOnSuccessListener { documentReference ->
-                    Log.d(TAG, "DocumentSnapshot added with ID: ${timeStamp}")
-                }
-                .addOnFailureListener { e ->
-                    Log.w(TAG, "Error adding document", e)
-                }
+
+//        db.collection("androidResults").document(user!!.uid)
+//        .collection("MeasurementType").document("${timeStamp}_${metaData.labelData}")
+//        .collection("Data").document()
+//        .set(resultData)
+//        .addOnSuccessListener { documentReference ->
+//            Log.d(TAG, "DocumentSnapshot added with ID: ${timeStamp}")
+//        }
+//        .addOnFailureListener { e ->
+//            Log.w(TAG, "Error adding document", e)
+//        }
+        for(resultData in metaData.dataList){
+            // Add a new document with a generated ID
+            db.collection("androidResults").document(user!!.uid)
+                    .collection("MeasurementType").document("${timeStamp}_${metaData.labelData}")
+                    .collection("Data").document()
+                    .set(resultData)
+                    .addOnSuccessListener { documentReference ->
+                        Log.d(TAG, "DocumentSnapshot added with ID: ${timeStamp}")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w(TAG, "Error adding document", e)
+                    }
+        }
+        metaData.dataList.clear()
     }
 
     fun getUid() : FirebaseUser?{

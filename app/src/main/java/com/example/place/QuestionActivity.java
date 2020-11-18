@@ -147,8 +147,9 @@ public class QuestionActivity extends AppCompatActivity {
                     @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
                     public void onClick(DialogInterface dialogInterface, int id) {
-
-                        dt.SendResultData(learningTime, confidenceData, Known_words, Mistakes_words, Q_num);
+                        //計測したデータの記録・転送処理
+                        //dataTransferProcessing();
+                        //10分計測のキャンセル処理
                         cancelMeasurementAlarm();
 
                         sensing.stop();
@@ -342,6 +343,21 @@ public class QuestionActivity extends AppCompatActivity {
         alarmManager.cancel(pendingIntent);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void dataTransferProcessing(){
+        ArrayList<Integer> Known_words = new ArrayList();
+        ArrayList<Integer> Mistakes_words = new ArrayList();
+
+        for (int i = 0; i < Q_num.length; i++) {
+            if(Result[i] == 0){
+                Mistakes_words.add(Q_num[i]);
+            }else{
+                Known_words.add(Q_num[i]);
+            }
+        }
+        dt.addResultData(learningTime, confidenceData, Known_words, Mistakes_words, Q_num);
+        dt.SendResultData();
+    }
 
     //10分間の時間を計測・終了を伝える
     public class qActivityABReceiver extends BroadcastReceiver {
@@ -349,18 +365,9 @@ public class QuestionActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            ArrayList<Integer> Known_words = new ArrayList();
-            ArrayList<Integer> Mistakes_words = new ArrayList();
+            //計測したデータの記録・転送処理
+            dataTransferProcessing();
 
-            for (int i = 0; i < Q_num.length; i++) {
-                if(Result[i] == 0){
-                    Mistakes_words.add(Q_num[i]);
-                }else{
-                    Known_words.add(Q_num[i]);
-                }
-            }
-
-            dt.SendResultData(learningTime, confidenceData, Known_words, Mistakes_words, Q_num);
             sensing.stop();
             final DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SS");
             final Date date = new Date(System.currentTimeMillis());
