@@ -67,8 +67,6 @@ public class QuestionActivity extends AppCompatActivity {
     qActivityABReceiver myReceiver = new qActivityABReceiver();
 
 
-    //デバイスステータス取得用
-    private BroadcastReceiver sb = null;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override

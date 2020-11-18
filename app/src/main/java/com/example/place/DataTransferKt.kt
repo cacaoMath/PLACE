@@ -77,7 +77,7 @@ class DataTransferKt {
                 "Label" to metaData.labelData,
                 "OtherData" to metaData.otherData,
                 "QuestionPattern" to metaData.quizPattern,
-                "Uid" to user?.uid,
+                "User" to user?.email,
                 "Device" to Build.MODEL,
                 "SensingDataFileName" to metaData.sensingFilePath + metaData.labelData
         )

@@ -272,11 +272,6 @@ public class ResultActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int id) {
 
-
-                            Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
-                            //時間精度デバック用
-
-                            //startActivity(mainIntent);
                             finish();
                         }
                     }).show();

@@ -46,8 +46,6 @@ public class ConfigActivity extends AppCompatActivity {
         config_save_btn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                //Sum_question = question_spinner.getSelectedItem().toString();
-                //saveConfig();
                 finish();
             }
         });

@@ -55,8 +55,6 @@ class InputNoteActivity : AppCompatActivity() {
             metaData.labelData = labelSpn.selectedItem as String
             metaData.otherData = etMeta.text.toString()
             metaData.quizPattern = qstSpn.selectedItem as String
-//            val mainIntent = Intent(applicationContext, MainActivity::class.java)
-//            startActivity(mainIntent)
             finish()
         }
 

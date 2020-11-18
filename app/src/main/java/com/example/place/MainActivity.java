@@ -81,8 +81,6 @@ public class MainActivity extends AppCompatActivity {
         this.UpdateMemory();//まだよくわからない
 
 
-
-
         startBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
