@@ -84,8 +84,6 @@ public class QuestionActivity extends AppCompatActivity {
         firstTime = Calendar.getInstance(); secondTime = Calendar.getInstance();
         count = 0;
         quiz = new Quiz();
-        this.UpdateMemory();
-        this.UpdateByConfig();
 
         Result = new int[numOfQuiz];
         Q_num = new int[numOfQuiz];
@@ -284,48 +282,7 @@ public class QuestionActivity extends AppCompatActivity {
         }else{return  target;}
     }
 
-    public String readFile(String file){
-        String text = null;
 
-        try (FileInputStream fileInputStream = openFileInput(file);
-             BufferedReader reader= new BufferedReader(
-                     new InputStreamReader(fileInputStream, StandardCharsets.UTF_8))) {
-
-            String lineBuffer;
-            while( (lineBuffer = reader.readLine()) != null ) {
-                text = lineBuffer ;
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return text;
-    }
-
-    //内部ストレージに入っている記憶データを用いてフラグを更新
-    public void UpdateMemory() {
-        //内部ストレージに存在しているかで分岐
-        String text = readFile("MyMemory");
-        if (text == null) {
-        } else {
-            String[] temp = text.split(",", 1300);
-            for (int i = 0; i < quiz.getQuizData().length; i++) {
-                if (temp[i].equals("1"))
-                    quiz.setMemory(i, true);
-            }
-        }
-    }
-
-    public void UpdateByConfig() {
-        //内部ストレージに存在しているかで分岐
-        String text = readFile("MyConfig");
-        if (text == null) {
-            numOfQuiz = 30;
-        } else {
-            String[] temp = text.split(",", 2);
-            numOfQuiz = Integer.valueOf(temp[0]);
-        }
-    }
 
     public void SetConfidence(int value){
         confidenceData[count] = value;

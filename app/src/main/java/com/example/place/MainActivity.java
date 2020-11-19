@@ -50,8 +50,6 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     protected static final String TAG = MainActivity.class.getSimpleName();
-    private Quiz quiz;  //英単語問題データクラス
-    private  int numOfCorrect;  //正解数
     private FirebaseAuth mAuth;
 
     AlertDialog alertDialog;
@@ -74,11 +72,6 @@ public class MainActivity extends AppCompatActivity {
 
         Button startBtn = findViewById(R.id.start_btn);
         Button metaBtn = findViewById(R.id.meta_btn);
-
-
-        numOfCorrect = 0;
-        quiz = new Quiz();
-        this.UpdateMemory();//まだよくわからない
 
 
         startBtn.setOnClickListener(new View.OnClickListener(){
@@ -124,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
             // Calendarを使って現在の時間をミリ秒で取得
             calendar.setTimeInMillis(System.currentTimeMillis());
             // 5秒後に設定
-            calendar.add(Calendar.SECOND, 10*60);
+            calendar.add(Calendar.SECOND, 1*60);
 
             //時間精度デバック用
             final DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS");
@@ -210,40 +203,5 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-    public String readFile(String file){
-        String text = null;
-
-        try (FileInputStream fileInputStream = openFileInput(file);
-             BufferedReader reader= new BufferedReader(
-                     new InputStreamReader(fileInputStream, StandardCharsets.UTF_8))) {
-
-            String lineBuffer;
-            while( (lineBuffer = reader.readLine()) != null ) {
-                text = lineBuffer ;
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return text;
-    }
-
-
-    //内部ストレージに入っている記憶データを用いてフラグを更新
-    public void UpdateMemory() {
-        //内部ストレージに存在しているかで分岐
-        String text = readFile("MyMemory");
-        if (text == null) {
-        } else {
-            String[] temp = text.split(",", quiz.getQuizData().length);
-            for (int i = 0; i < quiz.getQuizData().length; i++) {
-                if (temp[i].equals("1")) {
-                    quiz.setMemory(i, true);
-                    numOfCorrect++;
-                }
-            }
-        }
-    }
 
 }

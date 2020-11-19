@@ -83,7 +83,6 @@ public class ResultActivity extends AppCompatActivity {
         numtasks.setText(""+result.length);
         double percent = ((double)score / (double)result.length) * 100;
         rightper.setText(""+percent + "%");
-        saveMemory(Q_number, result);
 
 
 
@@ -178,69 +177,6 @@ public class ResultActivity extends AppCompatActivity {
         return Num_of_correct;
     }
 
-    //内部ストレージに記憶結果を保存
-    public void saveMemory(int[] Q_num, int[] correct){
-        //内部ストレージに存在しているかで分岐
-        String text = readFile("MyMemory");
-        if(text != null){
-            String[] temp = text.split(",", 1300);
-            for (int i = 0; i < quiz.getQuizData().length; i++) {
-                if(temp[i].equals("1")){
-                    quiz.setMemory(i, true);
-                    sum_of_all++;
-                }
-            }
-        }
-
-        //正解した問題の記憶フラグを1にする
-        for(int i = 0; i < Q_num.length; i++){
-            if(correct[i] == 1){
-                //解答時間が6秒より短いかどうかで分岐
-                if(Learning_time[i] < 6000){
-                    quiz.setMemory(Q_num[i]-1, true);
-                    sum_of_all++;
-                }else{
-                    quiz.setMemory(Q_num[i]-1, false);
-                }
-            }else{
-                quiz.setMemory(Q_num[i]-1, false);
-            }
-        }
-        //内部メモリに記憶度合いをセーブする
-        StringBuilder sbuilder = new StringBuilder();
-        for (int i = 0; i < quiz.getQuizData().length; i++) {
-            sbuilder.append(quiz.getMemory(i));
-            sbuilder.append(",");
-        }
-        saveFile("MyMemory", sbuilder.toString());
-    }
-
-    //ファイル保存
-    public void saveFile(String file, String str){
-        try (FileOutputStream fileOutputstream = openFileOutput(file, Context.MODE_PRIVATE);){
-            fileOutputstream.write(str.getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    //ファイルの読み込み
-    public String readFile(String file){
-        String text = null;
-
-        try (FileInputStream fileInputStream = openFileInput(file);
-             BufferedReader reader= new BufferedReader(
-                     new InputStreamReader(fileInputStream, StandardCharsets.UTF_8))) {
-            String lineBuffer;
-            while( (lineBuffer = reader.readLine()) != null ) {
-                text = lineBuffer ;
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return text;
-    }
 
     //ホームを押すと１０分のカウントを解除する
     private void cancelMeasurementAlarm(){
