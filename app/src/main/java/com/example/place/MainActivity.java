@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
             // Calendarを使って現在の時間をミリ秒で取得
             calendar.setTimeInMillis(System.currentTimeMillis());
             // 5秒後に設定
-            calendar.add(Calendar.SECOND, 1*60);
+            calendar.add(Calendar.SECOND, metaData.getMeasurementTime());
 
             //時間精度デバック用
             final DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS");
@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
                 AlarmManagerCompat.setExact(am, AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pending);
 
                 Toast.makeText(getApplicationContext(),
-                        "計測を始めます.", Toast.LENGTH_SHORT).show();
+                        metaData.getMeasurementTime()+"秒の計測を始めます.", Toast.LENGTH_SHORT).show();
             }
 
     }

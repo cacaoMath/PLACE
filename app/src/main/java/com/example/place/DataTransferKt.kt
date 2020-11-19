@@ -32,32 +32,6 @@ class DataTransferKt {
 
 
 
-    //Word data input to firestore
-    fun test(data : Array<Array<String>>){
-        Log.d(TAG,"test"+data.toList()[1][1])
-        // Add a new document with a generated ID
-
-
-        for(wordItem in data.toList() ){
-            db.collection("vocabulary")
-                    .document(wordItem[0])
-                    .set(hashMapOf(
-                            "Number" to wordItem[0],
-                            "EnglishWords" to wordItem[1],
-                            "Japanese" to wordItem[2],
-                            "Part of speech" to wordItem[3],
-                            "Memorize" to "0"))
-                    .addOnSuccessListener { documentReference ->
-                        Log.d(TAG, "DocumentSnapshot added with ID: ")
-                    }
-                    .addOnFailureListener { e ->
-                        Log.w(TAG, "Error adding document", e)
-                    }
-
-        }
-
-    }
-
     fun addResultData(learning_time: LongArray, confidence_data: IntArray, known_words: ArrayList<Int>, mistakes_words: ArrayList<Int>, q_number: IntArray){
         val result  = hashMapOf(
                 "learningTime" to learning_time.toList(),
@@ -85,16 +59,6 @@ class DataTransferKt {
 
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
 
-//        db.collection("androidResults").document(user!!.uid)
-//        .collection("MeasurementType").document("${timeStamp}_${metaData.labelData}")
-//        .collection("Data").document()
-//        .set(resultData)
-//        .addOnSuccessListener { documentReference ->
-//            Log.d(TAG, "DocumentSnapshot added with ID: ${timeStamp}")
-//        }
-//        .addOnFailureListener { e ->
-//            Log.w(TAG, "Error adding document", e)
-//        }
         for(resultData in metaData.dataList){
             // Add a new document with a generated ID
             db.collection("androidResults").document(user!!.uid)

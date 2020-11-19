@@ -9,8 +9,11 @@ class MetaData : Application() {
     var sensingFilePath : String? = null
     var quizPattern : String ? = null
 
-    //
+    //firebaseに送るデータのリスト
     var dataList : MutableList<HashMap<String, Any?>> = arrayListOf()
+
+    //時間は秒数で表す．
+    var measurementTime  = 10*60
 
 
     //グローバルに変数を保存する用

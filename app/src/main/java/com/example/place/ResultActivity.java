@@ -191,11 +191,15 @@ public class ResultActivity extends AppCompatActivity {
         alarmManager.cancel(pendingIntent);
     }
 
+
+
     //10分間の時間を計測・終了を伝える
     public class resultActivityABReceiver extends BroadcastReceiver {
         @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
         public void onReceive(Context context, Intent intent) {
+            //終了時データを転送する
+            dt.SendResultData();
 
             final DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SS");
             final Date date = new Date(System.currentTimeMillis());
@@ -203,7 +207,7 @@ public class ResultActivity extends AppCompatActivity {
 
             final AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setTitle("計測終了");
-            builder.setMessage("10分が経過したので計測を終了します．\nお疲れさまでした．")
+            builder.setMessage("規定の計測時間が経過したので\n計測を終了します．\nお疲れさまでした．")
                     .setNegativeButton("OK", new DialogInterface.OnClickListener() {
                         @RequiresApi(api = Build.VERSION_CODES.O)
                         @Override
