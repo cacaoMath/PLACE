@@ -32,6 +32,7 @@ class DataTransferKt {
 
 
 
+    //firebaseに送信するデータをリストにまとめる（追加する）処理
     fun addResultData(learning_time: LongArray, confidence_data: IntArray, known_words: ArrayList<Int>, mistakes_words: ArrayList<Int>, q_number: IntArray){
         val result  = hashMapOf(
                 "learningTime" to learning_time.toList(),

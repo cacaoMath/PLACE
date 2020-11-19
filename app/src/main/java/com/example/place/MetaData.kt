@@ -13,7 +13,7 @@ class MetaData : Application() {
     var dataList : MutableList<HashMap<String, Any?>> = arrayListOf()
 
     //時間は秒数で表す．
-    var measurementTime  = 10*60
+    var measurementTime  = 1*60
 
 
     //グローバルに変数を保存する用

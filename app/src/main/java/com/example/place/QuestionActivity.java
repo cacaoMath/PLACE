@@ -332,7 +332,9 @@ public class QuestionActivity extends AppCompatActivity {
 
             final AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setTitle("計測終了");
+            builder.setCancelable(false);
             builder.setMessage("規定の計測時間が経過したので\n計測を終了します．\nお疲れさまでした．")
+
                     .setNegativeButton("OK", new DialogInterface.OnClickListener() {
                         @RequiresApi(api = Build.VERSION_CODES.O)
                         @Override
