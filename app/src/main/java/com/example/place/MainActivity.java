@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
                 AlarmManagerCompat.setExact(am, AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pending);
 
                 Toast.makeText(getApplicationContext(),
-                        metaData.getMeasurementTime()+"秒の計測を始めます.", Toast.LENGTH_SHORT).show();
+                        metaData.getMeasurementTime()/60+"分の計測を始めます.", Toast.LENGTH_SHORT).show();
             }
 
     }

@@ -17,7 +17,6 @@
         android:fontFamily="@font/din1451alt"
         android:gravity="center"
         android:text="Question"
-        android:textAppearance="@style/AlertDialog.AppCompat"
         android:textSize="40sp"
         app:layout_constraintBottom_toTopOf="@+id/ansBtn1"
         app:layout_constraintEnd_toEndOf="parent"

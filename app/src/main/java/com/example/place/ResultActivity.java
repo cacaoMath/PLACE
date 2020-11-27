@@ -36,12 +36,10 @@ public class ResultActivity extends AppCompatActivity {
     protected static final String TAG = ResultActivity.class.getSimpleName();
     private TextView numtasks, rightper;
     private Button restartBtn;
-    private int sum_of_remember, AInoremember, sum_of_all;//PLACEにはいらない？気がするのでとりあえず放置
     private Quiz quiz;
     private long[] Learning_time;
     private DataTransferKt dt = new DataTransferKt();
     private int[] Confidence_data;
-    //private MetaData metaData = MetaData.getInstance();
 
     resultActivityABReceiver myReceiver = new resultActivityABReceiver();
 
@@ -58,9 +56,6 @@ public class ResultActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
 
 
-
-
-        AInoremember = 0;   sum_of_remember = 0;    sum_of_all = 0;
         numtasks = findViewById(R.id.resulttext1);
         rightper = findViewById(R.id.resulttext2);
         restartBtn = findViewById(R.id.restartBtn);
@@ -160,7 +155,6 @@ public class ResultActivity extends AppCompatActivity {
             if(result[i] == 0){
                 Mistakes_words.add(Q_num[i]);
             }else{
-                sum_of_remember++;
                 Known_words.add(Q_num[i]);
             }
         }
@@ -189,6 +183,7 @@ public class ResultActivity extends AppCompatActivity {
 
         pendingIntent.cancel();
         alarmManager.cancel(pendingIntent);
+        dt.resetDataList();
     }
 
 
@@ -218,8 +213,6 @@ public class ResultActivity extends AppCompatActivity {
                         }
                     }).show();
 
-
-            //Toast.makeText(context, "終了してください ", Toast.LENGTH_LONG).show();
         }
     }
 

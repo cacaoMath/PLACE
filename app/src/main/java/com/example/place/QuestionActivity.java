@@ -298,6 +298,7 @@ public class QuestionActivity extends AppCompatActivity {
 
         pendingIntent.cancel();
         alarmManager.cancel(pendingIntent);
+        dt.resetDataList();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

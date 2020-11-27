@@ -51,6 +51,10 @@ class DataTransferKt {
         Log.d(TAG,"ResultData added to \" dataList \" ${metaData.dataList.size}")
     }
 
+    fun resetDataList(){
+        metaData.dataList.clear()
+        Log.d(TAG,"canceled ${metaData.dataList.size}")
+    }
 
 
 
