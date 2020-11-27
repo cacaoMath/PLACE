@@ -39,7 +39,7 @@ class DataTransferKt {
                 "q_Number" to q_number.toList(),
                 "knownWords" to known_words.toList(),
                 "mistakeWords" to mistakes_words.toList(),
-                "confidenceData" to confidence_data.toList(),
+                //"confidenceData" to confidence_data.toList(),
                 "Label" to metaData.labelData,
                 "OtherData" to metaData.otherData,
                 "QuestionPattern" to metaData.quizPattern,

@@ -89,6 +89,7 @@
         android:layout_height="73dp"
         android:scaleType="fitXY"
         android:fontFamily="@font/din1451alt"
+        android:background="@drawable/neg_button_design"
         android:text="Restart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

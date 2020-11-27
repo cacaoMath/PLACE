@@ -28,6 +28,7 @@ public class ConfigActivity extends AppCompatActivity {
     protected static final String TAG = ConfigActivity.class.getSimpleName();
     private Button config_save_btn, signout_btn;
     private EditText measurementTime_Et;
+    private MetaData metaData = MetaData.getInstance();
 
 
     @Override
@@ -38,12 +39,13 @@ public class ConfigActivity extends AppCompatActivity {
         config_save_btn = findViewById(R.id.config_save_btn);
         signout_btn = findViewById(R.id.signoutBtn);
         measurementTime_Et = findViewById(R.id.measurementTimeEt);
-        measurementTime_Et.setText("10");
+        measurementTime_Et.setText(String.valueOf(metaData.getMeasurementTime()));
 
 
         config_save_btn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
+                metaData.setMeasurementTime(Integer.parseInt(measurementTime_Et.getText().toString()));
                 Log.d(TAG,"Saved!!");
                 finish();
             }
