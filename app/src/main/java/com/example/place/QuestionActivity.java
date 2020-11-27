@@ -40,7 +40,7 @@ import java.util.Date;
 public class QuestionActivity extends AppCompatActivity {
     protected static final String TAG = QuestionActivity.class.getSimpleName();
     private boolean eventFlag; //ボタン操作で二重タップを防ぐため
-    private boolean isConfident = true;
+    private boolean isConfident = false;
 
     private int numOfQuiz = 30; //後々はユーザーに決めてもらう
     private int count;
