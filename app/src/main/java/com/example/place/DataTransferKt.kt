@@ -51,8 +51,11 @@ class DataTransferKt {
         Log.d(TAG,"ResultData added to \" dataList \" ${metaData.dataList.size}")
     }
 
+    //Metadata内のDataListとラベルデータ，問題パターンをリセットする．
     fun resetDataList(){
         metaData.dataList.clear()
+        metaData.quizPattern = null
+        metaData.labelData = null
         Log.d(TAG,"canceled ${metaData.dataList.size}")
     }
 

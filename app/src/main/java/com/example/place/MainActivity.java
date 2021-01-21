@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view){
                 //問題画面へ遷移
                 //メタデータを選択しないと遷移しないようにする
-                if(metaData.getQuizPattern() != null ){
+                if(metaData.getQuizPattern() != null || metaData.getLabelData() != null){
                     startMeasurementAlarm();
                     Intent qIntent = new Intent(getApplicationContext(), QuestionActivity.class);
                     startActivity(qIntent);
