@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -51,7 +52,7 @@ public class ConfigActivity extends AppCompatActivity {
 
                     Toast.makeText(getApplicationContext(), "計測時間は数値だけを入れてください",
                             Toast.LENGTH_SHORT).show();
-                }else if(inputTxt == "" || inputTxt == null){
+                }else if(inputTxt == "" || TextUtils.isEmpty(inputTxt)){
                     metaData.setMeasurementTime(10);
                 }else{
                     metaData.setMeasurementTime(Integer.parseInt(inputTxt));
