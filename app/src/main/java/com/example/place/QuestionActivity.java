@@ -36,7 +36,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-
+/**
+このアクティビティは先輩のソースコードをほぼ使用している．
+ **/
 public class QuestionActivity extends AppCompatActivity {
     protected static final String TAG = QuestionActivity.class.getSimpleName();
     private boolean eventFlag; //ボタン操作で二重タップを防ぐため
@@ -223,6 +225,7 @@ public class QuestionActivity extends AppCompatActivity {
         builder.show();
     }
 
+    //出題する問題
     public void showNextQuiz(){
         questionView.setText(quizSet[count][1]);
         if(quizSet[count][1].length() > 14){
@@ -258,6 +261,7 @@ public class QuestionActivity extends AppCompatActivity {
         firstTime.setTimeInMillis(System.currentTimeMillis()); // 現在時刻を取得
     }
 
+    //このメソッドは先輩のソースコード
     public String getXXX(String target){
         int middleIndex = 0;
         int lastIndex = target.length();

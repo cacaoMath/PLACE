@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.DialogFragment
 
+//今後作る予定
 class HelpDialogFragment : DialogFragment(){
     private val TAG = this::class.java.simpleName
     private val dialogTxt = "HELP"

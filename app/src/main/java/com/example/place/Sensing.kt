@@ -15,7 +15,7 @@ import java.io.File
 import java.nio.charset.StandardCharsets
 
 /**
- * センシング用のクラス
+ * センシング用のクラス(研究室の先輩からいただいたクラス)
  */
 class Sensing(context: Context) : SensorEventListener {
     private val TAG = this::class.java.simpleName

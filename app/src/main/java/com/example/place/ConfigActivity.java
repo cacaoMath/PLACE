@@ -13,6 +13,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.ktx.Firebase;
@@ -45,7 +46,17 @@ public class ConfigActivity extends AppCompatActivity {
         config_save_btn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                metaData.setMeasurementTime(Integer.parseInt(measurementTime_Et.getText().toString()));
+                String inputTxt = measurementTime_Et.getText().toString();
+                if(inputTxt.contains(":") ){
+
+                    Toast.makeText(getApplicationContext(), "計測時間は数値だけを入れてください",
+                            Toast.LENGTH_SHORT).show();
+                }else if(inputTxt == "" || inputTxt == null){
+                    metaData.setMeasurementTime(10);
+                }else{
+                    metaData.setMeasurementTime(Integer.parseInt(inputTxt));
+                }
+
                 Log.d(TAG,"Saved!!");
                 finish();
             }
