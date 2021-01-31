@@ -4,10 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -16,11 +13,14 @@ import com.google.firebase.ktx.Firebase
 
 class LoginActivity : AppCompatActivity() {
     private val TAG = this::class.java.simpleName
-    private lateinit var auth: FirebaseAuth
 
-    var userEmail: String? = null
-    var userPassword: String? = null
+    // Initialize Firebase Auth
+    private var auth : FirebaseAuth = Firebase.auth
+
+    private var progressBar: ProgressBar? = null
     private var tvLog: TextView? = null
+    private lateinit var signInBtn: Button
+    private  lateinit var signUpBtn: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,26 +28,28 @@ class LoginActivity : AppCompatActivity() {
 
         val etUserEmail = findViewById<EditText>(R.id.etUserEmail)
         val etUserPassword = findViewById<EditText>(R.id.etUserPassword)
-        val signUpBtn = findViewById<Button>(R.id.signUpBtn)
-        val signInBtn = findViewById<Button>(R.id.signInBtn)
+        signUpBtn = findViewById<Button>(R.id.signUpBtn)
+        signInBtn = findViewById<Button>(R.id.signInBtn)
+        progressBar = findViewById<ProgressBar>(R.id.progressBar)
         tvLog = findViewById<TextView>(R.id.tvLog)
 
 
-        // Initialize Firebase Auth
-        auth = Firebase.auth
 
+        progressBar?.visibility = ProgressBar.INVISIBLE
 
         signInBtn.setOnClickListener{
             if(!TextUtils.isEmpty(etUserEmail.text.toString()) && !TextUtils.isEmpty(etUserPassword.text.toString()) ){
                 signIn(etUserEmail.text.toString(), etUserPassword.text.toString())
+                signInBtn.isEnabled = false
+                signUpBtn.isEnabled = false
+
             }
 
         }
 
         signUpBtn.setOnClickListener{
-            if(!TextUtils.isEmpty(etUserEmail.text.toString()) && !TextUtils.isEmpty(etUserPassword.text.toString())){
-                signUp(etUserEmail.text.toString(), etUserPassword.text.toString())
-            }
+            val signupIntent = Intent(applicationContext, SignupActivity::class.java)
+            startActivity(signupIntent)
         }
     }
 
@@ -62,25 +64,22 @@ class LoginActivity : AppCompatActivity() {
             //ホーム画面へ遷移
             val mainIntent = Intent(applicationContext, MainActivity::class.java)
             startActivity(mainIntent)
+            finish()
         }
         else{
             tvLog?.text = "Please Sign Up or Sign In"
         }
     }
 
-
-    private fun signUpMsg(user : FirebaseUser?){
-        if(user != null){
-            Log.d(TAG,"sign up : this user is exist")
-            tvLog?.text = "Made your account"
-        }else{
-            Log.d(TAG,"sign up : Error")
-            tvLog?.text = "Error"
-        }
-
+    override fun onBackPressed() {
+        //無記入で何もしないようにする
     }
 
+
+
+
     private fun signInMsg(user : FirebaseUser?){
+        progressBar?.visibility = ProgressBar.INVISIBLE
         if(user != null){
             Log.d(TAG,"sign In : this user is exist")
             tvLog?.text = "Sign In success"
@@ -91,40 +90,10 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    private fun signUp(email :String, password : String){
-        tvLog?.text = "Now Loading. Please wait ..."
-        auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful) {
-                        // Sign up success, update UI with the signed-in user's information
-                        Log.d(TAG, "createUserWithEmail:success")
-                        val user = auth.currentUser
-                        signUpMsg(user)
-
-                        //サインアップ完了でメール送信
-                        user?.sendEmailVerification()
-                                ?.addOnCompleteListener { task ->
-                                    if (task.isSuccessful) {
-                                        Log.d(TAG, "Email sent.")
-                                    }
-                                }
-                        // 登録後ホームへ移行
-                        val mainIntent = Intent(applicationContext, MainActivity::class.java)
-                        startActivity(mainIntent)
-                    } else {
-                        // If sign up fails, display a message to the user.
-                        Log.w(TAG, "createUserWithEmail:failure", task.exception)
-                        Toast.makeText(baseContext, "Authentication failed.",
-                                Toast.LENGTH_SHORT).show()
-                        signUpMsg(null)
-                    }
-
-                    // ...
-                }
-    }
 
     private fun signIn(email :String, password : String){
         tvLog?.text = "Now Loading. Please wait ..."
+        progressBar?.visibility = ProgressBar.VISIBLE
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
@@ -132,10 +101,9 @@ class LoginActivity : AppCompatActivity() {
                         Log.d(TAG, "signIn:success")
                         val user = auth.currentUser
                         signInMsg(user)
-                        Log.d(TAG, "password " + password)
-                        //ホーム画面へ遷移
-                        val mainIntent = Intent(applicationContext, MainActivity::class.java)
-                        startActivity(mainIntent)
+                        //Log.d(TAG, "password " + password)
+
+                        gotoMain()
                     } else {
                         // If sign in fails, display a message to the user.
                         Log.w(TAG, "signIn:failure", task.exception)
@@ -143,6 +111,8 @@ class LoginActivity : AppCompatActivity() {
                         Toast.makeText(baseContext, "Authentication failed.",
                                 Toast.LENGTH_SHORT).show()
                         signInMsg(null)
+                        signInBtn.isEnabled = true
+                        signUpBtn.isEnabled = true
                         // ...
                     }
 
@@ -150,22 +120,13 @@ class LoginActivity : AppCompatActivity() {
                 }
     }
 
-    fun getUid(){
-        val user = Firebase.auth.currentUser
-        user?.let {
-            // Name, email address, and profile photo Url
-            val name = user.displayName
-            val email = user.email
-            val photoUrl = user.photoUrl
-
-            // Check if user's email is verified
-            val emailVerified = user.isEmailVerified
-
-            // The user's ID, unique to the Firebase project. Do NOT use this value to
-            // authenticate with your backend server, if you have one. Use
-            // FirebaseUser.getToken() instead.
-            val uid = user.uid
-        }
+    private fun gotoMain(){
+        //ホーム画面へ遷移
+        val mainIntent = Intent(applicationContext, MainActivity::class.java)
+        startActivity(mainIntent)
+        finish()
     }
+
+
 
 }

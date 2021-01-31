@@ -1,89 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:elevation="0dp"
     tools:context=".MainActivity">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolBar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="#0e918c"
+        android:text="PLACE"
+        android:elevation="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/start_btn"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="296dp"
-        android:layout_marginEnd="8dp"
-        android:background="@color/colorDefault"
+        android:layout_width="315dp"
+        android:layout_height="152dp"
+        android:background="@drawable/main_button_design"
+        android:elevation="4dp"
+        android:fontFamily="@font/din1451alt"
         android:scaleType="fitXY"
+        android:stateListAnimator="@null"
         android:text="@string/startBtn"
-        android:textSize="20dp"
+        android:textSize="40dp"
+        app:layout_constraintBottom_toTopOf="@+id/meta_btn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/vocabulary_btn"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginBottom="160dp"
-        android:background="@color/colorDefault"
-        android:scaleType="fitXY"
-        android:text="@string/vocabBtn"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-
-    <Button
-        android:id="@+id/config_btn"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="160dp"
-        android:background="@color/colorDefault"
-        android:scaleType="fitXY"
-        android:text="@string/configBtn"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <Button
-        android:id="@+id/remember_btn"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="68dp"
-        android:background="@color/colorDefault"
-        android:scaleType="fitXY"
-        android:text="@string/rememberBtn"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/unknown_btn"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-        android:layout_marginTop="68dp"
-        android:layout_marginEnd="8dp"
-        android:background="@color/colorDefault"
-        android:scaleType="fitXY"
-        android:text="@string/unknownBtn"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/toolBar"
+        app:layout_constraintVertical_bias="0.349" />
 
     <Button
         android:id="@+id/meta_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="52dp"
+        android:layout_width="319dp"
+        android:layout_height="49dp"
+        android:background="@drawable/neg_button_design"
+        android:fontFamily="@font/din1451alt"
         android:text="Metadata"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/start_btn"
+        app:layout_constraintVertical_bias="0.708" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/currentUserTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/start_btn"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolBar"
+        app:layout_constraintVertical_bias="0.47" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

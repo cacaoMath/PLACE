@@ -1,12 +1,12 @@
 package com.example.place
 
-import android.app.ActionBar
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Spinner
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_input_note.*
 
 
 /*
@@ -21,26 +21,54 @@ class InputNoteActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_input_note)
 
-        var etLabel = findViewById<EditText>(R.id.etLabel)
+        var labelSpn = findViewById<Spinner>(R.id.labelSpn)
         var etMeta = findViewById<EditText>(R.id.etMeta)
         var setLabelBtn = findViewById<Button>(R.id.setLabelBtn)
+        var qstSpn = findViewById<Spinner>(R.id.qstSpn)
 
         if(metaData.labelData != null){
-            etLabel.setText(metaData.labelData)
+            val strArray = resources.getStringArray(R.array.labelList)
+            var index = 0
+            for (item in strArray){
+                if(item == metaData.labelData){
+                    labelSpn.setSelection(index)
+                }
+                index++
+            }
         }
         if(metaData.otherData != null){
             etMeta.setText(metaData.otherData)
         }
 
-        setLabelBtn.setOnClickListener{
-            Log.d("aa", etLabel.text.toString() + etMeta.text.toString())
-            metaData.labelData = etLabel.text.toString()
-            metaData.otherData = etMeta.text.toString()
+        if(metaData.quizPattern != null){
+            val strArray = resources.getStringArray(R.array.patternList)
+            var index = 0
+            for (item in strArray){
+                if(item == metaData.quizPattern){
+                    qstSpn.setSelection(index)
+                }
+                index++
+            }
+        }
 
-            val mainIntent = Intent(applicationContext, MainActivity::class.java)
-            startActivity(mainIntent)
+        setLabelBtn.setOnClickListener{
+            metaData.labelData = labelSpn.selectedItem as String
+            metaData.otherData = etMeta.text.toString()
+            metaData.quizPattern = qstSpn.selectedItem as String
+            finish()
         }
 
 
+
+
+    }
+
+    //戻るでも同じ挙動にする
+    override fun onBackPressed() {
+        metaData.labelData = labelSpn.selectedItem as String
+        metaData.otherData = etMeta.text.toString()
+        metaData.quizPattern = qstSpn.selectedItem as String
+
+        finish()
     }
 }

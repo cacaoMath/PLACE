@@ -1,13 +1,11 @@
 package com.example.place;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -15,9 +13,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
 
 import com.example.settlingmeasurement.Sensing;
 
@@ -26,17 +31,22 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class QuestionActivity extends AppCompatActivity {
     protected static final String TAG = QuestionActivity.class.getSimpleName();
     private boolean eventFlag; //ボタン操作で二重タップを防ぐため
-    private boolean isConfident = true;
+    private boolean isConfident = false;
 
-    private int numOfQuiz = 10; //後々はユーザーに決めてもらう
+    private int numOfQuiz = 30; //後々はユーザーに決めてもらう
     private int count;
     private Quiz quiz;
     private String[][] quizSet;
+    private MetaData metaData = MetaData.getInstance();
 
     private TextView questionView;
     private Button ansBtn1;
@@ -50,34 +60,41 @@ public class QuestionActivity extends AppCompatActivity {
     private Calendar firstTime, secondTime;
     private long[] learningTime;
     private int[] confidenceData;
-    protected IntentFilter intentFilter = new IntentFilter();
+    private DataTransferKt dt = new DataTransferKt();
 
     private  Sensing sensing; //センサデータ計測
 
+    qActivityABReceiver myReceiver = new qActivityABReceiver();
 
-    //デバイスステータス取得用
-    private BroadcastReceiver sb = null;
+
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolBar);
+        setSupportActionBar(myToolbar);
+
+
 
         sensing = new Sensing(this);
+
 
         firstTime = Calendar.getInstance(); secondTime = Calendar.getInstance();
         count = 0;
         quiz = new Quiz();
-        this.UpdateMemory();
-        this.UpdateByConfig();
 
         Result = new int[numOfQuiz];
         Q_num = new int[numOfQuiz];
         learningTime = new long[numOfQuiz];
         confidenceData = new int[numOfQuiz];
+        //確信度の初期値が中断した場合ややこしいので-1にする
+        for(int i = 0; i <numOfQuiz; i++){
+            confidenceData[i] = -1;
+        }
 
-        quizSet = quiz.GetQuizSet(numOfQuiz);
+        quizSet = quiz.GetQuizSet(numOfQuiz, metaData.getQuizPattern());
 
         questionView = findViewById(R.id.Question);
         ansBtn1 = findViewById(R.id.ansBtn1);
@@ -89,12 +106,35 @@ public class QuestionActivity extends AppCompatActivity {
         sensing.start(""); //計測開始
 
     }
+    @Override
+    public void onResume() {
+
+        super.onResume();
+        registerReceiver(myReceiver, new IntentFilter("STOP"));
+    }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        // ブロードキャストレシーバーを解除する
+        unregisterReceiver(myReceiver);
+    }
+    @Override
     public void onBackPressed(){
+        ArrayList<Integer> Known_words = new ArrayList();
+        ArrayList<Integer> Mistakes_words = new ArrayList();
+
+        for (int i = 0; i < Q_num.length; i++) {
+            if(Result[i] == 0){
+                Mistakes_words.add(Q_num[i]);
+            }else{
+                Known_words.add(Q_num[i]);
+            }
+        }
+
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("確認");
-        builder.setMessage("学習の途中ですが，\n終了してよろしいですか？")
+        builder.setMessage("計測が中止されます．\nよろしいですか？")
                 .setPositiveButton("いいえ", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int id) {
@@ -102,10 +142,13 @@ public class QuestionActivity extends AppCompatActivity {
                     }
                 })
                 .setNegativeButton("はい", new DialogInterface.OnClickListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
                     public void onClick(DialogInterface dialogInterface, int id) {
-                        Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
-                        startActivity(mainIntent);
+                        //計測したデータの記録・転送処理
+                        //dataTransferProcessing();
+                        //10分計測のキャンセル処理
+                        cancelMeasurementAlarm();
 
                         sensing.stop();
                         finish();
@@ -169,6 +212,7 @@ public class QuestionActivity extends AppCompatActivity {
                     resultIntent.putExtra("Learning_Time", learningTime);
                     resultIntent.putExtra("Confidence_data", confidenceData);
                     startActivity(resultIntent);
+                    finish();//追加
                 } else {
                     count++;
                     showNextQuiz();
@@ -238,52 +282,80 @@ public class QuestionActivity extends AppCompatActivity {
         }else{return  target;}
     }
 
-    public String readFile(String file){
-        String text = null;
 
-        try (FileInputStream fileInputStream = openFileInput(file);
-             BufferedReader reader= new BufferedReader(
-                     new InputStreamReader(fileInputStream, StandardCharsets.UTF_8))) {
-
-            String lineBuffer;
-            while( (lineBuffer = reader.readLine()) != null ) {
-                text = lineBuffer ;
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return text;
-    }
-
-    //内部ストレージに入っている記憶データを用いてフラグを更新
-    public void UpdateMemory() {
-        //内部ストレージに存在しているかで分岐
-        String text = readFile("MyMemory");
-        if (text == null) {
-        } else {
-            String[] temp = text.split(",", 1300);
-            for (int i = 0; i < quiz.getQuizData().length; i++) {
-                if (temp[i].equals("1"))
-                    quiz.setMemory(i, true);
-            }
-        }
-    }
-
-    public void UpdateByConfig() {
-        //内部ストレージに存在しているかで分岐
-        String text = readFile("MyConfig");
-        if (text == null) {
-            numOfQuiz = 10;
-        } else {
-            String[] temp = text.split(",", 2);
-            numOfQuiz = Integer.valueOf(temp[0]);
-        }
-    }
 
     public void SetConfidence(int value){
         confidenceData[count] = value;
     }
+
+    private void cancelMeasurementAlarm(){
+        Toast.makeText(getApplicationContext(), "中断しました", Toast.LENGTH_SHORT).show();
+        // アラームの削除
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+        Intent intent = new Intent("STOP");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
+
+        pendingIntent.cancel();
+        alarmManager.cancel(pendingIntent);
+        dt.resetDataList();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void dataTransferProcessing(){
+        ArrayList<Integer> Known_words = new ArrayList();
+        ArrayList<Integer> Mistakes_words = new ArrayList();
+
+        for (int i = 0; i < Q_num.length; i++) {
+            if(Result[i] == 0){
+                Mistakes_words.add(Q_num[i]);
+            }else{
+                Known_words.add(Q_num[i]);
+            }
+        }
+        dt.addResultData(learningTime, confidenceData, Known_words, Mistakes_words, Q_num);
+        dt.SendResultData();
+    }
+
+    //10分間の時間を計測・終了を伝える
+    public class qActivityABReceiver extends BroadcastReceiver {
+        @RequiresApi(api = Build.VERSION_CODES.O)
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            //計測したデータの記録・転送処理
+            dataTransferProcessing();
+
+            sensing.stop();
+            final DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SS");
+            final Date date = new Date(System.currentTimeMillis());
+            Log.d("alarmCheck_stop", df.format(date));
+
+            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("計測終了");
+            builder.setCancelable(false);
+            builder.setMessage("規定の計測時間が経過したので\n計測を終了します．\nお疲れさまでした．")
+
+                    .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                        @RequiresApi(api = Build.VERSION_CODES.O)
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int id) {
+
+
+                            Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
+                            //時間精度デバック用
+
+                            //startActivity(mainIntent);
+                            finish();
+                        }
+                    }).show();
+
+
+            //Toast.makeText(context, "終了してください ", Toast.LENGTH_LONG).show();
+        }
+    }
+
+
 
 
     public static class ConfidenceDialogFragment extends DialogFragment{

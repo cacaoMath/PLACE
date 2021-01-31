@@ -45,7 +45,10 @@ class Sensing(context: Context) : SensorEventListener {
         if (stateMeasurement) return // 実行中だったら実行しない
 
         val directory = File(rootDirectory, "data")
-        if(!isExternalStorageWritable()) return
+        if(!isExternalStorageWritable()) {
+            Log.d(TAG, "isExternalStorageWritable is false")
+            return
+        }
         if(!(directory.exists() and directory.isDirectory))
             if(!directory.mkdir()) return
 
@@ -53,12 +56,12 @@ class Sensing(context: Context) : SensorEventListener {
 
         // labelの保存
         val unixtime = System.currentTimeMillis()
-        val meta = "${unixtime}_$label"
+        val meta = "${unixtime}_${label}"
         //metadataにファイル名も保存
         metadata.sensingFilePath = meta
 
         Log.d(TAG, "file mane meta data: $meta")
-        accelerateFile = File(directory, "accelerate_$meta.txt")
+        accelerateFile = File(directory, "accelerate_${meta}.txt")
         gyroFile = File(directory, "gyro_$meta.txt")
         accelerateFile?.writeText("timestamp,x,y,z\n", StandardCharsets.UTF_8)
         gyroFile?.writeText("timestamp,x,y,z\n", StandardCharsets.UTF_8)

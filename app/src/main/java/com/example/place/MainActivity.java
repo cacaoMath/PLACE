@@ -2,37 +2,58 @@ package com.example.place;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.AlarmManagerCompat;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.settlingmeasurement.Sensing;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.ktx.Firebase;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
     protected static final String TAG = MainActivity.class.getSimpleName();
-    private Quiz quiz;  //英単語問題データクラス
-    private  int numOfCorrect;  //正解数
-    DataTransferKt dataTransfer = new DataTransferKt();
-    ActivityRecognition activityRecognition;
+    private FirebaseAuth mAuth;
+
+    AlertDialog alertDialog;
+    MetaData metaData = MetaData.getInstance();
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -40,76 +61,45 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolBar);
+        setSupportActionBar(myToolbar);
 
-        Button unknownBtn = findViewById(R.id.unknown_btn);
-        Button rememberBtn = findViewById(R.id.remember_btn);
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        TextView currentUserTxt = findViewById(R.id.currentUserTxt);
+        currentUserTxt.setText(currentUser.getEmail() + "\nでログインしています．");
+
         Button startBtn = findViewById(R.id.start_btn);
-        Button configBtn = findViewById(R.id.config_btn);
-        Button vocabBtn = findViewById(R.id.vocabulary_btn);
         Button metaBtn = findViewById(R.id.meta_btn);
-
-        Sensing sensing = new Sensing(this);
-        activityRecognition = new ActivityRecognition(this);
-
-        numOfCorrect = 0;
-        quiz = new Quiz();
-        this.UpdateMemory();//まだよくわからない
-
-
-        //記憶数によって表示を変化させる
-        int unknownWords = 1300 - numOfCorrect;
-        rememberBtn.setText("Remember\n"+numOfCorrect);
-        unknownBtn.setText("Unknown\n"+unknownWords);
-
-
-        unknownBtn.setOnClickListener(view ->{
-            sensing.start("");
-        });
-
-        rememberBtn.setOnClickListener(view -> {
-            sensing.stop();
-        });
-
-        activityRecognition.startTracking();
-
 
 
         startBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
                 //問題画面へ遷移
-                Intent qIntent = new Intent(getApplicationContext(), QuestionActivity.class);
-                startActivity(qIntent);
+                //メタデータを選択しないと遷移しないようにする
+                if(metaData.getQuizPattern() != null || metaData.getLabelData() != null){
+                    startMeasurementAlarm();
+                    Intent qIntent = new Intent(getApplicationContext(), QuestionActivity.class);
+                    startActivity(qIntent);
+                }else{
+                    Toast toast = Toast.makeText(getApplicationContext(),"メタデータを入力して下さい.",Toast.LENGTH_LONG);
+                    // 位置調整
+                    toast.setGravity(Gravity.CENTER, 0, -200);
+                    toast.show();
+                }
 
                 Log.d(TAG, "onClick:start_btn");
             }
         });
 
-        vocabBtn.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                //MyWords画面へ遷移
-                Intent vocabIntent = new Intent(getApplicationContext(), VocabActivity.class);
-                startActivity(vocabIntent);
-                Log.d(TAG, "onClick:vocab_btn");
-            }
-        });
 
-        configBtn.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                //dataTransfer.test(); //firebase Test
-                //設定画面へ遷移
-                Intent configIntent = new Intent(getApplicationContext(), ConfigActivity.class);
-                startActivity(configIntent);
-                Log.d(TAG, "onClick:config_btn");
-            }
-        });
 
         metaBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                //設定画面へ遷移
+                //メタデータ入力画面へ遷移
                 Intent inputMetaIntent = new Intent(getApplicationContext(), InputNoteActivity.class);
                 startActivity(inputMetaIntent);
                 Log.d(TAG, "onClick:meta_btn");
@@ -119,45 +109,99 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //10分計測のためのアラームをセットする
+    private void startMeasurementAlarm(){
 
+            // 時間をセットする
+            Calendar calendar = Calendar.getInstance();
+            // Calendarを使って現在の時間をミリ秒で取得
+            calendar.setTimeInMillis(System.currentTimeMillis());
+            // metadataに保存されている分数後に設定
+            calendar.add(Calendar.SECOND, metaData.getMeasurementTime()*60);
 
+            //時間精度デバック用
+            final DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS");
+            final Date date = new Date(System.currentTimeMillis());
+            Log.d("alarmCheck_start", df.format(date));
 
+            //暗黙的なBroadCast
+            Intent intent = new Intent("STOP");
+            PendingIntent pending = PendingIntent.getBroadcast(
+                    getApplicationContext(), 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
+            // アラームをセットする
+            AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+            if(am != null) {
+//                        am.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pending);
+                AlarmManagerCompat.setExact(am, AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pending);
 
-
-    public String readFile(String file){
-        String text = null;
-
-        try (FileInputStream fileInputStream = openFileInput(file);
-             BufferedReader reader= new BufferedReader(
-                     new InputStreamReader(fileInputStream, StandardCharsets.UTF_8))) {
-
-            String lineBuffer;
-            while( (lineBuffer = reader.readLine()) != null ) {
-                text = lineBuffer ;
+                Toast.makeText(getApplicationContext(),
+                        metaData.getMeasurementTime()+"分の計測を始めます.", Toast.LENGTH_SHORT).show();
             }
 
-        } catch (IOException e) {
-            e.printStackTrace();
+    }
+
+    private void cancelMeasurementAlarm(){
+        Toast.makeText(getApplicationContext(), "中断しました", Toast.LENGTH_SHORT).show();
+        // アラームの削除
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+        Intent intent = new Intent("STOP");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
+
+        pendingIntent.cancel();
+        alarmManager.cancel(pendingIntent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.toolbar, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.config:
+                //設定画面へ遷移
+                Intent configIntent = new Intent(getApplicationContext(), ConfigActivity.class);
+                startActivity(configIntent);
+                Log.d(TAG, "onClick:config_btn");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return text;
+    }
+
+    //戻るでアプリ終了
+    @Override
+    public void onBackPressed() {
+        alertDialog = new AlertDialog.Builder(MainActivity.this)
+                .setCancelable(false)
+                .setTitle("確認")
+                .setMessage("終了してよろしいですか")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        alertDialog.dismiss();
+                    }
+                }).show();
+    }
+
+    public class mainActivityABReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+        }
     }
 
 
-    //内部ストレージに入っている記憶データを用いてフラグを更新
-    public void UpdateMemory() {
-        //内部ストレージに存在しているかで分岐
-        String text = readFile("MyMemory");
-        if (text == null) {
-        } else {
-            String[] temp = text.split(",", 1300);
-            for (int i = 0; i < quiz.getQuizData().length; i++) {
-                if (temp[i].equals("1")) {
-                    quiz.setMemory(i, true);
-                    numOfCorrect++;
-                }
-            }
-        }
-    }
 
 }
