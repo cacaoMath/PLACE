@@ -2,6 +2,9 @@
 英単語アプリ "PLACE" (Plactice, Learning and Confront English）一旦fixバージョン  
 4選択問題形式で英単語を学習できる．
 
+# 動作環境
+Android10, Android11
+
 # アプリ使い方
 ## サインイン　or サインアップ
 <image height="400" src="https://user-images.githubusercontent.com/53263220/106417633-e7feb200-6497-11eb-87c3-c6f800b6ab64.png"> <image height="400" src="https://user-images.githubusercontent.com/53263220/106417635-e92fdf00-6497-11eb-80b2-59d550ef8a5d.png">  
