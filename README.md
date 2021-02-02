@@ -36,7 +36,8 @@ Android10, Android11
   
 
 ## 計測画面（英単語学習画面）と結果画面
-<image height="400" src="https://user-images.githubusercontent.com/53263220/106417637-ea610c00-6497-11eb-9ca8-a8ec8afc1921.png"> <image height="400" src="https://user-images.githubusercontent.com/53263220/106417642-eaf9a280-6497-11eb-9cd6-a74cac00993c.png">
+<image height="400" src="https://user-images.githubusercontent.com/53263220/106417637-ea610c00-6497-11eb-9ca8-a8ec8afc1921.png"> <image height="400" src="https://user-images.githubusercontent.com/53263220/106417642-eaf9a280-6497-11eb-9cd6-a74cac00993c.png">  
+
 計測が始まると左図のような画面になります．英単語学習問題の形式は4選択問題で，上のテキストの意味に合うような，選択肢を選ぶものになります．  
   最終的に30単語が終わると結果画面(右図)になります．RESTARTを押すことで，同じ問題で英単語学習問題が始まります．  
   左上の家のボタンを押すと計測を中断するか聞かれます，中断した場合はホーム画面へ戻ることができます．
