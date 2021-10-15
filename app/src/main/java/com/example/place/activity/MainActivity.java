@@ -1,20 +1,9 @@
-package com.example.place;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.AlarmManagerCompat;
+package com.example.place.activity;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.hardware.Sensor;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -26,26 +15,20 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.settlingmeasurement.Sensing;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.AlarmManagerCompat;
+
+import com.example.place.MetaData;
+import com.example.place.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.ktx.Firebase;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -56,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
     MetaData metaData = MetaData.getInstance();
 
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -162,16 +144,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.config:
-                //設定画面へ遷移
-                Intent configIntent = new Intent(getApplicationContext(), ConfigActivity.class);
-                startActivity(configIntent);
-                Log.d(TAG, "onClick:config_btn");
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.config) {//設定画面へ遷移
+            Intent configIntent = new Intent(getApplicationContext(), ConfigActivity.class);
+            startActivity(configIntent);
+            Log.d(TAG, "onClick:config_btn");
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     //戻るでアプリ終了
@@ -194,14 +173,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }).show();
     }
-
-    public class mainActivityABReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-        }
-    }
-
 
 
 }

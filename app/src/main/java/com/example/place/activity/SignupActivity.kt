@@ -1,14 +1,14 @@
-package com.example.place
+package com.example.place.activity
 
 import android.content.Intent
-import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.example.place.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -70,34 +70,36 @@ class SignupActivity : AppCompatActivity() {
                     if (task.isSuccessful) {
                         // Sign up success, update UI with the signed-in user's information
                         Log.d(TAG, "createUserWithEmail:success")
-                        var db = FirebaseFirestore.getInstance()
-                        var user = auth.currentUser
+                        val db = FirebaseFirestore.getInstance()
+                        val user = auth.currentUser
 
-                        db.collection("users").document(user!!.uid).collection("data")
+                        user?.uid?.let {
+                            db.collection("users").document(it).collection("data")
                                 .add(
-                                        hashMapOf(
-                                                "mLearningExp" to mlSpn.selectedItem,
-                                                "mLearningEnvironment" to envSpn.selectedItem,
-                                                "e-mail" to user.email
-                                        )
+                                    hashMapOf(
+                                        "mLearningExp" to mlSpn.selectedItem,
+                                        "mLearningEnvironment" to envSpn.selectedItem,
+                                        "e-mail" to user.email
+                                    )
                                 )
-                                .addOnSuccessListener { documentReference ->
+                                .addOnSuccessListener {
                                     Log.d(TAG, "DocumentSnapshot added with ID: ")
                                     signUpMsg(user)
 
                                     //サインアップ完了でメール送信
-                                    user?.sendEmailVerification()
-                                            ?.addOnCompleteListener { task ->
-                                                if (task.isSuccessful) {
-                                                    Log.d(TAG, "Email sent.")
-                                                }
+                                    user.sendEmailVerification()
+                                        .addOnCompleteListener { task ->
+                                            if (task.isSuccessful) {
+                                                Log.d(TAG, "Email sent.")
                                             }
+                                        }
                                     // 登録後ホームへ移行
                                     gotoMain()
                                 }
                                 .addOnFailureListener { e ->
                                     Log.w(TAG, "Error adding document", e)
                                 }
+                        }
 
 
                     } else {
@@ -105,7 +107,7 @@ class SignupActivity : AppCompatActivity() {
                         Log.w(TAG, "createUserWithEmail:failure", task.exception)
                         Toast.makeText(baseContext, "Authentication failed.",
                                 Toast.LENGTH_SHORT).show()
-                        loadingBar?.visibility = ProgressBar.INVISIBLE
+                        loadingBar.visibility = ProgressBar.INVISIBLE
                         signUpMsg(null)
                         createAccountBtn.isEnabled = true
 

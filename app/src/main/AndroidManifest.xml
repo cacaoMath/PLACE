@@ -13,25 +13,25 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
-        <activity android:name=".SignupActivity"></activity>
+        <activity android:name=".activity.SignupActivity"></activity>
 
         <meta-data
             android:name="com.google.android.actions"
             android:resource="@xml/actions" />
 
-        <activity android:name=".TitleActivity">
+        <activity android:name=".activity.TitleActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".InputNoteActivity" />
-        <activity android:name=".ResultActivity" />
-        <activity android:name=".ConfigActivity" />
-        <activity android:name=".QuestionActivity" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".activity.LoginActivity" />
+        <activity android:name=".activity.InputNoteActivity" />
+        <activity android:name=".activity.ResultActivity" />
+        <activity android:name=".activity.ConfigActivity" />
+        <activity android:name=".activity.QuestionActivity" />
+        <activity android:name=".activity.MainActivity" />
     </application>
 
 </manifest>

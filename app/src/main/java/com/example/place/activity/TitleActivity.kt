@@ -1,14 +1,10 @@
-package com.example.place
+package com.example.place.activity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.widget.Button
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.example.place.R
 
 class TitleActivity : AppCompatActivity() {
     private val handler = Handler()

@@ -1,11 +1,12 @@
-package com.example.place
+package com.example.place.activity
 
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.example.place.MetaData
+import com.example.place.R
 import kotlinx.android.synthetic.main.activity_input_note.*
 
 
@@ -21,10 +22,10 @@ class InputNoteActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_input_note)
 
-        var labelSpn = findViewById<Spinner>(R.id.labelSpn)
-        var etMeta = findViewById<EditText>(R.id.etMeta)
-        var setLabelBtn = findViewById<Button>(R.id.setLabelBtn)
-        var qstSpn = findViewById<Spinner>(R.id.qstSpn)
+        val labelSpn = findViewById<Spinner>(R.id.labelSpn)
+        val etMeta = findViewById<EditText>(R.id.etMeta)
+        val setLabelBtn = findViewById<Button>(R.id.setLabelBtn)
+        val qstSpn = findViewById<Spinner>(R.id.qstSpn)
 
         if(metaData.labelData != null){
             val strArray = resources.getStringArray(R.array.labelList)

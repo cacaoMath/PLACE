@@ -1,4 +1,4 @@
-package com.example.place;
+package com.example.place.activity;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -9,28 +9,24 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 
-import com.example.settlingmeasurement.Sensing;
+import com.example.place.DataTransferKt;
+import com.example.place.MetaData;
+import com.example.place.Quiz;
+import com.example.place.R;
+import com.example.place.Sensing;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -70,7 +66,6 @@ public class QuestionActivity extends AppCompatActivity {
 
 
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -144,7 +139,6 @@ public class QuestionActivity extends AppCompatActivity {
                     }
                 })
                 .setNegativeButton("はい", new DialogInterface.OnClickListener() {
-                    @RequiresApi(api = Build.VERSION_CODES.O)
                     @Override
                     public void onClick(DialogInterface dialogInterface, int id) {
                         //計測したデータの記録・転送処理
@@ -305,7 +299,6 @@ public class QuestionActivity extends AppCompatActivity {
         dt.resetDataList();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     private void dataTransferProcessing(){
         ArrayList<Integer> Known_words = new ArrayList();
         ArrayList<Integer> Mistakes_words = new ArrayList();
@@ -318,12 +311,11 @@ public class QuestionActivity extends AppCompatActivity {
             }
         }
         dt.addResultData(learningTime, confidenceData, Known_words, Mistakes_words, Q_num);
-        dt.SendResultData();
+        dt.sendResultData();
     }
 
     //10分間の時間を計測・終了を伝える
     public class qActivityABReceiver extends BroadcastReceiver {
-        @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
         public void onReceive(Context context, Intent intent) {
 
@@ -341,7 +333,6 @@ public class QuestionActivity extends AppCompatActivity {
             builder.setMessage("規定の計測時間が経過したので\n計測を終了します．\nお疲れさまでした．")
 
                     .setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                        @RequiresApi(api = Build.VERSION_CODES.O)
                         @Override
                         public void onClick(DialogInterface dialogInterface, int id) {
 

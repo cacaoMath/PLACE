@@ -272,32 +272,28 @@ public class Quiz {
         int Adj_counter = 0;
         int Adv_counter = 0;
         int Oth_counter= 0;
-        for(int i = 0; i < quizData.length; i++){
-            if(quizData[i][3] == "n"){
-                Noun[Noun_counter] = quizData[i];
+        for (String[] quizDatum : quizData) {
+            if (quizDatum[3].equals("n")) {
+                Noun[Noun_counter] = quizDatum;
                 Noun_counter++;
-            }
-            else if(quizData[i][3] == "v"){
-                Verb[Verb_counter] = quizData[i];
+            } else if (quizDatum[3].equals("v")) {
+                Verb[Verb_counter] = quizDatum;
                 Verb_counter++;
-            }
-            else if(quizData[i][3] == "adj"){
-                Adjective[Adj_counter] = quizData[i];
+            } else if (quizDatum[3].equals("adj")) {
+                Adjective[Adj_counter] = quizDatum;
                 Adj_counter++;
-            }
-            else if(quizData[i][3] == "adv"){
-                Adverb[Adv_counter] = quizData[i];
+            } else if (quizDatum[3].equals("adv")) {
+                Adverb[Adv_counter] = quizDatum;
                 Adv_counter++;
-            }
-            else{
-                Other[Oth_counter] = quizData[i];
+            } else {
+                Other[Oth_counter] = quizDatum;
                 Oth_counter++;
             }
         }
     }
 
     public String[][] GetQuizSet(int sum){
-        String temp[][] = new String[sum][8];
+        String[][] temp = new String[sum][8];
         ArrayList<Integer> list = new ArrayList<Integer>();
 
         // listに値を入れる。この段階では昇順
@@ -325,7 +321,7 @@ public class Quiz {
 
     //Quizの出題範囲を限定するための処理
     public String[][] GetQuizSet(int sum, String quizPattern){
-        String temp[][] = new String[sum][8];
+        String[][] temp = new String[sum][8];
         ArrayList<Integer> list = new ArrayList<Integer>();
 
 
@@ -385,7 +381,7 @@ public class Quiz {
     }
 
     public String[][] GetQuizSetEtoJ(int sum, String quizPattern){
-        String temp[][] = new String[sum][8];
+        String[][] temp = new String[sum][8];
         ArrayList<Integer> list = new ArrayList<Integer>();
 
 
@@ -448,14 +444,14 @@ public class Quiz {
     public String[] GetOtherAnswer(String num){
         String type = quizData[Integer.valueOf(num).intValue() - 1][3];
         Random random = new Random();
-        String temp[] = new String[4];
-        int keepNum[] = {-1, -1, -1};
+        String[] temp = new String[4];
+        int[] keepNum = {-1, -1, -1};
         int i = 0;
         switch(type) {
             case "n":
                 while(i != 3) {
                     int randomNum = random.nextInt(Noun.length);
-                    if(Noun[randomNum][0] != num){
+                    if(!Noun[randomNum][0].equals(num)){
                         if (randomNum != keepNum[0] && randomNum != keepNum[1]){
                             keepNum[i] = randomNum;
                             i++;
@@ -470,7 +466,7 @@ public class Quiz {
             case "v":
                 while(i != 3) {
                     int randomNum = random.nextInt(Verb.length);
-                    if(Verb[randomNum][0] != num){
+                    if(!Verb[randomNum][0].equals(num)){
                         if (randomNum != keepNum[0] && randomNum != keepNum[1]){
                             keepNum[i] = randomNum;
                             i++;
@@ -486,7 +482,7 @@ public class Quiz {
 
                 while(i != 3) {
                     int randomNum = random.nextInt(Adjective.length);
-                    if(Adjective[randomNum][0] != num){
+                    if(!Adjective[randomNum][0].equals(num)){
                         if (randomNum != keepNum[0] && randomNum != keepNum[1]){
                             keepNum[i] = randomNum;
                             i++;
@@ -501,7 +497,7 @@ public class Quiz {
             case "adv":
                 while(i != 3) {
                     int randomNum = random.nextInt(Adverb.length);
-                    if(Adverb[randomNum][0] != num){
+                    if(!Adverb[randomNum][0].equals(num)){
                         if (randomNum != keepNum[0] && randomNum != keepNum[1]){
                             keepNum[i] = randomNum;
                             i++;
@@ -513,13 +509,13 @@ public class Quiz {
                 temp[2] = Adverb[keepNum[2]][2];
                 break;
             default:
-                if(Other[0][0] == num){
+                if(Other[0][0].equals(num)){
                     temp[0] = Other[1][2]; temp[1] = Adverb[2][2]; temp[2] = Adverb[3][2];
                 }
-                else if(Other[1][0] == num){
+                else if(Other[1][0].equals(num)){
                     temp[0] = Other[0][2]; temp[1] = Adverb[2][2]; temp[2] = Adverb[3][2];
                 }
-                else if(Other[2][0] == num){
+                else if(Other[2][0].equals(num)){
                     temp[0] = Other[0][2]; temp[1] = Adverb[1][2]; temp[2] = Adverb[3][2];
                 }
                 else{
@@ -531,7 +527,7 @@ public class Quiz {
         return temp;
     }
     public void setMemory(int num, boolean f){
-        if(f == true){
+        if(f){
             this.quizData[num][4] = "1";
         }
         else{

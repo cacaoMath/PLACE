@@ -23,7 +23,6 @@ class DataTransferKt {
 
 
     // Create a new user with a first, middle, and last name
-    @RequiresApi(Build.VERSION_CODES.O)
     val userData = hashMapOf(
             "name" to user?.displayName,
             "email" to user?.email,
@@ -61,8 +60,7 @@ class DataTransferKt {
 
 
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun SendResultData(){
+    fun sendResultData(){
         Log.d(TAG,"sent result test data")
 
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())

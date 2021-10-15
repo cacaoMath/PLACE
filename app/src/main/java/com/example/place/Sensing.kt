@@ -1,16 +1,12 @@
-package com.example.settlingmeasurement
+package com.example.place
 
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.os.Build
 import android.os.Environment
 import android.util.Log
-import androidx.annotation.RequiresApi
-import com.example.place.MetaData
-import com.example.place.MetaData.Companion.getInstance
 import java.io.File
 import java.nio.charset.StandardCharsets
 
@@ -39,7 +35,6 @@ class Sensing(context: Context) : SensorEventListener {
         Log.d(TAG, rootDirectory.toString()) // no require permission about this path got getExternalFilesDir
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     @JvmOverloads
     fun start(label: String, listener: ((SensorEvent?) -> Unit)? = null) {
         if (stateMeasurement) return // 実行中だったら実行しない
@@ -110,7 +105,6 @@ class Sensing(context: Context) : SensorEventListener {
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun sensor2text(sensors : List<Sensor?>){
         // sensor2text
         val sensorInfo = File(rootDirectory, "sensorInfo.csv")
