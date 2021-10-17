@@ -13,6 +13,7 @@ import androidx.core.app.AlarmManagerCompat
 import com.example.place.MetaData.Companion.getInstance
 import com.example.place.R
 import com.example.place.databinding.ActivityMainBinding
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -48,9 +49,13 @@ class MainActivity : AppCompatActivity() {
                 val qIntent = Intent(applicationContext, QuestionActivity::class.java)
                 startActivity(qIntent)
             } else {
-                val toast = Toast.makeText(applicationContext, "メタデータを入力して下さい.", Toast.LENGTH_LONG)
-                // 位置調整
-                toast.show()
+                Snackbar.make(binding.root,"メタデータ入力してください", Snackbar.LENGTH_SHORT)
+                    .setAction("メタデータ入力") {
+                        val inputMetaIntent =
+                            Intent(applicationContext, InputNoteActivity::class.java)
+                        startActivity(inputMetaIntent)
+                    }
+                    .show()
             }
             Log.d(TAG, "onClick:start_btn")
         }
