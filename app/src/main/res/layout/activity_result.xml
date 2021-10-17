@@ -12,7 +12,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="#0e918c"
         android:elevation="4dp"
-        android:text="PLACE"
+        android:text="@string/app_name"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,15 +32,15 @@
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="40dp"
         android:gravity="center"
-        android:text="出題数"
+        android:text="@string/amount_of_question"
         android:textSize="36sp"
         app:layout_constraintBottom_toTopOf="@+id/textView12"
-        app:layout_constraintEnd_toStartOf="@+id/resulttext1"
+        app:layout_constraintEnd_toStartOf="@+id/resultText1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/resulttext1"
+        android:id="@+id/resultText1"
         android:layout_width="160dp"
         android:layout_height="50dp"
         android:layout_marginStart="24dp"
@@ -50,7 +50,7 @@
         android:gravity="center"
         android:text="TextView"
         android:textSize="36sp"
-        app:layout_constraintBottom_toTopOf="@+id/resulttext2"
+        app:layout_constraintBottom_toTopOf="@+id/resultText2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView3"
         app:layout_constraintTop_toTopOf="parent" />
@@ -63,14 +63,14 @@
         android:layout_marginTop="40dp"
         android:layout_marginEnd="24dp"
         android:gravity="center"
-        android:text="正答率"
+        android:text="@string/correct_rate"
         android:textSize="36sp"
-        app:layout_constraintEnd_toStartOf="@+id/resulttext2"
+        app:layout_constraintEnd_toStartOf="@+id/resultText2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <TextView
-        android:id="@+id/resulttext2"
+        android:id="@+id/resultText2"
         android:layout_width="160dp"
         android:layout_height="50dp"
         android:layout_marginStart="24dp"
@@ -81,7 +81,7 @@
         android:textSize="36sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView12"
-        app:layout_constraintTop_toBottomOf="@+id/resulttext1" />
+        app:layout_constraintTop_toBottomOf="@+id/resultText1" />
 
     <Button
         android:id="@+id/restartBtn"
@@ -90,7 +90,7 @@
         android:scaleType="fitXY"
         android:fontFamily="@font/din1451alt"
         android:background="@drawable/neg_button_design"
-        android:text="Restart"
+        android:text="@string/restart"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.place.R
+import com.example.place.databinding.ActivityLoginBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -18,21 +19,24 @@ class LoginActivity : AppCompatActivity() {
     // Initialize Firebase Auth
     private var auth : FirebaseAuth = Firebase.auth
 
-    private var progressBar: ProgressBar? = null
-    private var tvLog: TextView? = null
+    private lateinit var progressBar: ProgressBar
+    private lateinit var tvLog: TextView
     private lateinit var signInBtn: Button
-    private  lateinit var signUpBtn: Button
+    private lateinit var signUpBtn: Button
+    private lateinit var binding: ActivityLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
-        val etUserEmail = findViewById<EditText>(R.id.etUserEmail)
-        val etUserPassword = findViewById<EditText>(R.id.etUserPassword)
-        signUpBtn = findViewById<Button>(R.id.signUpBtn)
-        signInBtn = findViewById<Button>(R.id.signInBtn)
-        progressBar = findViewById<ProgressBar>(R.id.progressBar)
-        tvLog = findViewById<TextView>(R.id.tvLog)
+        val etUserEmail = binding.etUserEmail
+        val etUserPassword = binding.etUserPassword
+        signUpBtn = binding.signUpBtn
+        signInBtn = binding.signInBtn
+        progressBar = binding.progressBar
+        tvLog = binding.tvLog
 
 
 

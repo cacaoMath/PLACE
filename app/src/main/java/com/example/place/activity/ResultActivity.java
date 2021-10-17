@@ -20,6 +20,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.example.place.DataTransferKt;
 import com.example.place.R;
+import com.example.place.databinding.ActivityResultBinding;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -28,11 +29,9 @@ import java.util.Date;
 
 public class ResultActivity extends AppCompatActivity {
     protected static final String TAG = ResultActivity.class.getSimpleName();
-    private TextView numtasks, rightper;
-    private Button restartBtn;
-    private long[] Learning_time;
+
+    private ActivityResultBinding binding;
     private DataTransferKt dt = new DataTransferKt();
-    private int[] Confidence_data;
 
     resultActivityABReceiver myReceiver = new resultActivityABReceiver();
 
@@ -43,21 +42,22 @@ public class ResultActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_result);
+        binding = ActivityResultBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolBar);
         setSupportActionBar(myToolbar);
 
 
-        numtasks = findViewById(R.id.resulttext1);
-        rightper = findViewById(R.id.resulttext2);
-        restartBtn = findViewById(R.id.restartBtn);
+        TextView numTasks = binding.resultText1;
+        TextView rightPer = binding.resultText2;
+        Button restartBtn = binding.restartBtn;
 
         //確信度についての保存変数
         int[] result = getIntent().getExtras().getIntArray("Result");
         int score = getResult(result);
         int[] Q_number = getIntent().getExtras().getIntArray("Q_number");
-        Learning_time = getIntent().getExtras().getLongArray("Learning_Time");
-        Confidence_data = getIntent().getExtras().getIntArray("Confidence_data");
+        long[] learning_time = getIntent().getExtras().getLongArray("Learning_Time");
+        int[] confidence_data = getIntent().getExtras().getIntArray("Confidence_data");
         Known_words = new ArrayList();
         Mistakes_words = new ArrayList();
         AI_words = new ArrayList();
@@ -65,10 +65,10 @@ public class ResultActivity extends AppCompatActivity {
 
         this.getResultDetail(Q_number, result);
 
-        Log.d(TAG, "data value"+Learning_time[0]);
-        numtasks.setText(""+result.length);
+        Log.d(TAG, "data value"+ learning_time[0]);
+        numTasks.setText(""+result.length);
         double percent = ((double)score / (double)result.length) * 100;
-        rightper.setText(""+percent + "%");
+        rightPer.setText(""+percent + "%");
 
 
 
@@ -116,7 +116,7 @@ public class ResultActivity extends AppCompatActivity {
         });
 
         //ここでfirestoreに１セット終了時の結果を追加する．
-        dt.addResultData(Learning_time, Confidence_data, Known_words, Mistakes_words, Q_number);    //テストの結果をfireStoreに送信
+        dt.addResultData(learning_time, confidence_data, Known_words, Mistakes_words, Q_number);    //テストの結果をfireStoreに送信
     }
 
     @Override
@@ -153,8 +153,8 @@ public class ResultActivity extends AppCompatActivity {
     //正答数の取得
     public int getResult(int[] temp){
         int Num_of_correct = 0;
-        for(int i = 0; i < temp.length; i++){
-            if(temp[i] == 1){
+        for (int j : temp) {
+            if (j == 1) {
                 Num_of_correct++;
             }
         }
