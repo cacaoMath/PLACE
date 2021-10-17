@@ -9,6 +9,7 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.place.databinding.ActivitySignupBinding
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -44,8 +45,9 @@ class SignupActivity : AppCompatActivity() {
                 signUp(binding.etSignupEmail.text.toString(), binding.etSignupPass.text.toString())
                 createAccountBtn.isEnabled = false
             }else{
-                Toast.makeText(baseContext, "パスワードは7文字以上にしてください",
-                        Toast.LENGTH_SHORT).show()
+//                Toast.makeText(baseContext, "パスワードは7文字以上にしてください",
+//                        Toast.LENGTH_SHORT).show()
+                Snackbar.make(binding.root,"パスワードは7文字以上にしてください", Snackbar.LENGTH_SHORT).show()
             }
 
         }
@@ -106,8 +108,10 @@ class SignupActivity : AppCompatActivity() {
                     } else {
                         // If sign up fails, display a message to the user.
                         Log.w(TAG, "createUserWithEmail:failure", task.exception)
-                        Toast.makeText(baseContext, "Authentication failed.",
-                                Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(baseContext, "Authentication failed.",
+//                                Toast.LENGTH_SHORT).show()
+                        Snackbar.make(binding.root,"Authentication failed.", Snackbar.LENGTH_SHORT).show()
+
                         loadingBar.visibility = ProgressBar.INVISIBLE
                         signUpMsg(null)
                         createAccountBtn.isEnabled = true
