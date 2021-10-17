@@ -8,18 +8,18 @@ import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.place.R
+import com.example.place.databinding.ActivitySignupBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.android.synthetic.main.activity_signup.*
 
 class SignupActivity : AppCompatActivity() {
     private val TAG = this::class.java.simpleName
     // Initialize Firebase Auth
     private var auth : FirebaseAuth = Firebase.auth
+    private lateinit var binding: ActivitySignupBinding
     private lateinit var envSpn : Spinner
     private lateinit var mlSpn : Spinner
     private lateinit var createAccountBtn : Button
@@ -28,19 +28,20 @@ class SignupActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_signup)
+        binding = ActivitySignupBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        envSpn = findViewById(R.id.envSpn)
-        mlSpn = findViewById(R.id.mlSpn)
-        createAccountBtn = findViewById(R.id.createAccountBtn)
-        loadingBar = findViewById(R.id.loadingBar)
+        envSpn = binding.envSpn
+        mlSpn = binding.mlSpn
+        createAccountBtn = binding.createAccountBtn
+        loadingBar = binding.loadingBar
 
-        loadingBar?.visibility = ProgressBar.INVISIBLE
+        loadingBar.visibility = ProgressBar.INVISIBLE
 
         createAccountBtn.setOnClickListener {
-            if(etSignupPass.text.toString().length > 6){
-                loadingBar?.visibility = ProgressBar.VISIBLE
-                signUp(etSignupEmail.text.toString(), etSignupPass.text.toString())
+            if(binding.etSignupPass.text.toString().length > 6){
+                loadingBar.visibility = ProgressBar.VISIBLE
+                signUp(binding.etSignupEmail.text.toString(), binding.etSignupPass.text.toString())
                 createAccountBtn.isEnabled = false
             }else{
                 Toast.makeText(baseContext, "パスワードは7文字以上にしてください",

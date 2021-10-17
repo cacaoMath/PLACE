@@ -33,5 +33,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvTitle"
         app:layout_constraintVertical_bias="0.314"
-        app:srcCompat="@drawable/train_learrning" />
+        app:srcCompat="@drawable/train_learning" />
 </androidx.constraintlayout.widget.ConstraintLayout>

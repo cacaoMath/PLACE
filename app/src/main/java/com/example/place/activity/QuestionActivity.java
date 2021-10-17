@@ -26,12 +26,15 @@ import com.example.place.MetaData;
 import com.example.place.Quiz;
 import com.example.place.R;
 import com.example.place.Sensing;
+import com.example.place.databinding.ActivityQuestionBinding;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
+
 /**
 このアクティビティは先輩のソースコードをほぼ使用している．
  **/
@@ -46,6 +49,7 @@ public class QuestionActivity extends AppCompatActivity {
     private String[][] quizSet;
     private MetaData metaData = MetaData.getInstance();
 
+    private ActivityQuestionBinding binding;
     private TextView questionView;
     private Button ansBtn1;
     private Button ansBtn2;
@@ -69,7 +73,8 @@ public class QuestionActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_question);
+        binding = ActivityQuestionBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolBar);
         setSupportActionBar(myToolbar);
 
@@ -91,13 +96,13 @@ public class QuestionActivity extends AppCompatActivity {
             confidenceData[i] = -1;
         }
 
-        quizSet = quiz.GetQuizSet(numOfQuiz, metaData.getQuizPattern());
+        quizSet = quiz.GetQuizSet(numOfQuiz, Objects.requireNonNull(metaData.getQuizPattern()));
 
-        questionView = findViewById(R.id.Question);
-        ansBtn1 = findViewById(R.id.ansBtn1);
-        ansBtn2 = findViewById(R.id.ansBtn2);
-        ansBtn3 = findViewById(R.id.ansBtn3);
-        ansBtn4 = findViewById(R.id.ansBtn4);
+        questionView = binding.Question;
+        ansBtn1 = binding.ansBtn1;
+        ansBtn2 = binding.ansBtn2;
+        ansBtn3 = binding.ansBtn3;
+        ansBtn4 = binding.ansBtn4;
 
         showNextQuiz(); //第１問目表示用
         sensing.start(""); //計測開始

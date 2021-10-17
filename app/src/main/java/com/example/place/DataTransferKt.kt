@@ -2,15 +2,12 @@ package com.example.place
 
 import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
 import java.util.*
-import kotlin.collections.HashMap
 
 class DataTransferKt {
     private val TAG = "DataTransfer"

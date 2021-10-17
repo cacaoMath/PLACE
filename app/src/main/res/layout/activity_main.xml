@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="#0e918c"
-        android:text="PLACE"
+        android:text="@string/app_name"
         android:elevation="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,7 +32,7 @@
         android:scaleType="fitXY"
         android:stateListAnimator="@null"
         android:text="@string/startBtn"
-        android:textSize="40dp"
+        android:textSize="40sp"
         app:layout_constraintBottom_toTopOf="@+id/meta_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -54,10 +54,6 @@
         app:layout_constraintTop_toBottomOf="@+id/start_btn"
         app:layout_constraintVertical_bias="0.708" />
 
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/currentUserTxt"

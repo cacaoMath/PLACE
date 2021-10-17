@@ -6,13 +6,41 @@
     <string name="unknownBtn">Unknown</string>
     <string name="vocabBtn">Vocabulary</string>
     <string name="configBtn">Config</string>
+    <string name="save">保存する</string>
+    <string name="password">password</string>
 
-    <!--for  InputNoteActivity-->
-    <string name="tvLabel">ラベルデータ</string>
-    <string name="spLabel">問題パターン</string>
-    <string name="tvMeta">その他のメタデータ等</string>
-    <string name="setBtn">保存する</string>
+    <!--SignupActivity-->
+    <string name="your_password">your password</string>
+    <string name="your_email">Your e-mail</string>
+    <string name="signup_activity_title">sign up information</string>
+    <string name="your_mLearning_experience">m-Learningの経験を教えてください</string>
+    <string name="your_mLearning_environment">m-Learningで学習する際の主な環境を教えてください</string>
+    <string name="create_account">create account</string>
 
+    <!--ConfigActivity-->
+    <string name="detail_option">詳細設定</string>
+    <string name="measurement_time">計測時間（分）</string>
+    <string name="sign_out">sign out</string>
+    <string name="please_input_number">数字を入力してください．単位は[分]です．</string>
+
+    <!--InputNoteActivity-->
+    <string name="tv_label">ラベルデータ</string>
+    <string name="sp_label">問題パターン</string>
+    <string name="meta_tv">その他のメタデータ等</string>
+
+    <!--LoginActivity-->
+    <string name="eMail">E-mail</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="sign_in">Sign In</string>
+    <string name="status">status</string>
+
+    <!--ResultActivity-->
+    <string name="restart">restart</string>
+    <string name="correct_rate">正答率</string>
+    <string name="amount_of_question">出題数</string>
+
+    <!--QuestionActivity-->
+    <string name="question">Question</string>
 
     <!-- メタデータ入力用 -->
     <string-array name="patternList">

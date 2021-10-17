@@ -17,7 +17,7 @@ public class Quiz {
             {"1","hire","雇う","v","0"},
             {"2","pillage","略奪","n","0"},
             {"3","consider","考慮する","v","0"},
-            {"4","fllow","従う","v","0"},
+            {"4","follow","従う","v","0"},
             {"5","suggest","提案する","v","0"},
             {"6","cavalry","騎兵","v","0"},
             {"7","perceive","知覚する","v","0"},
@@ -51,7 +51,7 @@ public class Quiz {
             {"35","pain","苦痛","n","0"},
             {"36","injure","傷つける","v","0"},
             {"37","significant","重要な","adj","0"},
-            {"38","exsist","存在する","v","0"},
+            {"38","exist","存在する","v","0"},
             {"39","demand","要求する","v","0"},
             {"40","scrabble","引っかく","v","0"},
             {"41","native","母国の","adj","0"},
@@ -273,21 +273,27 @@ public class Quiz {
         int Adv_counter = 0;
         int Oth_counter= 0;
         for (String[] quizDatum : quizData) {
-            if (quizDatum[3].equals("n")) {
-                Noun[Noun_counter] = quizDatum;
-                Noun_counter++;
-            } else if (quizDatum[3].equals("v")) {
-                Verb[Verb_counter] = quizDatum;
-                Verb_counter++;
-            } else if (quizDatum[3].equals("adj")) {
-                Adjective[Adj_counter] = quizDatum;
-                Adj_counter++;
-            } else if (quizDatum[3].equals("adv")) {
-                Adverb[Adv_counter] = quizDatum;
-                Adv_counter++;
-            } else {
-                Other[Oth_counter] = quizDatum;
-                Oth_counter++;
+            switch (quizDatum[3]) {
+                case "n":
+                    Noun[Noun_counter] = quizDatum;
+                    Noun_counter++;
+                    break;
+                case "v":
+                    Verb[Verb_counter] = quizDatum;
+                    Verb_counter++;
+                    break;
+                case "adj":
+                    Adjective[Adj_counter] = quizDatum;
+                    Adj_counter++;
+                    break;
+                case "adv":
+                    Adverb[Adv_counter] = quizDatum;
+                    Adv_counter++;
+                    break;
+                default:
+                    Other[Oth_counter] = quizDatum;
+                    Oth_counter++;
+                    break;
             }
         }
     }
