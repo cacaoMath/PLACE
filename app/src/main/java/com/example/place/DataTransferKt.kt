@@ -43,7 +43,7 @@ class DataTransferKt {
                 "Device" to Build.MODEL,
                 "SensingDataFileName" to metaData.sensingFilePath + metaData.labelData
         )
-        metaData.dataList?.add(result)
+        metaData.dataList.add(result)
         Log.d(TAG,"ResultData added to \" dataList \" ${metaData.dataList.size}")
     }
 
@@ -68,8 +68,8 @@ class DataTransferKt {
                     .collection("MeasurementType").document("${timeStamp}_${metaData.labelData}")
                     .collection("Data").document()
                     .set(resultData)
-                    .addOnSuccessListener { documentReference ->
-                        Log.d(TAG, "DocumentSnapshot added with ID: ${timeStamp}")
+                    .addOnSuccessListener {
+                        Log.d(TAG, "DocumentSnapshot added with ID: $timeStamp")
                     }
                     .addOnFailureListener { e ->
                         Log.w(TAG, "Error adding document", e)

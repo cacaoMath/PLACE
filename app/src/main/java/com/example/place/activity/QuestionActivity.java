@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -33,12 +34,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
-/**
-このアクティビティは先輩のソースコードをほぼ使用している．
- **/
-public class QuestionActivity extends AppCompatActivity {
+public class QuestionActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
     protected static final String TAG = QuestionActivity.class.getSimpleName();
     private boolean eventFlag; //ボタン操作で二重タップを防ぐため
     private boolean isConfident = false;
@@ -66,8 +65,10 @@ public class QuestionActivity extends AppCompatActivity {
 
     private  Sensing sensing; //センサデータ計測
 
-    qActivityABReceiver myReceiver = new qActivityABReceiver();
+    private TextToSpeech ttsJp;
+    private TextToSpeech ttsEn;
 
+    qActivityABReceiver myReceiver = new qActivityABReceiver();
 
 
     @Override
@@ -78,7 +79,8 @@ public class QuestionActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolBar);
         setSupportActionBar(myToolbar);
 
-
+        ttsJp = new TextToSpeech(this, this);
+        ttsEn = new TextToSpeech(this, this);
 
         sensing = new Sensing(this);
 
@@ -104,8 +106,31 @@ public class QuestionActivity extends AppCompatActivity {
         ansBtn3 = binding.ansBtn3;
         ansBtn4 = binding.ansBtn4;
 
-        showNextQuiz(); //第１問目表示用
+//        showNextQuiz(); //第１問目表示用
         sensing.start(""); //計測開始
+
+    }
+
+
+    @Override
+    public void onInit(int status) {
+        if (status == TextToSpeech.SUCCESS) {
+
+            if((ttsEn.isLanguageAvailable(Locale.ENGLISH) >= TextToSpeech.LANG_AVAILABLE)
+                    &&(ttsJp.isLanguageAvailable(Locale.JAPANESE) >= TextToSpeech.LANG_AVAILABLE)){
+                ttsEn.setLanguage(Locale.ENGLISH);
+                ttsJp.setLanguage(Locale.JAPANESE);
+                Log.i(TAG, "言語の設定完了しました．");
+                //両言語のttsの初期化完了後に問題開始する．
+                showNextQuiz();
+            }else{
+                Log.i(TAG, "言語の設定するのに失敗しました．システムの音声出力言語設定（日本語，英語）を確認してください．");
+            }
+
+        } else {
+            // Tts init 失敗
+            Log.i(TAG, "ttsの初期化に失敗しました．");
+        }
 
     }
     @Override
@@ -120,6 +145,14 @@ public class QuestionActivity extends AppCompatActivity {
         super.onPause();
         // ブロードキャストレシーバーを解除する
         unregisterReceiver(myReceiver);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //ttsのリソース開放
+        ttsEn.shutdown();
+        ttsJp.shutdown();
     }
     @Override
     public void onBackPressed(){
@@ -170,10 +203,13 @@ public class QuestionActivity extends AppCompatActivity {
             }, 1000L);
         }
         if(isConfident){
+            //今後の実験の結果によっては学習中の確信度を取得する．
             DialogFragment newFragment = new ConfidenceDialogFragment(view);
             newFragment.show(getSupportFragmentManager(), "Confidence");
         }else{
-            checkAnswer(view);
+            if(!ttsEn.isSpeaking() && !ttsJp.isSpeaking()){
+                checkAnswer(view);
+            }
         }
     }
 
@@ -182,7 +218,8 @@ public class QuestionActivity extends AppCompatActivity {
         Select_Answer = answerBtn.getText().toString();
         secondTime.setTimeInMillis(System.currentTimeMillis()); // 現在時刻を取得
 
-
+        ttsJp.stop();
+        ttsEn.stop();
 
         Log.d(TAG, "onClick:Ans_btn1");
         learningTime[count] =  secondTime.getTimeInMillis() - firstTime.getTimeInMillis() ;
@@ -224,8 +261,29 @@ public class QuestionActivity extends AppCompatActivity {
         builder.show();
     }
 
+    /**
+    * 言語を読み上げる
+    * @param text 読み上げるテキスト
+    * @param tts TextToSpeech　オブジェクト
+    * */
+    private void wordSpeak(TextToSpeech tts,String text){
+        tts.speak(text, TextToSpeech.QUEUE_ADD,null,"utteranceId");
+        Log.i(TAG,"speak :"+text);
+    }
+
     //出題する問題
     public void showNextQuiz(){
+        //単語の読み上げ
+        wordSpeak(ttsEn, quizSet[count][1]);
+        wordSpeak(ttsEn, "A ");
+        wordSpeak(ttsJp, quizSet[count][2]);
+        wordSpeak(ttsEn, "B ");
+        wordSpeak(ttsJp, quizSet[count][3]);
+        wordSpeak(ttsEn, "C ");
+        wordSpeak(ttsJp, quizSet[count][4]);
+        wordSpeak(ttsEn, "D ");
+        wordSpeak(ttsJp, quizSet[count][5]);
+
         questionView.setText(quizSet[count][1]);
         if(quizSet[count][1].length() > 14){
             questionView.setTextSize(30);
@@ -261,6 +319,11 @@ public class QuestionActivity extends AppCompatActivity {
     }
 
     //このメソッドは先輩のソースコード
+    /**
+     * 解答文が長い場合，表示がおかしくならないように改行をはさむ処理をして返す
+     * @param target 解答文
+     *
+     * **/
     public String getXXX(String target){
         int middleIndex = 0;
         int lastIndex = target.length();
@@ -346,6 +409,7 @@ public class QuestionActivity extends AppCompatActivity {
                             //時間精度デバック用
 
                             //startActivity(mainIntent);
+
                             finish();
                         }
                     }).show();
