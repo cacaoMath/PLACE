@@ -126,7 +126,7 @@ class MainActivity : AppCompatActivity() {
 
     //戻るでアプリ終了
     override fun onBackPressed() {
-        val alertDialog = AlertDialog.Builder(this@MainActivity)
+        AlertDialog.Builder(this@MainActivity)
             .setCancelable(false)
             .setTitle("確認")
             .setMessage("終了してよろしいですか")

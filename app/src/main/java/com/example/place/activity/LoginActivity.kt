@@ -42,7 +42,7 @@ class LoginActivity : AppCompatActivity() {
 
 
 
-        progressBar?.visibility = ProgressBar.INVISIBLE
+        progressBar.visibility = ProgressBar.INVISIBLE
 
         signInBtn.setOnClickListener{
             if(!TextUtils.isEmpty(etUserEmail.text.toString()) && !TextUtils.isEmpty(etUserPassword.text.toString()) ){
@@ -74,7 +74,7 @@ class LoginActivity : AppCompatActivity() {
             finish()
         }
         else{
-            tvLog?.text = "Please Sign Up or Sign In"
+            tvLog.text = "Please Sign Up or Sign In"
         }
     }
 
@@ -86,21 +86,21 @@ class LoginActivity : AppCompatActivity() {
 
 
     private fun signInMsg(user : FirebaseUser?){
-        progressBar?.visibility = ProgressBar.INVISIBLE
+        progressBar.visibility = ProgressBar.INVISIBLE
         if(user != null){
             Log.d(TAG,"sign In : this user is exist")
-            tvLog?.text = "Sign In success"
+            tvLog.text = "Sign In success"
         }else{
             Log.d(TAG,"sign In : There is NO account your e-mail")
-            tvLog?.text = "NO account your e-mail. Please Sign Up."
+            tvLog.text = "NO account your e-mail. Please Sign Up."
         }
 
     }
 
 
     private fun signIn(email :String, password : String){
-        tvLog?.text = "Now Loading. Please wait ..."
-        progressBar?.visibility = ProgressBar.VISIBLE
+        tvLog.text = "Now Loading. Please wait ..."
+        progressBar.visibility = ProgressBar.VISIBLE
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
