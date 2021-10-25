@@ -1,5 +1,6 @@
 package com.example.place.activity;
 
+import android.Manifest;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -9,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
@@ -20,7 +22,14 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.camera.core.CameraSelector;
+import androidx.camera.core.Preview;
+import androidx.camera.lifecycle.ProcessCameraProvider;
+import androidx.camera.view.PreviewView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.LifecycleOwner;
 
 import com.example.place.DataTransferKt;
 import com.example.place.MetaData;
@@ -28,17 +37,24 @@ import com.example.place.Quiz;
 import com.example.place.R;
 import com.example.place.Sensing;
 import com.example.place.databinding.ActivityQuestionBinding;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class QuestionActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
     protected static final String TAG = QuestionActivity.class.getSimpleName();
+    private static final String[] REQUIRED_PERMISSIONS = new String[]{Manifest.permission.CAMERA};
+    private static final int REQUEST_CODE_PERMISSIONS = 10;
     private boolean eventFlag; //ボタン操作で二重タップを防ぐため
     private boolean isConfident = false;
 
@@ -54,6 +70,7 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
     private Button ansBtn2;
     private Button ansBtn3;
     private Button ansBtn4;
+    private PreviewView cameraView;
 
     private String Right_Answer;
     private String  Select_Answer;
@@ -65,8 +82,12 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
 
     private  Sensing sensing; //センサデータ計測
 
+    //音声再生
     private TextToSpeech ttsJp;
     private TextToSpeech ttsEn;
+
+    //シースルー用
+    private ExecutorService cameraExecutor;
 
     qActivityABReceiver myReceiver = new qActivityABReceiver();
 
@@ -109,6 +130,58 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
 //        showNextQuiz(); //第１問目表示用
         sensing.start(""); //計測開始
 
+        if(allPermissionsGranted()){
+            startCamera(this);
+        }else{
+            ActivityCompat.requestPermissions(
+                    this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
+        }
+
+        cameraExecutor = Executors.newSingleThreadExecutor();
+        cameraView = binding.viewFinder;
+
+    }
+
+
+    private Boolean allPermissionsGranted(){
+        return Arrays.stream(REQUIRED_PERMISSIONS).allMatch(it->ContextCompat.checkSelfPermission(
+                getBaseContext(), it) == PackageManager.PERMISSION_GRANTED);
+    }
+
+    private void startCamera(Context context) {
+        ListenableFuture cameraProviderFuture = ProcessCameraProvider.getInstance(this);
+
+        cameraProviderFuture.addListener(new Runnable() {
+            @Override
+            public void run() {
+                ProcessCameraProvider cameraProvider = null;
+                try {
+                    cameraProvider = (ProcessCameraProvider) cameraProviderFuture.get();
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                // Preview
+                Preview preview = new Preview.Builder()
+                        .build();
+                preview.setSurfaceProvider(cameraView.getSurfaceProvider());
+
+                // Select back camera as a default
+                CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
+
+                try {
+                    // Unbind use cases before rebinding
+                    cameraProvider.unbindAll();
+
+                    // Bind use cases to camera
+                    cameraProvider.bindToLifecycle((LifecycleOwner)context, cameraSelector, preview);
+
+
+                } catch(Exception exc) {
+                    Log.e(TAG, "Use case binding failed", exc);
+                }
+            }
+        }, ContextCompat.getMainExecutor(this));
     }
 
 
@@ -153,6 +226,8 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
         //ttsのリソース開放
         ttsEn.shutdown();
         ttsJp.shutdown();
+
+        cameraExecutor.shutdown();
     }
     @Override
     public void onBackPressed(){

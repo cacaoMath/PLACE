@@ -6,6 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".activity.QuestionActivity">
 
+    <androidx.camera.view.PreviewView
+        android:id="@+id/viewFinder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 
     <TextView
         android:id="@+id/Question"
@@ -18,6 +23,8 @@
         android:gravity="center"
         android:text="@string/question"
         android:textSize="40sp"
+        android:background="@color/colorBg"
+        android:alpha="0.7"
         app:layout_constraintBottom_toTopOf="@+id/ansBtn1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,6 +42,7 @@
         android:elevation="4dp"
         android:onClick="pushButton"
         android:text="Button4"
+        android:alpha="0.7"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -55,6 +63,7 @@
         android:onClick="pushButton"
         android:text="Button1"
         android:textSize="24sp"
+        android:alpha="0.7"
         app:layout_constraintBottom_toTopOf="@+id/ansBtn2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
@@ -73,6 +82,7 @@
         android:elevation="4dp"
         android:onClick="pushButton"
         android:text="Button2"
+        android:alpha="0.7"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/ansBtn3"
         app:layout_constraintEnd_toEndOf="parent"
@@ -92,6 +102,7 @@
         android:elevation="4dp"
         android:onClick="pushButton"
         android:text="Button3"
+        android:alpha="0.7"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/ansBtn4"
         app:layout_constraintEnd_toEndOf="parent"
