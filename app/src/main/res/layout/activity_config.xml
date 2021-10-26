@@ -40,7 +40,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/signoutBtn"
-        app:layout_constraintTop_toBottomOf="@+id/measurementTimeEt" />
+        app:layout_constraintTop_toBottomOf="@+id/measurementTimeEt"
+        app:layout_constraintVertical_bias="0.674" />
 
     <Button
         android:id="@+id/signoutBtn"
@@ -52,7 +53,8 @@
         app:layout_constraintEnd_toStartOf="@+id/config_save_btn"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/measurementTimeEt" />
+        app:layout_constraintTop_toBottomOf="@+id/measurementTimeEt"
+        app:layout_constraintVertical_bias="0.674" />
 
     <EditText
         android:id="@+id/measurementTimeEt"
@@ -66,6 +68,31 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/seeThrowSwitch"
+        android:layout_width="200dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="44dp"
+        android:text="@string/see_throw_switch"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/measurementTimeEt"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/voiceSwitch"
+        android:layout_width="200dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="44dp"
+        android:text="@string/voice_switch"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/seeThrowSwitch"
+        app:layout_constraintVertical_bias="0.018" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
