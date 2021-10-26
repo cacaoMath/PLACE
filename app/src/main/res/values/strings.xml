@@ -22,6 +22,8 @@
     <string name="measurement_time">計測時間（分）</string>
     <string name="sign_out">sign out</string>
     <string name="please_input_number">数字を入力してください．単位は[分]です．</string>
+    <string name="see_throw_switch">See Throw</string>
+    <string name="voice_switch">Voice</string>
 
     <!--InputNoteActivity-->
     <string name="tv_label">ラベルデータ</string>

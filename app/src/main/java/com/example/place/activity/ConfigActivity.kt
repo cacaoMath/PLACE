@@ -2,6 +2,7 @@ package com.example.place.activity
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.preference.PreferenceManager
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
@@ -9,8 +10,8 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.place.MetaData.Companion.getInstance
 import com.example.place.databinding.ActivityConfigBinding
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.firebase.auth.FirebaseAuth
 
 open class ConfigActivity : AppCompatActivity() {
@@ -18,8 +19,9 @@ open class ConfigActivity : AppCompatActivity() {
     private lateinit var configSaveBtn: Button
     private lateinit var signOutBtn: Button
     private lateinit var measurementTimeEt: EditText
-    private val metaData = getInstance()
-    
+    private lateinit var seeThrowSwitch: SwitchMaterial
+    private lateinit var voiceSwitch: SwitchMaterial
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityConfigBinding.inflate(layoutInflater)
@@ -29,7 +31,14 @@ open class ConfigActivity : AppCompatActivity() {
         configSaveBtn = binding.configSaveBtn
         signOutBtn = binding.signoutBtn
         measurementTimeEt = binding.measurementTimeEt
-        measurementTimeEt.setText(metaData.measurementTime.toString())
+        seeThrowSwitch = binding.seeThrowSwitch
+        voiceSwitch = binding.voiceSwitch
+
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
+        seeThrowSwitch.isChecked = sharedPreferences.getBoolean("seeThrow",false)
+        voiceSwitch.isChecked = sharedPreferences.getBoolean("voiceMode",false)
+
+        measurementTimeEt.setText(sharedPreferences.getInt("measurementTime",10).toString())
         configSaveBtn.setOnClickListener(View.OnClickListener {
             val inputTxt = measurementTimeEt.text.toString()
             when {
@@ -41,10 +50,10 @@ open class ConfigActivity : AppCompatActivity() {
                     Log.i(TAG,"計測時間は数値だけを入れてください")
                 }
                 TextUtils.isEmpty(inputTxt) -> {
-                    metaData.measurementTime = 10
+                    sharedPreferences.edit().putInt("measurementTime", 10).apply()
                 }
                 else -> {
-                    metaData.measurementTime = inputTxt.toInt()
+                    sharedPreferences.edit().putInt("measurementTime", inputTxt.toInt()).apply()
                 }
             }
             Log.d(TAG, "Saved!!")
@@ -56,9 +65,18 @@ open class ConfigActivity : AppCompatActivity() {
             startActivity(titleIntent)
             finish()
         })
+
+        seeThrowSwitch.setOnCheckedChangeListener { _, isChecked ->
+            sharedPreferences.edit().putBoolean("seeThrow", isChecked).apply()
+        }
+
+        voiceSwitch.setOnCheckedChangeListener { _, isChecked ->
+            sharedPreferences.edit().putBoolean("voiceMode", isChecked).apply()
+        }
+
     }
 
     companion object {
-        protected val TAG = ConfigActivity::class.java.simpleName
+        private var TAG = ConfigActivity::class.java.simpleName
     }
 }

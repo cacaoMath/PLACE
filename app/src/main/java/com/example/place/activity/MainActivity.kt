@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.AlarmManagerCompat
+import androidx.preference.PreferenceManager
 import com.example.place.MetaData.Companion.getInstance
 import com.example.place.R
 import com.example.place.databinding.ActivityMainBinding
@@ -24,6 +25,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var alertDialog: AlertDialog? = null
     var metaData = getInstance()
+    private var measurementTime:Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +42,8 @@ class MainActivity : AppCompatActivity() {
 
         val startBtn = binding.startBtn
         val metaBtn = binding.metaBtn
+
+        measurementTime = PreferenceManager.getDefaultSharedPreferences(this).getInt("measurementTime",10)
 
 
         startBtn.setOnClickListener { //問題画面へ遷移
@@ -75,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         // Calendarを使って現在の時間をミリ秒で取得
         calendar.timeInMillis = System.currentTimeMillis()
         // metadataに保存されている分数後に設定
-        calendar.add(Calendar.SECOND, metaData.measurementTime * 60)
+        calendar.add(Calendar.SECOND, measurementTime * 60)
 
         //時間精度デバック用
         val df: DateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS")
@@ -94,7 +98,7 @@ class MainActivity : AppCompatActivity() {
         AlarmManagerCompat.setExact(am, AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pending)
         Toast.makeText(
             applicationContext,
-            "${metaData.measurementTime}分の計測を始めます.", Toast.LENGTH_SHORT
+            "${measurementTime}分の計測を始めます.", Toast.LENGTH_SHORT
         ).show()
     }
 

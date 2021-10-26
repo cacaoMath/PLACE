@@ -30,6 +30,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.preference.PreferenceManager;
 
 import com.example.place.DataTransferKt;
 import com.example.place.MetaData;
@@ -85,6 +86,7 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
     //音声再生
     private TextToSpeech ttsJp;
     private TextToSpeech ttsEn;
+    private Boolean isVoiceMode;
 
     //シースルー用
     private ExecutorService cameraExecutor;
@@ -127,9 +129,21 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
         ansBtn3 = binding.ansBtn3;
         ansBtn4 = binding.ansBtn4;
 
+        cameraView = binding.viewFinder;
+
 //        showNextQuiz(); //第１問目表示用
         sensing.start(""); //計測開始
 
+        //シースルーにするかどうか
+        if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("seeThrow",false)) {
+            launchSeeThrow();
+        }else{
+            cameraView.setVisibility(View.INVISIBLE);
+        }
+        isVoiceMode = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("voiceMode",false);
+    }
+
+    private void launchSeeThrow(){
         if(allPermissionsGranted()){
             startCamera(this);
         }else{
@@ -138,7 +152,6 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
         }
 
         cameraExecutor = Executors.newSingleThreadExecutor();
-        cameraView = binding.viewFinder;
 
     }
 
@@ -195,7 +208,7 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
                 ttsJp.setLanguage(Locale.JAPANESE);
                 Log.i(TAG, "言語の設定完了しました．");
                 //両言語のttsの初期化完了後に問題開始する．
-                showNextQuiz();
+                showNextQuiz(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("voiceMode",false));
             }else{
                 Log.i(TAG, "言語の設定するのに失敗しました．システムの音声出力言語設定（日本語，英語）を確認してください．");
             }
@@ -265,6 +278,7 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
                 }).show();
     }
 
+    //xmlのOnClickで使用する
     public void pushButton(View view){
         //ボタン(イベント)連打防止処理
         if(eventFlag) return;
@@ -328,7 +342,7 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
                     finish();//追加
                 } else {
                     count++;
-                    showNextQuiz();
+                    showNextQuiz(isVoiceMode);
                 }
             }
         });
@@ -347,17 +361,20 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
     }
 
     //出題する問題
-    public void showNextQuiz(){
+    public void showNextQuiz(Boolean isVoiceMode){
         //単語の読み上げ
-        wordSpeak(ttsEn, quizSet[count][1]);
-        wordSpeak(ttsEn, "A ");
-        wordSpeak(ttsJp, quizSet[count][2]);
-        wordSpeak(ttsEn, "B ");
-        wordSpeak(ttsJp, quizSet[count][3]);
-        wordSpeak(ttsEn, "C ");
-        wordSpeak(ttsJp, quizSet[count][4]);
-        wordSpeak(ttsEn, "D ");
-        wordSpeak(ttsJp, quizSet[count][5]);
+        if(isVoiceMode){
+            wordSpeak(ttsEn, quizSet[count][1]);
+            wordSpeak(ttsEn, "A ");
+            wordSpeak(ttsJp, quizSet[count][2]);
+            wordSpeak(ttsEn, "B ");
+            wordSpeak(ttsJp, quizSet[count][3]);
+            wordSpeak(ttsEn, "C ");
+            wordSpeak(ttsJp, quizSet[count][4]);
+            wordSpeak(ttsEn, "D ");
+            wordSpeak(ttsJp, quizSet[count][5]);
+        }
+
 
         questionView.setText(quizSet[count][1]);
         if(quizSet[count][1].length() > 14){

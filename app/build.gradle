@@ -52,6 +52,8 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     implementation "androidx.core:core-ktx:1.6.0"
 
+    implementation "androidx.preference:preference-ktx:1.1.1"
+
     //cameraX
     def camerax_version ="1.0.2"
     // CameraX core library using camera2 implementation
