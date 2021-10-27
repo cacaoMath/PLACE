@@ -266,7 +266,7 @@ public class Quiz {
         this.set();
     }
 
-    public void set(){
+    private void set(){
         int Noun_counter = 0;
         int Verb_counter = 0;
         int Adj_counter = 0;
@@ -298,65 +298,41 @@ public class Quiz {
         }
     }
 
-    public String[][] GetQuizSet(int sum){
-        String[][] temp = new String[sum][8];
-        ArrayList<Integer> list = new ArrayList<Integer>();
-
-        // listに値を入れる。この段階では昇順
-        for(int i = 0 ; i < 1300 ; i++) {
-            list.add(i);
-        }
-        // シャッフルして、順番を変える
-        Collections.shuffle(list);
-
-        for(int i = 0; i < sum ; i++){
-            String[] ans = GetOtherAnswer(quizData[list.get(i)][0]);
-            temp[i][6] = ans[3];//解答
-            List<String> answer = Arrays.asList(ans);
-            Collections.shuffle(answer);
-            temp[i][0] = "Q" + i;//問題の番号
-            temp[i][1] = quizData[list.get(i)][1];//問題英単語
-            temp[i][2] = answer.get(0);//選択肢1
-            temp[i][3] = answer.get(1);//選択肢2
-            temp[i][4] = answer.get(2);//選択肢3
-            temp[i][5] = answer.get(3);//選択肢4
-            temp[i][7] = quizData[list.get(i)][0];//問題英単語番号
-        }
-        return temp;
-    }
-
     //Quizの出題範囲を限定するための処理
-    public String[][] GetQuizSet(int sum, String quizPattern){
-        String[][] temp = new String[sum][8];
+    public String[][] GetQuizSet(int setSize, String quizPattern){
+        String[][] temp = new String[setSize][8];
         ArrayList<Integer> list = new ArrayList<Integer>();
 
 
         int Q_Num;
         int Q_endNum;
+        if(setSize > quizData.length/5){
+            quizPattern = "default";
+        }
         switch (quizPattern){
             case "A":
                 Q_Num = 0;
-                Q_endNum = 30;
+                Q_endNum = setSize;
                 break;
 
             case "B":
-                Q_Num = 30;
-                Q_endNum = 60;
+                Q_Num = setSize;
+                Q_endNum = 2*setSize;
                 break;
 
             case "C":
-                Q_Num = 60;
-                Q_endNum = 90;
+                Q_Num = 2*setSize;
+                Q_endNum = 3*setSize;
                 break;
 
             case "D":
-                Q_Num = 90;
-                Q_endNum = 120;
+                Q_Num = 3*setSize;
+                Q_endNum = 4*setSize;
                 break;
 
             case "E":
-                Q_Num = 120;
-                Q_endNum = 150;
+                Q_Num = 4*setSize;
+                Q_endNum = 5*setSize;
                 break;
 
             default:
@@ -370,7 +346,7 @@ public class Quiz {
         // シャッフルして、順番を変える
         Collections.shuffle(list);
 
-        for(int i = 0; i < sum ; i++){
+        for(int i = 0; i < setSize ; i++){
             String[] ans = GetOtherAnswer(quizData[list.get(i)][0]);
             temp[i][6] = ans[3];//解答
             List<String> answer = Arrays.asList(ans);
@@ -386,68 +362,9 @@ public class Quiz {
         return temp;
     }
 
-    public String[][] GetQuizSetEtoJ(int sum, String quizPattern){
-        String[][] temp = new String[sum][8];
-        ArrayList<Integer> list = new ArrayList<Integer>();
-
-
-        int Q_Num;
-        int Q_endNum;
-        switch (quizPattern){
-            case "A":
-                Q_Num = 0;
-                Q_endNum = 30;
-                break;
-
-            case "B":
-                Q_Num = 30;
-                Q_endNum = 60;
-                break;
-
-            case "C":
-                Q_Num = 60;
-                Q_endNum = 90;
-                break;
-
-            case "D":
-                Q_Num = 90;
-                Q_endNum = 120;
-                break;
-
-            case "E":
-                Q_Num = 120;
-                Q_endNum = 150;
-                break;
-
-            default:
-                Q_Num = quizData.length-50;
-                Q_endNum = quizData.length;
-        }
-        // listに値を入れる。この段階では昇順
-        for(; Q_Num < Q_endNum ; Q_Num++) {
-            list.add(Q_Num);
-        }
-        // シャッフルして、順番を変える
-        Collections.shuffle(list);
-
-        for(int i = 0; i < sum ; i++){
-            String[] ans = GetOtherAnswer(quizData[list.get(i)][0]);
-            temp[i][6] = ans[3];//解答
-            List<String> answer = Arrays.asList(ans);
-            Collections.shuffle(answer);
-            temp[i][0] = "Q" + i;//問題の番号
-            temp[i][1] = quizData[list.get(i)][1];//問題英単語
-            temp[i][2] = answer.get(0);//選択肢1
-            temp[i][3] = answer.get(1);//選択肢2
-            temp[i][4] = answer.get(2);//選択肢3
-            temp[i][5] = answer.get(3);//選択肢4
-            temp[i][7] = quizData[list.get(i)][0];//問題英単語
-        }
-        return temp;
-    }
 
     //問題番号(1～1300)を渡すと他の選択肢と問題番号の解答を返すメソッド
-    public String[] GetOtherAnswer(String num){
+    private String[] GetOtherAnswer(String num){
         String type = quizData[Integer.valueOf(num).intValue() - 1][3];
         Random random = new Random();
         String[] temp = new String[4];
@@ -531,14 +448,6 @@ public class Quiz {
         }
         temp[3] = quizData[Integer.valueOf(num).intValue() - 1][2];
         return temp;
-    }
-    public void setMemory(int num, boolean f){
-        if(f){
-            this.quizData[num][4] = "1";
-        }
-        else{
-            this.quizData[num][4] = "0";
-        }
     }
 
 
