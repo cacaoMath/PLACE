@@ -24,6 +24,7 @@
     <string name="please_input_number">数字を入力してください．単位は[分]です．</string>
     <string name="see_throw_switch">See Throw</string>
     <string name="voice_switch">Voice</string>
+    <string name="flash_card_switch">Flash Card</string>
 
     <!--InputNoteActivity-->
     <string name="tv_label">ラベルデータ</string>
