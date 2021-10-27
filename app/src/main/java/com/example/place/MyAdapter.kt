@@ -5,23 +5,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.place.databinding.FlashCardItemBinding
 
 class MyAdapter(private val dataSet: Array<Array<String>>) :RecyclerView.Adapter<MyAdapter.ViewHolder>(){
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val englishTv: TextView = view.findViewById(R.id.english_tv)
-        val japaneseTv: TextView = view.findViewById(R.id.japanese_tv)
-
-        init {
-            // Define click listener for the ViewHolder's View.
-        }
+    class ViewHolder(binding : FlashCardItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        val englishTv: TextView = binding.englishTv
+        val japaneseTv: TextView = binding.englishTv
     }
 
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item
-        val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.flash_card_item, viewGroup, false)
+        val view = FlashCardItemBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup,false)
 
         return ViewHolder(view)
     }
