@@ -50,8 +50,9 @@ class MainActivity : AppCompatActivity() {
             //メタデータを選択しないと遷移しないようにする
             if (metaData.quizPattern != null || metaData.labelData != null) {
                 startMeasurementAlarm()
-                val qIntent = Intent(applicationContext, QuestionActivity::class.java)
-                startActivity(qIntent)
+//                val qIntent = Intent(applicationContext, QuestionActivity::class.java)
+                val fIntent = Intent(applicationContext, FlashCardActivity::class.java)
+                startActivity(fIntent)
             } else {
                 Snackbar.make(binding.root,"メタデータ入力してください", Snackbar.LENGTH_SHORT)
                     .setAction("メタデータ入力") {
