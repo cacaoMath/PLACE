@@ -29,22 +29,39 @@ class DataTransferKt {
 
 
     //firebaseに送信するデータをリストにまとめる（追加する）処理
-    fun addResultData(learning_time: LongArray, confidence_data: IntArray, known_words: ArrayList<Int>, mistakes_words: ArrayList<Int>, q_number: IntArray){
+    fun addSelectQuizResultData(learning_time: LongArray, confidence_data: IntArray, known_words: ArrayList<Int>, mistakes_words: ArrayList<Int>, q_number: IntArray){
         val result  = hashMapOf(
-                "learningTime" to learning_time.toList(),
-                "q_Number" to q_number.toList(),
-                "knownWords" to known_words.toList(),
-                "mistakeWords" to mistakes_words.toList(),
-                //"confidenceData" to confidence_data.toList(),
-                "Label" to metaData.labelData,
-                "OtherData" to metaData.otherData,
-                "QuestionPattern" to metaData.quizPattern,
-                "User" to user?.email,
-                "Device" to Build.MODEL,
-                "SensingDataFileName" to metaData.sensingFilePath + metaData.labelData
+            "learningType" to "SelectQuiz",
+            "learningTime" to learning_time.toList(),
+            "q_Number" to q_number.toList(),
+            "knownWords" to known_words.toList(),
+            "mistakeWords" to mistakes_words.toList(),
+            //"confidenceData" to confidence_data.toList(),
+            "Label" to metaData.labelData,
+            "OtherData" to metaData.otherData,
+            "QuestionPattern" to metaData.quizPattern,
+            "User" to user?.email,
+            "Device" to Build.MODEL,
+            "SensingDataFileName" to metaData.sensingFilePath + metaData.labelData
         )
         metaData.dataList.add(result)
         Log.d(TAG,"ResultData added to \" dataList \" ${metaData.dataList.size}")
+    }
+
+    fun addFlashCardResultData(learnedWordNumList: IntArray, learningTimeList: LongArray, rememberingOrNotList: IntArray){
+        val result  = hashMapOf(
+            "learningType" to "FlashCard",
+            "learningTimeList" to learningTimeList.toList(),
+            "learnedWordNumList" to learnedWordNumList.toList(),
+            "rememberingOrNotList" to rememberingOrNotList.toList(),
+            "Label" to metaData.labelData,
+            "OtherData" to metaData.otherData,
+            "QuestionPattern" to metaData.quizPattern,
+            "User" to user?.email,
+            "Device" to Build.MODEL,
+            "SensingDataFileName" to metaData.sensingFilePath + metaData.labelData
+        )
+        metaData.dataList.add(result)
     }
 
     //Metadata内のDataListとラベルデータ，問題パターンをリセットする．

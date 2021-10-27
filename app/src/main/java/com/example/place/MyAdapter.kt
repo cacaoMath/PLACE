@@ -11,7 +11,7 @@ class MyAdapter(private val dataSet: Array<Array<String>>) :RecyclerView.Adapter
 
     class ViewHolder(binding : FlashCardItemBinding) : RecyclerView.ViewHolder(binding.root) {
         val englishTv: TextView = binding.englishTv
-        val japaneseTv: TextView = binding.englishTv
+        val japaneseTv: TextView = binding.japaneseTv
     }
 
     // Create new views (invoked by the layout manager)
