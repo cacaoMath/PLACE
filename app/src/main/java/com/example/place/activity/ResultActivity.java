@@ -21,6 +21,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.preference.PreferenceManager;
 
 import com.example.place.DataTransferKt;
+import com.example.place.MeasurementABReceiver;
 import com.example.place.R;
 import com.example.place.databinding.ActivityResultBinding;
 
@@ -36,7 +37,14 @@ public class ResultActivity extends AppCompatActivity {
     private ActivityResultBinding binding;
     private DataTransferKt dt = new DataTransferKt();
 
-    resultActivityABReceiver myReceiver = new resultActivityABReceiver();
+    MeasurementABReceiver myReceiver  = new MeasurementABReceiver(this){
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            super.onReceive(context, intent);
+            //終了時データを転送する
+            dt.sendResultData();
+        }
+    };
 
     ArrayList<Integer> Known_words;
     ArrayList<Integer> Mistakes_words;
@@ -115,8 +123,7 @@ public class ResultActivity extends AppCompatActivity {
                                 .setNegativeButton("はい", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int id) {
-
-                                        cancelMeasurementAlarm();
+                                        myReceiver.cancelABReceiver();
                                         Log.d(TAG, "onClick:home_btn");
                                         finish();
 
@@ -185,49 +192,6 @@ public class ResultActivity extends AppCompatActivity {
             }
         }
         return Num_of_correct;
-    }
-
-
-    //ホームを押すと１０分のカウントを解除する
-    private void cancelMeasurementAlarm(){
-        Toast.makeText(getApplicationContext(), "中止しました", Toast.LENGTH_SHORT).show();
-        // アラームの削除
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-
-        Intent intent = new Intent("STOP");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
-
-        pendingIntent.cancel();
-        alarmManager.cancel(pendingIntent);
-        dt.resetDataList();
-    }
-
-
-
-    //10分間の時間を計測・終了を伝える
-    public class resultActivityABReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //終了時データを転送する
-            dt.sendResultData();
-
-            final DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SS");
-            final Date date = new Date(System.currentTimeMillis());
-            Log.d("alarmCheck_stop", df.format(date));
-
-            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setTitle("計測終了");
-            builder.setCancelable(false);
-            builder.setMessage("規定の計測時間が経過したので\n計測を終了します．\nお疲れさまでした．")
-                    .setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int id) {
-
-                            finish();
-                        }
-                    }).show();
-
-        }
     }
 
 }
