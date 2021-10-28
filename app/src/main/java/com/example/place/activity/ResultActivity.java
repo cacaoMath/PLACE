@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.preference.PreferenceManager;
 
 import com.example.place.DataTransferKt;
 import com.example.place.R;
@@ -25,6 +27,7 @@ import com.example.place.databinding.ActivityResultBinding;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 public class ResultActivity extends AppCompatActivity {
@@ -36,8 +39,9 @@ public class ResultActivity extends AppCompatActivity {
     resultActivityABReceiver myReceiver = new resultActivityABReceiver();
 
     ArrayList<Integer> Known_words;
-    ArrayList<Integer> Mistakes_words;;
-    ArrayList<Integer> AI_words;
+    ArrayList<Integer> Mistakes_words;
+
+    Boolean isFlashCardMode = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,23 +56,42 @@ public class ResultActivity extends AppCompatActivity {
         TextView rightPer = binding.resultText2;
         Button restartBtn = binding.restartBtn;
 
-        //確信度についての保存変数
-        int[] result = getIntent().getExtras().getIntArray("Result");
-        int score = getResult(result);
-        int[] Q_number = getIntent().getExtras().getIntArray("Q_number");
-        long[] learning_time = getIntent().getExtras().getLongArray("Learning_Time");
-        int[] confidence_data = getIntent().getExtras().getIntArray("Confidence_data");
-        Known_words = new ArrayList();
-        Mistakes_words = new ArrayList();
-        AI_words = new ArrayList();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        isFlashCardMode= sharedPreferences.getBoolean("flashCardMode",false);
+        if(isFlashCardMode)
+        {
+            int[] learnedWordNumList = getIntent().getExtras().getIntArray("LearnedWordNumList");
+            long[] learningTimeList = getIntent().getExtras().getLongArray("RememberingOrNotList");
+            int[] rememberingOrNotList = getIntent().getExtras().getIntArray("LearningTimeList");
+            dt.addFlashCardResultData(learnedWordNumList,learningTimeList,rememberingOrNotList);
+
+            //todo:文言の変更
+            numTasks.setText(""+learnedWordNumList.length);
+            rightPer.setText(""+ Arrays.stream(rememberingOrNotList).sum()/rememberingOrNotList.length);
+        }else{
+
+            int[] result = getIntent().getExtras().getIntArray("Result");
+            int score = getResult(result);
+            int[] Q_number = getIntent().getExtras().getIntArray("Q_number");
+            long[] learning_time = getIntent().getExtras().getLongArray("Learning_Time");
+            int[] confidence_data = getIntent().getExtras().getIntArray("Confidence_data");
+            Known_words = new ArrayList();
+            Mistakes_words = new ArrayList();
 
 
-        this.getResultDetail(Q_number, result);
+            this.getResultDetail(Q_number, result);
 
-        Log.d(TAG, "data value"+ learning_time[0]);
-        numTasks.setText(""+result.length);
-        double percent = ((double)score / (double)result.length) * 100;
-        rightPer.setText(""+percent + "%");
+            Log.d(TAG, "data value"+ learning_time[0]);
+            numTasks.setText(""+result.length);
+            double percent = ((double)score / (double)result.length) * 100;
+            rightPer.setText(""+percent + "%");
+
+            //ここでfirestoreに１セット終了時の結果を追加する．
+            dt.addSelectQuizResultData(learning_time, confidence_data, Known_words, Mistakes_words, Q_number);    //テストの結果をfireStoreに送信
+
+        }
+
+
 
 
 
@@ -108,15 +131,18 @@ public class ResultActivity extends AppCompatActivity {
         restartBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                Intent restartIntent = new Intent(getApplicationContext(), QuestionActivity.class);
+                Intent restartIntent;
+                if(isFlashCardMode){
+                    restartIntent = new Intent(getApplicationContext(), FlashCardActivity.class);
+                }else{
+                    restartIntent = new Intent(getApplicationContext(), QuestionActivity.class);
+                }
                 startActivity(restartIntent);
                 Log.d(TAG, "onClick:restart");
                 finish();
             }
         });
 
-        //ここでfirestoreに１セット終了時の結果を追加する．
-        dt.addResultData(learning_time, confidence_data, Known_words, Mistakes_words, Q_number);    //テストの結果をfireStoreに送信
     }
 
     @Override

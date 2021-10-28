@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Switch
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.place.databinding.ActivityConfigBinding
@@ -21,6 +22,7 @@ open class ConfigActivity : AppCompatActivity() {
     private lateinit var measurementTimeEt: EditText
     private lateinit var seeThrowSwitch: SwitchMaterial
     private lateinit var voiceSwitch: SwitchMaterial
+    private lateinit var flashCardSwitch: SwitchMaterial
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,10 +35,12 @@ open class ConfigActivity : AppCompatActivity() {
         measurementTimeEt = binding.measurementTimeEt
         seeThrowSwitch = binding.seeThrowSwitch
         voiceSwitch = binding.voiceSwitch
+        flashCardSwitch = binding.flashCardSwitch
 
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         seeThrowSwitch.isChecked = sharedPreferences.getBoolean("seeThrow",false)
         voiceSwitch.isChecked = sharedPreferences.getBoolean("voiceMode",false)
+        flashCardSwitch.isChecked = sharedPreferences.getBoolean("flashCardMode",false)
 
         measurementTimeEt.setText(sharedPreferences.getInt("measurementTime",10).toString())
         configSaveBtn.setOnClickListener(View.OnClickListener {
@@ -72,6 +76,10 @@ open class ConfigActivity : AppCompatActivity() {
 
         voiceSwitch.setOnCheckedChangeListener { _, isChecked ->
             sharedPreferences.edit().putBoolean("voiceMode", isChecked).apply()
+        }
+
+        flashCardSwitch.setOnCheckedChangeListener{ _, isChecked ->
+            sharedPreferences.edit().putBoolean("flashCardMode", isChecked).apply()
         }
 
     }
