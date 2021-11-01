@@ -31,7 +31,7 @@ class DataTransferKt {
     //firebaseに送信するデータをリストにまとめる（追加する）処理
     fun addSelectQuizResultData(learning_time: LongArray, confidence_data: IntArray, known_words: ArrayList<Int>, mistakes_words: ArrayList<Int>, q_number: IntArray){
         val result  = hashMapOf(
-            "learningType" to "SelectQuiz",
+            "LearningType" to "SelectQuiz",
             "learningTime" to learning_time.toList(),
             "q_Number" to q_number.toList(),
             "knownWords" to known_words.toList(),
@@ -50,7 +50,7 @@ class DataTransferKt {
 
     fun addFlashCardResultData(learnedWordNumList: IntArray, learningTimeList: LongArray, rememberingOrNotList: IntArray){
         val result  = hashMapOf(
-            "learningType" to "FlashCard",
+            "LearningType" to "FlashCard",
             "learningTimeList" to learningTimeList.toList(),
             "learnedWordNumList" to learnedWordNumList.toList(),
             "rememberingOrNotList" to rememberingOrNotList.toList(),
@@ -75,7 +75,7 @@ class DataTransferKt {
 
 
     fun sendResultData(){
-        Log.d(TAG,"sent result test data")
+        Log.i(TAG,"sent result test data to firestore")
 
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
 

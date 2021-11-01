@@ -1,19 +1,23 @@
 package com.example.place.activity
 
+import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
-import androidx.appcompat.widget.Toolbar
+import androidx.appcompat.app.AppCompatActivity
+import com.example.place.DataTransferKt
+import com.example.place.MeasurementABReceiver
 import com.example.place.MetaData.Companion.getInstance
 import com.example.place.MyAdapter
 import com.example.place.Quiz
-import com.example.place.R
 import com.example.place.databinding.ActivityFlashCardBinding
-import com.yuyakaido.android.cardstackview.*
-import java.util.*
+import com.yuyakaido.android.cardstackview.CardStackLayoutManager
+import com.yuyakaido.android.cardstackview.CardStackListener
+import com.yuyakaido.android.cardstackview.CardStackView
+import com.yuyakaido.android.cardstackview.Direction
 
 class FlashCardActivity : AppCompatActivity(), CardStackListener{
     private lateinit var flashCardBinding: ActivityFlashCardBinding
@@ -28,6 +32,22 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener{
     private var isRemembering = false
     private var wordAppearedTime = 0L
 
+    private val dt = DataTransferKt()
+
+    private val myReceiver = object: MeasurementABReceiver(this) {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            super.onReceive(context, intent)
+
+            //終了時データを転送する
+            dt.addFlashCardResultData(
+                learnedWordNumList.toIntArray(),
+                learningTimeList.toLongArray(),
+                rememberingOrNotList.toIntArray()
+            )
+            dt.sendResultData()
+            Log.d(TAG, "measurement finish")
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +62,32 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener{
 
         cardStackView.adapter = MyAdapter(quizSet)
 
-        //todo: onBackPressの時の処理などや，10分計測のアラームの追加
+    }
+
+    override fun onResume() {
+        super.onResume()
+        registerReceiver(myReceiver, IntentFilter("STOP"))
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // ブロードキャストレシーバーを解除する
+        unregisterReceiver(myReceiver)
+    }
+
+    override fun onBackPressed() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("確認")
+        builder.setMessage("計測が中止されます．\nよろしいですか？")
+            .setPositiveButton(
+                "いいえ"
+            ) { _, _ -> }
+            .setNegativeButton(
+                "はい"
+            ) { _, _ -> //10分計測のキャンセル処理
+                myReceiver.cancelABReceiver()
+                finish()
+            }.show()
     }
 
     override fun onCardDragging(direction: Direction?, ratio: Float) {

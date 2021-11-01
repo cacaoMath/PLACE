@@ -33,6 +33,7 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.preference.PreferenceManager;
 
 import com.example.place.DataTransferKt;
+import com.example.place.MeasurementABReceiver;
 import com.example.place.MetaData;
 import com.example.place.Quiz;
 import com.example.place.R;
@@ -91,7 +92,15 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
     //シースルー用
     private ExecutorService cameraExecutor;
 
-    qActivityABReceiver myReceiver = new qActivityABReceiver();
+    MeasurementABReceiver myReceiver = new MeasurementABReceiver(this){
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            super.onReceive(context, intent);
+
+            //計測したデータの記録・転送処理
+            dataTransferProcessing();
+        }
+    };
 
 
     @Override
@@ -267,10 +276,8 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
                 .setNegativeButton("はい", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int id) {
-                        //計測したデータの記録・転送処理
-                        //dataTransferProcessing();
                         //10分計測のキャンセル処理
-                        cancelMeasurementAlarm();
+                        myReceiver.cancelABReceiver();
 
                         sensing.stop();
                         finish();
@@ -446,18 +453,6 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
         confidenceData[count] = value;
     }
 
-    private void cancelMeasurementAlarm(){
-        Toast.makeText(getApplicationContext(), "中断しました", Toast.LENGTH_SHORT).show();
-        // アラームの削除
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-
-        Intent intent = new Intent("STOP");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
-
-        pendingIntent.cancel();
-        alarmManager.cancel(pendingIntent);
-        dt.resetDataList();
-    }
 
     private void dataTransferProcessing(){
         ArrayList<Integer> Known_words = new ArrayList();
@@ -470,48 +465,9 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
                 Known_words.add(Q_num[i]);
             }
         }
-        dt.addResultData(learningTime, confidenceData, Known_words, Mistakes_words, Q_num);
+        dt.addSelectQuizResultData(learningTime, confidenceData, Known_words, Mistakes_words, Q_num);
         dt.sendResultData();
     }
-
-    //10分間の時間を計測・終了を伝える
-    public class qActivityABReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            //計測したデータの記録・転送処理
-            dataTransferProcessing();
-
-            sensing.stop();
-            final DateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SS");
-            final Date date = new Date(System.currentTimeMillis());
-            Log.d("alarmCheck_stop", df.format(date));
-
-            final AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setTitle("計測終了");
-            builder.setCancelable(false);
-            builder.setMessage("規定の計測時間が経過したので\n計測を終了します．\nお疲れさまでした．")
-
-                    .setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int id) {
-
-
-                            Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
-                            //時間精度デバック用
-
-                            //startActivity(mainIntent);
-
-                            finish();
-                        }
-                    }).show();
-
-
-            //Toast.makeText(context, "終了してください ", Toast.LENGTH_LONG).show();
-        }
-    }
-
-
 
 
     public static class ConfidenceDialogFragment extends DialogFragment{

@@ -357,7 +357,7 @@ public class Quiz {
             temp[i][3] = answer.get(1);//選択肢2
             temp[i][4] = answer.get(2);//選択肢3
             temp[i][5] = answer.get(3);//選択肢4
-            temp[i][7] = quizData[list.get(i)][0];//問題英単語
+            temp[i][7] = quizData[list.get(i)][0];//問題英単語番号
         }
         return temp;
     }
