@@ -5,21 +5,21 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.speech.tts.UtteranceProgressListener
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.example.place.DataTransferKt
-import com.example.place.MeasurementABReceiver
+import androidx.preference.PreferenceManager
+import com.example.place.*
 import com.example.place.MetaData.Companion.getInstance
-import com.example.place.MyAdapter
-import com.example.place.Quiz
 import com.example.place.databinding.ActivityFlashCardBinding
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager
 import com.yuyakaido.android.cardstackview.CardStackListener
 import com.yuyakaido.android.cardstackview.CardStackView
 import com.yuyakaido.android.cardstackview.Direction
+import java.util.*
 
-class FlashCardActivity : AppCompatActivity(), CardStackListener{
+class FlashCardActivity : AppCompatActivity(), CardStackListener, VoiceManager.VoiceManagerListener{
     private lateinit var flashCardBinding: ActivityFlashCardBinding
     private lateinit var quizSet : Array<Array<String>>
 
@@ -49,6 +49,9 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener{
         }
     }
 
+    private lateinit var voiceManagerEn: VoiceManager
+    private lateinit var voiceManagerJp: VoiceManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         flashCardBinding = ActivityFlashCardBinding.inflate(layoutInflater)
@@ -61,6 +64,18 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener{
         cardStackView.layoutManager = CardStackLayoutManager(this,this)
 
         cardStackView.adapter = MyAdapter(quizSet)
+
+        voiceManagerEn = VoiceManager(this, Locale.ENGLISH)
+        voiceManagerEn.setLaunchSuccessListener(this)
+        voiceManagerJp = VoiceManager(this, Locale.JAPANESE)
+        voiceManagerJp.setLaunchSuccessListener(this)
+
+        if(!PreferenceManager.getDefaultSharedPreferences(this).getBoolean("voiceMode", false)){
+            voiceManagerJp.isVoiceMode = false
+            voiceManagerEn.isVoiceMode = false
+        }else{
+            //todo:音声再生の起動が終わるまで動かさないようにする．
+        }
 
     }
 
@@ -90,6 +105,12 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener{
             }.show()
     }
 
+    override fun onDestroy() {
+        voiceManagerEn.shutdown()
+        voiceManagerJp.shutdown()
+        super.onDestroy()
+    }
+
     override fun onCardDragging(direction: Direction?, ratio: Float) {
     }
 
@@ -109,6 +130,9 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener{
 
     override fun onCardAppeared(view: View?, position: Int) {
         wordAppearedTime = System.currentTimeMillis()
+        val utteranceId = position.toString()
+        voiceManagerEn.speak(quizSet[position][1], utteranceId)
+        voiceManagerJp.speak(quizSet[position][6], utteranceId)
     }
 
     override fun onCardDisappeared(view: View?, position: Int) {
@@ -149,4 +173,15 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener{
     companion object{
         private const val TAG = "FlashCardActivity"
     }
+
+    override fun onLaunchSuccess(result: Boolean) {
+        if(result){
+            Log.i(TAG,"音声再生機能が使えます．")
+
+        }else{
+            Log.i(TAG,"音声再生機能が使えません．")
+        }
+    }
+
+
 }
