@@ -2,9 +2,7 @@ name: Android CI
 
 on:
   push:
-    tags:
-      - '*v'
-    branches: [ main, develop ]
+    branches: [ develop ]
 
 
 
