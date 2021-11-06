@@ -5,10 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.speech.tts.UtteranceProgressListener
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
+import android.view.WindowManager
+import androidx.core.view.isVisible
 import androidx.preference.PreferenceManager
 import com.example.place.*
 import com.example.place.MetaData.Companion.getInstance
@@ -17,9 +18,13 @@ import com.yuyakaido.android.cardstackview.CardStackLayoutManager
 import com.yuyakaido.android.cardstackview.CardStackListener
 import com.yuyakaido.android.cardstackview.CardStackView
 import com.yuyakaido.android.cardstackview.Direction
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
-class FlashCardActivity : AppCompatActivity(), CardStackListener, VoiceManager.VoiceManagerListener{
+class FlashCardActivity : ScopedAppActivity(), CardStackListener{
     private lateinit var flashCardBinding: ActivityFlashCardBinding
     private lateinit var quizSet : Array<Array<String>>
 
@@ -49,8 +54,12 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener, VoiceManager.V
         }
     }
 
-    private lateinit var voiceManagerEn: VoiceManager
-    private lateinit var voiceManagerJp: VoiceManager
+    private var voiceManagerEn: TextToSpeech? = null
+    private var voiceManagerJp: TextToSpeech? = null
+
+    private lateinit var cameraTask: CameraTask
+
+    private var isVoiceMode = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,18 +74,65 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener, VoiceManager.V
 
         cardStackView.adapter = MyAdapter(quizSet)
 
-        voiceManagerEn = VoiceManager(this, Locale.ENGLISH)
-        voiceManagerEn.setLaunchSuccessListener(this)
-        voiceManagerJp = VoiceManager(this, Locale.JAPANESE)
-        voiceManagerJp.setLaunchSuccessListener(this)
+        cameraTask = CameraTask(this,flashCardBinding.cameraPreview)
 
-        if(!PreferenceManager.getDefaultSharedPreferences(this).getBoolean("voiceMode", false)){
-            voiceManagerJp.isVoiceMode = false
-            voiceManagerEn.isVoiceMode = false
-        }else{
-            //todo:音声再生の起動が終わるまで動かさないようにする．
+
+        isVoiceMode = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("voiceMode", false)
+        if(isVoiceMode){
+            launch {
+                launchAdditionalOption(baseContext)
+            }
         }
 
+    }
+
+    private suspend fun launchAdditionalOption(context: Context){
+        val launchTask = async(Dispatchers.IO) {
+            var isTTSEnReady = false
+            var isTTSJpReady = false
+            voiceManagerEn = TextToSpeech(context) { status ->
+                if (status == TextToSpeech.SUCCESS) {
+                    if (voiceManagerEn?.isLanguageAvailable(Locale.ENGLISH)!! >= TextToSpeech.LANG_AVAILABLE) {
+                        voiceManagerEn?.language = Locale.ENGLISH
+                        isTTSEnReady = true
+                    } else {
+                        Log.i(TAG, "英語の設定するのに失敗しました．システムの音声出力言語設定を確認してください．")
+                        isTTSEnReady = false
+                    }
+                } else {
+                    // Tts init 失敗
+                    Log.i(TAG, "ttsの初期化に失敗しました．音声再生を中止します．")
+                    isTTSEnReady = false
+                }
+
+            }
+            voiceManagerJp = TextToSpeech(context) { status ->
+                if (status == TextToSpeech.SUCCESS) {
+                    if (voiceManagerJp?.isLanguageAvailable(Locale.JAPANESE)!! >= TextToSpeech.LANG_AVAILABLE) {
+                        voiceManagerJp?.language = Locale.JAPANESE
+                        isTTSJpReady = true
+                    } else {
+                        Log.i(TAG, "日本語の設定するのに失敗しました．システムの音声出力言語設定を確認してください．")
+                        isTTSJpReady = false
+                    }
+                } else {
+                    // Tts init 失敗
+                    Log.i(TAG, "ttsの初期化に失敗しました．音声再生を中止します．")
+                    isTTSJpReady = false
+                } }
+
+
+
+            Log.i(TAG, "is TTS Ready ${isTTSEnReady && isTTSJpReady}")
+            isTTSEnReady && isTTSJpReady
+        }
+
+        withContext(Dispatchers.Main){
+            if(launchTask.await()){
+                window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+            }
+
+        }
     }
 
     override fun onResume() {
@@ -106,8 +162,9 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener, VoiceManager.V
     }
 
     override fun onDestroy() {
-        voiceManagerEn.shutdown()
-        voiceManagerJp.shutdown()
+        voiceManagerEn?.shutdown()
+        voiceManagerJp?.shutdown()
+        cameraTask.shutdown()
         super.onDestroy()
     }
 
@@ -131,8 +188,12 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener, VoiceManager.V
     override fun onCardAppeared(view: View?, position: Int) {
         wordAppearedTime = System.currentTimeMillis()
         val utteranceId = position.toString()
-        voiceManagerEn.speak(quizSet[position][1], utteranceId)
-        voiceManagerJp.speak(quizSet[position][6], utteranceId)
+
+        if(isVoiceMode){
+            voiceManagerEn?.speak(quizSet[position][1], TextToSpeech.QUEUE_ADD, null, utteranceId)
+            voiceManagerJp?.speak(quizSet[position][6], TextToSpeech.QUEUE_ADD, null, utteranceId)
+        }
+
     }
 
     override fun onCardDisappeared(view: View?, position: Int) {
@@ -174,14 +235,6 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener, VoiceManager.V
         private const val TAG = "FlashCardActivity"
     }
 
-    override fun onLaunchSuccess(result: Boolean) {
-        if(result){
-            Log.i(TAG,"音声再生機能が使えます．")
-
-        }else{
-            Log.i(TAG,"音声再生機能が使えません．")
-        }
-    }
 
 
 }
