@@ -84,6 +84,11 @@ class FlashCardActivity : ScopedAppActivity(), CardStackListener{
             }
         }
 
+        if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("seeThrow", false)){
+            cameraTask.launchSeeThrow()
+        }else{
+            flashCardBinding.cameraPreview.isVisible = false
+        }
     }
 
     private suspend fun launchAdditionalOption(context: Context){
