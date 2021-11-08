@@ -3,9 +3,9 @@
 <item>
     <shape android:shape="rectangle">
         <corners
-            android:radius="20dp"/>
+            android:radius="4dp"/>
         <solid
-            android:color="@color/gray"/>
+            android:color="@color/flash_card"/>
     </shape>
 </item>
 </selector>

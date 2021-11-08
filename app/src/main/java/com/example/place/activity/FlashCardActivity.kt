@@ -9,6 +9,8 @@ import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
+import android.view.animation.LinearInterpolator
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.preference.PreferenceManager
 import com.example.place.*
@@ -70,9 +72,14 @@ class FlashCardActivity : ScopedAppActivity(), CardStackListener{
 
         cardStackView = flashCardBinding.cardStackView
 
-        cardStackView.layoutManager = CardStackLayoutManager(this,this)
+        cardStackView.layoutManager = CardStackLayoutManager(this,this).apply {
+            setOverlayInterpolator(LinearInterpolator())
+            setVisibleCount(1)
+        }
+
 
         cardStackView.adapter = MyAdapter(quizSet)
+
 
         cameraTask = CameraTask(this,flashCardBinding.cameraPreview)
 
