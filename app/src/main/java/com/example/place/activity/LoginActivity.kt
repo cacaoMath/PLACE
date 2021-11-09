@@ -16,8 +16,6 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 class LoginActivity : AppCompatActivity() {
-    private val TAG = this::class.java.simpleName
-
     // Initialize Firebase Auth
     private var auth : FirebaseAuth = Firebase.auth
 
@@ -134,6 +132,8 @@ class LoginActivity : AppCompatActivity() {
         finish()
     }
 
-
+    companion object{
+        private const val TAG = "LoginActivity"
+    }
 
 }

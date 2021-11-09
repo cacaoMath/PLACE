@@ -37,8 +37,8 @@ class CameraTask(private val context: Context, private val cameraView:PreviewVie
     }
     private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
-        cameraProviderFuture.addListener(Runnable{
-            var cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+        cameraProviderFuture.addListener({
+            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
             // Preview
             val preview = Preview.Builder()
