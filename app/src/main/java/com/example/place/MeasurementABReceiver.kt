@@ -33,7 +33,7 @@ open class MeasurementABReceiver(private val context: Context): BroadcastReceive
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val intent = Intent("STOP")
-        val pendingIntent = PendingIntent.getBroadcast(this.context, 0, intent, 0)
+        val pendingIntent = PendingIntent.getBroadcast(this.context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
         pendingIntent.cancel()
         alarmManager.cancel(pendingIntent)

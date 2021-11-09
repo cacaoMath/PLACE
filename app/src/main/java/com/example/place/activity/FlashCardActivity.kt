@@ -10,7 +10,7 @@ import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.LinearInterpolator
-import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.preference.PreferenceManager
 import com.example.place.*
@@ -20,13 +20,9 @@ import com.yuyakaido.android.cardstackview.CardStackLayoutManager
 import com.yuyakaido.android.cardstackview.CardStackListener
 import com.yuyakaido.android.cardstackview.CardStackView
 import com.yuyakaido.android.cardstackview.Direction
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.*
 
-class FlashCardActivity : ScopedAppActivity(), CardStackListener{
+class FlashCardActivity : AppCompatActivity(), CardStackListener, TextToSpeech.OnInitListener{
     private lateinit var flashCardBinding: ActivityFlashCardBinding
     private lateinit var quizSet : Array<Array<String>>
 
@@ -56,8 +52,7 @@ class FlashCardActivity : ScopedAppActivity(), CardStackListener{
         }
     }
 
-    private var voiceManagerEn: TextToSpeech? = null
-    private var voiceManagerJp: TextToSpeech? = null
+    private lateinit var tts: TextToSpeech
 
     private lateinit var cameraTask: CameraTask
 
@@ -68,6 +63,7 @@ class FlashCardActivity : ScopedAppActivity(), CardStackListener{
         flashCardBinding = ActivityFlashCardBinding.inflate(layoutInflater)
         setContentView(flashCardBinding.root)
         quizSet = Quiz().GetQuizSet(questionNum, getInstance().quizPattern)
+        tts = TextToSpeech(this,this)
 
 
         cardStackView = flashCardBinding.cardStackView
@@ -78,72 +74,18 @@ class FlashCardActivity : ScopedAppActivity(), CardStackListener{
         }
 
 
-        cardStackView.adapter = MyAdapter(quizSet)
-
-
         cameraTask = CameraTask(this,flashCardBinding.cameraPreview)
 
 
         isVoiceMode = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("voiceMode", false)
-        if(isVoiceMode){
-            launch {
-                launchAdditionalOption(baseContext)
-            }
+        if(!isVoiceMode) {
+            cardStackView.adapter = MyAdapter(quizSet)
         }
 
         if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("seeThrow", false)){
             cameraTask.launchSeeThrow()
         }else{
             flashCardBinding.cameraPreview.isVisible = false
-        }
-    }
-
-    private suspend fun launchAdditionalOption(context: Context){
-        val launchTask = async(Dispatchers.IO) {
-            var isTTSEnReady = false
-            var isTTSJpReady = false
-            voiceManagerEn = TextToSpeech(context) { status ->
-                if (status == TextToSpeech.SUCCESS) {
-                    if (voiceManagerEn?.isLanguageAvailable(Locale.ENGLISH)!! >= TextToSpeech.LANG_AVAILABLE) {
-                        voiceManagerEn?.language = Locale.ENGLISH
-                        isTTSEnReady = true
-                    } else {
-                        Log.i(TAG, "英語の設定するのに失敗しました．システムの音声出力言語設定を確認してください．")
-                        isTTSEnReady = false
-                    }
-                } else {
-                    // Tts init 失敗
-                    Log.i(TAG, "ttsの初期化に失敗しました．音声再生を中止します．")
-                    isTTSEnReady = false
-                }
-
-            }
-            voiceManagerJp = TextToSpeech(context) { status ->
-                if (status == TextToSpeech.SUCCESS) {
-                    if (voiceManagerJp?.isLanguageAvailable(Locale.JAPANESE)!! >= TextToSpeech.LANG_AVAILABLE) {
-                        voiceManagerJp?.language = Locale.JAPANESE
-                        isTTSJpReady = true
-                    } else {
-                        Log.i(TAG, "日本語の設定するのに失敗しました．システムの音声出力言語設定を確認してください．")
-                        isTTSJpReady = false
-                    }
-                } else {
-                    // Tts init 失敗
-                    Log.i(TAG, "ttsの初期化に失敗しました．音声再生を中止します．")
-                    isTTSJpReady = false
-                } }
-
-
-
-            Log.i(TAG, "is TTS Ready ${isTTSEnReady && isTTSJpReady}")
-            isTTSEnReady && isTTSJpReady
-        }
-
-        withContext(Dispatchers.Main){
-            if(launchTask.await()){
-                window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-            }
-
         }
     }
 
@@ -174,8 +116,7 @@ class FlashCardActivity : ScopedAppActivity(), CardStackListener{
     }
 
     override fun onDestroy() {
-        voiceManagerEn?.shutdown()
-        voiceManagerJp?.shutdown()
+        tts.shutdown()
         cameraTask.shutdown()
         super.onDestroy()
     }
@@ -202,8 +143,10 @@ class FlashCardActivity : ScopedAppActivity(), CardStackListener{
         val utteranceId = position.toString()
 
         if(isVoiceMode){
-            voiceManagerEn?.speak(quizSet[position][1], TextToSpeech.QUEUE_ADD, null, utteranceId)
-            voiceManagerJp?.speak(quizSet[position][6], TextToSpeech.QUEUE_ADD, null, utteranceId)
+            tts.language = Locale.ENGLISH
+            tts.speak(quizSet[position][1], TextToSpeech.QUEUE_ADD, null, utteranceId)
+            tts.language = Locale.JAPANESE
+            tts.speak(quizSet[position][6], TextToSpeech.QUEUE_ADD, null, utteranceId)
         }
 
     }
@@ -241,6 +184,27 @@ class FlashCardActivity : ScopedAppActivity(), CardStackListener{
             finish()
         }
 
+    }
+    override fun onInit(status: Int) {
+        if (status == TextToSpeech.SUCCESS) {
+            if ((tts.isLanguageAvailable(Locale.ENGLISH) >= TextToSpeech.LANG_AVAILABLE)
+                && (tts.isLanguageAvailable(Locale.JAPANESE) >= TextToSpeech.LANG_AVAILABLE)) {
+                Log.i(TAG, "言語の設定するのに成功しました．")
+                window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                cardStackView.adapter = MyAdapter(quizSet)
+
+            } else {
+                Log.i(TAG, "言語の設定するのに失敗しました．システムの音声出力言語設定を確認してください．")
+                isVoiceMode = false
+                cardStackView.adapter = MyAdapter(quizSet)
+            }
+        } else {
+            // Tts init 失敗
+            Log.i(TAG, "ttsの初期化に失敗しました．音声再生を中止します．")
+            isVoiceMode = false
+            cardStackView.adapter = MyAdapter(quizSet)
+
+        }
     }
 
     companion object{
