@@ -5,4 +5,7 @@
     <color name="colorBg">#f8f1f1</color>
     <color name="colorDefault">#ffa62b</color>
     <color name="gray">#9F9C9C</color>
+    <color name="flash_card">#B3E0E0E0</color>
+    <color name="negative_color">#B300BCD4</color>
+    <color name="positive_color">#B3FF5722</color>
 </resources>

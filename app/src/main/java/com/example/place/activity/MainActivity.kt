@@ -1,8 +1,10 @@
 package com.example.place.activity
 
+import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -77,6 +79,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     //10分計測のためのアラームをセットする
+    @SuppressLint("UnspecifiedImmutableFlag")
     private fun startMeasurementAlarm() {
 
         // 時間をセットする
@@ -93,9 +96,13 @@ class MainActivity : AppCompatActivity() {
 
         //暗黙的なBroadCast
         val intent = Intent("STOP")
-        val pending = PendingIntent.getBroadcast(
-            applicationContext, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT
-        )
+        val pending = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.getBroadcast(
+                applicationContext, 0, intent, PendingIntent.FLAG_IMMUTABLE
+            )}else{
+                PendingIntent.getBroadcast(
+                    applicationContext, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+            }
 
         // アラームをセットする
         val am = getSystemService(ALARM_SERVICE) as AlarmManager

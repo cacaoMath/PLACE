@@ -1,11 +1,8 @@
 package com.example.place.activity;
 
 import android.Manifest;
-import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,7 +15,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -41,19 +37,17 @@ import com.example.place.Sensing;
 import com.example.place.databinding.ActivityQuestionBinding;
 import com.google.common.util.concurrent.ListenableFuture;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 
-public class QuestionActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
+public class QuestionActivity extends AppCompatActivity{
     protected static final String TAG = QuestionActivity.class.getSimpleName();
     private static final String[] REQUIRED_PERMISSIONS = new String[]{Manifest.permission.CAMERA};
     private static final int REQUEST_CODE_PERMISSIONS = 10;
@@ -111,8 +105,6 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolBar);
         setSupportActionBar(myToolbar);
 
-        ttsJp = new TextToSpeech(this, this);
-        ttsEn = new TextToSpeech(this, this);
 
         sensing = new Sensing(this);
 
@@ -149,7 +141,61 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
         }else{
             cameraView.setVisibility(View.INVISIBLE);
         }
+
         isVoiceMode = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("voiceMode",false);
+
+        AtomicReference<Boolean> isTTSJpReady = new AtomicReference<>(false);
+        AtomicReference<Boolean> isTTSEnReady = new AtomicReference<>(false);
+
+        if(isVoiceMode){
+            ttsJp = new TextToSpeech(this, status -> {
+                if (status == TextToSpeech.SUCCESS) {
+
+                    if(ttsEn.isLanguageAvailable(Locale.JAPANESE) >= TextToSpeech.LANG_AVAILABLE){
+                        ttsJp.setLanguage(Locale.JAPANESE);
+                        Log.i(TAG, "日本語の設定完了しました．");
+                        isTTSJpReady.set(true);
+                        if(isTTSEnReady.get() && isTTSJpReady.get()){
+                            showNextQuiz(true);
+                        }
+                    }else{
+                        Log.i(TAG, "言語の設定するのに失敗しました．システムの音声出力言語設定の日本語を確認してください．");
+                        isTTSJpReady.set(false);
+                    }
+
+                } else {
+                    // Tts init 失敗
+                    Log.i(TAG, "ttsの初期化に失敗しました．");
+                    isTTSJpReady.set(false);
+                }
+            });
+
+            ttsEn = new TextToSpeech(this, status -> {
+                if (status == TextToSpeech.SUCCESS) {
+
+                    if(ttsEn.isLanguageAvailable(Locale.ENGLISH) >= TextToSpeech.LANG_AVAILABLE){
+                        ttsEn.setLanguage(Locale.ENGLISH);
+                        Log.i(TAG, "日本語の設定完了しました．");
+                        isTTSEnReady.set(true);
+                    }else{
+                        Log.i(TAG, "言語の設定するのに失敗しました．システムの音声出力言語設定の英語を確認してください．");
+                        isTTSEnReady.set(false);
+                    }
+                    if(isTTSEnReady.get() && isTTSJpReady.get()){
+                        showNextQuiz(true);
+                    }
+
+                } else {
+                    // Tts init 失敗
+                    Log.i(TAG, "ttsの初期化に失敗しました．");
+                    isTTSEnReady.set(false);
+                }
+            });
+        }else{
+            showNextQuiz(false);
+        }
+
+
     }
 
     private void launchSeeThrow(){
@@ -206,28 +252,6 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
         }, ContextCompat.getMainExecutor(this));
     }
 
-
-    @Override
-    public void onInit(int status) {
-        if (status == TextToSpeech.SUCCESS) {
-
-            if((ttsEn.isLanguageAvailable(Locale.ENGLISH) >= TextToSpeech.LANG_AVAILABLE)
-                    &&(ttsJp.isLanguageAvailable(Locale.JAPANESE) >= TextToSpeech.LANG_AVAILABLE)){
-                ttsEn.setLanguage(Locale.ENGLISH);
-                ttsJp.setLanguage(Locale.JAPANESE);
-                Log.i(TAG, "言語の設定完了しました．");
-                //両言語のttsの初期化完了後に問題開始する．
-                showNextQuiz(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("voiceMode",false));
-            }else{
-                Log.i(TAG, "言語の設定するのに失敗しました．システムの音声出力言語設定（日本語，英語）を確認してください．");
-            }
-
-        } else {
-            // Tts init 失敗
-            Log.i(TAG, "ttsの初期化に失敗しました．");
-        }
-
-    }
     @Override
     public void onResume() {
 
@@ -246,8 +270,10 @@ public class QuestionActivity extends AppCompatActivity implements TextToSpeech.
     public void onDestroy() {
         super.onDestroy();
         //ttsのリソース開放
-        ttsEn.shutdown();
-        ttsJp.shutdown();
+        if((ttsEn != null)&&(ttsJp!= null)){
+            ttsEn.shutdown();
+            ttsJp.shutdown();
+        }
 
         cameraExecutor.shutdown();
     }
