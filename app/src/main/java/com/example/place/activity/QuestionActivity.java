@@ -275,7 +275,9 @@ public class QuestionActivity extends AppCompatActivity{
             ttsJp.shutdown();
         }
 
-        cameraExecutor.shutdown();
+        if(cameraExecutor != null){
+            cameraExecutor.shutdown();
+        }
     }
     @Override
     public void onBackPressed(){

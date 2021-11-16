@@ -156,7 +156,6 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener, TextToSpeech.O
 
     override fun onCardAppeared(view: View?, position: Int) {
         wordAppearedTime = System.currentTimeMillis()
-        val utteranceId = position.toString()
 
         if(isVoiceMode){
             tts.language = Locale.ENGLISH
