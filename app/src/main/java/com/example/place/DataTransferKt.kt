@@ -42,7 +42,8 @@ class DataTransferKt {
             "QuestionPattern" to metaData.quizPattern,
             "User" to user?.email,
             "Device" to Build.MODEL,
-            "SensingDataFileName" to metaData.sensingFilePath + metaData.labelData
+            "SensingDataFileName" to metaData.sensingFilePath + metaData.labelData,
+            "Timestamp" to System.currentTimeMillis()
         )
         metaData.dataList.add(result)
         Log.d(TAG,"ResultData added to \" dataList \" ${metaData.dataList.size}")
@@ -59,7 +60,8 @@ class DataTransferKt {
             "QuestionPattern" to metaData.quizPattern,
             "User" to user?.email,
             "Device" to Build.MODEL,
-            "SensingDataFileName" to metaData.sensingFilePath + metaData.labelData
+            "SensingDataFileName" to metaData.sensingFilePath + metaData.labelData,
+            "Timestamp" to System.currentTimeMillis()
         )
         metaData.dataList.add(result)
     }
