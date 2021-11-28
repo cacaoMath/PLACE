@@ -17,7 +17,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 
 class SignupActivity : AppCompatActivity() {
-    private val TAG = this::class.java.simpleName
     // Initialize Firebase Auth
     private var auth : FirebaseAuth = Firebase.auth
     private lateinit var binding: ActivitySignupBinding
@@ -127,5 +126,9 @@ class SignupActivity : AppCompatActivity() {
         val mainIntent = Intent(applicationContext, MainActivity::class.java)
         startActivity(mainIntent)
         finish()
+    }
+
+    companion object{
+        private const val TAG ="SignupActivity"
     }
 }

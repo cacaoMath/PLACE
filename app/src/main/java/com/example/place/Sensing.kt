@@ -18,7 +18,7 @@ class Sensing(context: Context) : SensorEventListener {
     private val metadata = MetaData.getInstance()
 
     private val sensorManager: SensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-    public var stateMeasurement = false
+    var stateMeasurement = false
         private set
 
     // for File

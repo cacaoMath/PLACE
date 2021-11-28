@@ -77,7 +77,7 @@ class DataTransferKt {
     fun sendResultData(){
         Log.i(TAG,"sent result test data to firestore")
 
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.JAPAN).format(Date())
 
         for(resultData in metaData.dataList){
             // Add a new document with a generated ID

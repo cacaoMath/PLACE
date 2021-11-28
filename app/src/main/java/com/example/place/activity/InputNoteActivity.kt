@@ -14,7 +14,6 @@ import com.example.place.databinding.ActivityInputNoteBinding
 データ計測時のメタデータやラベルデータなどを入力する用
  */
 class InputNoteActivity : AppCompatActivity() {
-    private val TAG = InputNoteActivity::class.java.simpleName
     //メタデータを入れる用
     private var metaData = MetaData.getInstance()
 
@@ -73,5 +72,9 @@ class InputNoteActivity : AppCompatActivity() {
         metaData.quizPattern = qstSpn.selectedItem.toString()
 
         finish()
+    }
+
+    companion object{
+        private const val TAG = "InputNoteActivity"
     }
 }

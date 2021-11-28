@@ -15,7 +15,7 @@ import java.util.*
 open class MeasurementABReceiver(private val context: Context): BroadcastReceiver() {
     private val dt = DataTransferKt()
     override fun onReceive(context: Context?, intent: Intent?) {
-        val df = SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SS")
+        val df = SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SS", Locale.JAPAN)
         val date = Date(System.currentTimeMillis())
         Log.d("alarmCheck_stop", df.format(date))
         val builder = AlertDialog.Builder(context)

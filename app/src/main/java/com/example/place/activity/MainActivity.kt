@@ -23,10 +23,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
-    private val TAG = MainActivity::class.java.simpleName
     private lateinit var binding: ActivityMainBinding
     private var alertDialog: AlertDialog? = null
-    var metaData = getInstance()
+    private var metaData = getInstance()
     private var measurementTime:Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +39,7 @@ class MainActivity : AppCompatActivity() {
 
         val currentUser = mAuth.currentUser
         val currentUserTxt = binding.currentUserTxt
-        currentUserTxt.text = "${currentUser!!.email}\nでログインしています．"
+        currentUserTxt.text = String.format("%s\nでログインしています．",currentUser!!.email)
 
         val startBtn = binding.startBtn
         val metaBtn = binding.metaBtn
@@ -90,7 +89,7 @@ class MainActivity : AppCompatActivity() {
         calendar.add(Calendar.SECOND, measurementTime * 60)
 
         //時間精度デバック用
-        val df: DateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS")
+        val df: DateFormat = SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS", Locale.JAPAN)
         val date = Date(System.currentTimeMillis())
         Log.d("alarmCheck_start", df.format(date))
 
@@ -114,15 +113,6 @@ class MainActivity : AppCompatActivity() {
         ).show()
     }
 
-    private fun cancelMeasurementAlarm() {
-        Toast.makeText(applicationContext, "中断しました", Toast.LENGTH_SHORT).show()
-        // アラームの削除
-        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
-        val intent = Intent("STOP")
-        val pendingIntent = PendingIntent.getBroadcast(applicationContext, 0, intent, 0)
-        pendingIntent.cancel()
-        alarmManager.cancel(pendingIntent)
-    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater
@@ -150,4 +140,7 @@ class MainActivity : AppCompatActivity() {
             .setNegativeButton("No") { _, _ -> alertDialog!!.dismiss() }.show()
     }
 
+    companion object{
+        private const val TAG = "MainActivity"
+    }
 }

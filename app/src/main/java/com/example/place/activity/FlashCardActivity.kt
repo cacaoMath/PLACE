@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
@@ -27,7 +28,7 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener, TextToSpeech.O
     private lateinit var quizSet : Array<Array<String>>
 
     private lateinit var cardStackView: CardStackView
-    private val questionNum = 30
+    private val questionNum = 50
     private var learnedWordNumList = mutableListOf<Int>()
     private var learningTimeList = mutableListOf<Long>()
     private var rememberingOrNotList = mutableListOf<Int>()
@@ -64,6 +65,21 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener, TextToSpeech.O
         setContentView(flashCardBinding.root)
         quizSet = Quiz().GetQuizSet(questionNum, getInstance().quizPattern)
         tts = TextToSpeech(this,this)
+
+        tts.setOnUtteranceProgressListener(object: UtteranceProgressListener() {
+            override fun onStart(utteranceId: String?) {
+            }
+
+            override fun onDone(utteranceId: String?) {
+                if(utteranceId.equals("jp")){
+                    cardStackView.swipe()
+                }
+            }
+
+            override fun onError(utteranceId: String?) {
+            }
+
+        })
 
 
         cardStackView = flashCardBinding.cardStackView
@@ -140,13 +156,12 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener, TextToSpeech.O
 
     override fun onCardAppeared(view: View?, position: Int) {
         wordAppearedTime = System.currentTimeMillis()
-        val utteranceId = position.toString()
 
         if(isVoiceMode){
             tts.language = Locale.ENGLISH
-            tts.speak(quizSet[position][1], TextToSpeech.QUEUE_ADD, null, utteranceId)
+            tts.speak(quizSet[position][1], TextToSpeech.QUEUE_ADD, null, "en")
             tts.language = Locale.JAPANESE
-            tts.speak(quizSet[position][6], TextToSpeech.QUEUE_ADD, null, utteranceId)
+            tts.speak(quizSet[position][6], TextToSpeech.QUEUE_ADD, null, "jp")
         }
 
     }
@@ -188,7 +203,8 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener, TextToSpeech.O
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
             if ((tts.isLanguageAvailable(Locale.ENGLISH) >= TextToSpeech.LANG_AVAILABLE)
-                && (tts.isLanguageAvailable(Locale.JAPANESE) >= TextToSpeech.LANG_AVAILABLE)) {
+                && (tts.isLanguageAvailable(Locale.JAPANESE) >= TextToSpeech.LANG_AVAILABLE)
+                && isVoiceMode) {
                 Log.i(TAG, "言語の設定するのに成功しました．")
                 window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 cardStackView.adapter = MyAdapter(quizSet)
