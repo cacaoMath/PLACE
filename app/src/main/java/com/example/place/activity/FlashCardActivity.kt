@@ -28,7 +28,7 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener, TextToSpeech.O
     private lateinit var quizSet : Array<Array<String>>
 
     private lateinit var cardStackView: CardStackView
-    private val questionNum = 30
+    private val questionNum = 50
     private var learnedWordNumList = mutableListOf<Int>()
     private var learningTimeList = mutableListOf<Long>()
     private var rememberingOrNotList = mutableListOf<Int>()
