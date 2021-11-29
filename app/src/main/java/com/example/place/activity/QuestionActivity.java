@@ -54,7 +54,7 @@ public class QuestionActivity extends AppCompatActivity{
     private boolean eventFlag; //ボタン操作で二重タップを防ぐため
     private boolean isConfident = false;
 
-    private int numOfQuiz = 30; //後々はユーザーに決めてもらう
+    private int numOfQuiz = 50; //後々はユーザーに決めてもらう
     private int count;
     private Quiz quiz;
     private String[][] quizSet;

@@ -83,7 +83,7 @@ class DataTransferKt {
 
         for(resultData in metaData.dataList){
             // Add a new document with a generated ID
-            db.collection("androidResults").document(user!!.uid)
+            db.collection("androidResults_MT").document(user!!.uid)
                     .collection("MeasurementType").document("${timeStamp}_${metaData.labelData}")
                     .collection("Data").document()
                     .set(resultData)
