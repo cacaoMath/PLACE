@@ -52,16 +52,15 @@
         <item>B</item>
         <item>C</item>
         <item>D</item>
-        <item>E</item>
+<!--human errorを行いようにコメントアウト        <item>E</item>-->
     </string-array>
 
     <string-array name="labelList">
         <item>other</item>
-        <item>lie</item>
         <item>sit</item>
-        <item>stand</item>
-        <item>walk_treadmill</item>
-        <item>walk_disturb</item>
+        <item>walk_normal</item>
+        <item>walk_seeThrow</item>
+        <item>walk_sound</item>
     </string-array>
 
     <!-- ユーザーアンケート　mLearningの経験 -->
