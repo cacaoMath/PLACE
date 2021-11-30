@@ -75,7 +75,7 @@ public class ResultActivity extends AppCompatActivity {
 
             //todo:文言の変更
             numTasks.setText(""+learnedWordNumList.length);
-            rightPer.setText(""+ Arrays.stream(rememberingOrNotList).sum()/rememberingOrNotList.length);
+            rightPer.setText("-");
         }else{
 
             int[] result = getIntent().getExtras().getIntArray("Result");

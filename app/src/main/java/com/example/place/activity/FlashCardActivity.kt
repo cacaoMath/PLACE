@@ -169,6 +169,10 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener, TextToSpeech.O
     override fun onCardDisappeared(view: View?, position: Int) {
         Log.d(TAG,"Disappeared $position")
 
+        if(!learnedWordNumList.isNullOrEmpty()
+            && learnedWordNumList.last() == quizSet[position][7].toInt()){
+            return
+        }
         //覚えていたら1，覚えていなければ0
         if(isRemembering){
             rememberingOrNotList.add(1)
