@@ -137,7 +137,7 @@ class MainActivity : AppCompatActivity() {
             .setTitle("確認")
             .setMessage("終了してよろしいですか")
             .setPositiveButton("Yes") { _, _ -> finish() }
-            .setNegativeButton("No") { _, _ -> alertDialog!!.dismiss() }.show()
+            .setNegativeButton("No") { _, _ ->  }.show()
     }
 
     companion object{
