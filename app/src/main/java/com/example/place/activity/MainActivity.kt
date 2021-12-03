@@ -113,6 +113,11 @@ class MainActivity : AppCompatActivity() {
         ).show()
     }
 
+    override fun onResume(){
+        super.onResume()
+        measurementTime = PreferenceManager.getDefaultSharedPreferences(this).getInt("measurementTime",10)
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         val inflater = menuInflater

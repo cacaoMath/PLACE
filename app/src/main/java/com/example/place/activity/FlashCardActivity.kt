@@ -41,6 +41,8 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener, TextToSpeech.O
     private val myReceiver = object: MeasurementABReceiver(this) {
         override fun onReceive(context: Context?, intent: Intent?) {
             super.onReceive(context, intent)
+            tts.language = Locale.JAPANESE
+            tts.speak("計測終了です．お疲れさまでした．", TextToSpeech.QUEUE_ADD, null, "finish")
 
             //終了時データを転送する
             dt.addFlashCardResultData(
@@ -73,6 +75,8 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener, TextToSpeech.O
             override fun onDone(utteranceId: String?) {
                 if(utteranceId.equals("jp")){
                     cardStackView.swipe()
+                }else if(utteranceId.equals("finish")){
+                    tts.stop()
                 }
             }
 
@@ -212,6 +216,7 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener, TextToSpeech.O
                 Log.i(TAG, "言語の設定するのに成功しました．")
                 window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                 cardStackView.adapter = MyAdapter(quizSet)
+                tts.setSpeechRate(0.8f)//再生速度
 
             } else {
                 Log.i(TAG, "言語の設定するのに失敗しました．システムの音声出力言語設定を確認してください．")

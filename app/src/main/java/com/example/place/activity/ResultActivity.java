@@ -150,6 +150,13 @@ public class ResultActivity extends AppCompatActivity {
             }
         });
 
+        if(PreferenceManager.getDefaultSharedPreferences(this).getBoolean("voiceMode",false)){
+            Intent restartIntent;
+            restartIntent = new Intent(getApplicationContext(), FlashCardActivity.class);
+            startActivity(restartIntent);
+            Log.d(TAG, "flash card:restart");
+            finish();
+        }
     }
 
     @Override
