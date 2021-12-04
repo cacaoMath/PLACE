@@ -2,6 +2,7 @@ package com.example.place.activity
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
@@ -12,6 +13,7 @@ import android.view.View
 import android.view.WindowManager
 import android.view.animation.LinearInterpolator
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.preference.PreferenceManager
 import com.example.place.*
@@ -65,6 +67,9 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener, TextToSpeech.O
         super.onCreate(savedInstanceState)
         flashCardBinding = ActivityFlashCardBinding.inflate(layoutInflater)
         setContentView(flashCardBinding.root)
+        val myToolbar = findViewById<View>(R.id.toolBar) as Toolbar
+        setSupportActionBar(myToolbar)
+
         quizSet = Quiz().GetQuizSet(questionNum, getInstance().quizPattern)
         tts = TextToSpeech(this,this)
 
@@ -107,6 +112,24 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener, TextToSpeech.O
         }else{
             flashCardBinding.cameraPreview.isVisible = false
         }
+
+        myToolbar.setNavigationIcon(R.drawable.round_home_black_18dp)
+
+        myToolbar.setNavigationOnClickListener { v -> // ナビゲーションアイコンクリック時の処理
+            val builder = AlertDialog.Builder(v.context)
+            builder.setTitle("確認")
+            builder.setMessage("ホームに戻ると計測が中止されます．\nよろしいですか？")
+                .setPositiveButton(
+                    "いいえ"
+                ) { _, _ -> }
+                .setNegativeButton(
+                    "はい"
+                ) { _, _ ->
+                    myReceiver.cancelABReceiver()
+                    Log.d(ResultActivity.TAG, "onClick:home_btn")
+                    finish()
+                }.show()
+        }
     }
 
     override fun onResume() {
@@ -120,19 +143,8 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener, TextToSpeech.O
         unregisterReceiver(myReceiver)
     }
 
+    //フラッシュカードの誤操作防止のためにBackPressの無効化
     override fun onBackPressed() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("確認")
-        builder.setMessage("計測が中止されます．\nよろしいですか？")
-            .setPositiveButton(
-                "いいえ"
-            ) { _, _ -> }
-            .setNegativeButton(
-                "はい"
-            ) { _, _ -> //10分計測のキャンセル処理
-                myReceiver.cancelABReceiver()
-                finish()
-            }.show()
     }
 
     override fun onDestroy() {
