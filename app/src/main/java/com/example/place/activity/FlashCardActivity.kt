@@ -43,8 +43,10 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener, TextToSpeech.O
     private val myReceiver = object: MeasurementABReceiver(this) {
         override fun onReceive(context: Context?, intent: Intent?) {
             super.onReceive(context, intent)
-            tts.language = Locale.JAPANESE
-            tts.speak("計測終了です．お疲れさまでした．", TextToSpeech.QUEUE_ADD, null, "finish")
+            if(isVoiceMode){
+                tts.language = Locale.JAPANESE
+                tts.speak("計測終了です．お疲れさまでした．", TextToSpeech.QUEUE_ADD, null, "finish")
+            }
 
             //終了時データを転送する
             dt.addFlashCardResultData(
