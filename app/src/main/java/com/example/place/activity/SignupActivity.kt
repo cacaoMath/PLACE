@@ -13,6 +13,7 @@ import com.example.place.PasswordValidateStatus
 import com.example.place.databinding.ActivitySignupBinding
 import com.example.place.validateEmail
 import com.example.place.validatePassword
+import com.google.android.gms.tasks.Task
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.auth
@@ -75,10 +76,10 @@ class SignupActivity : AppCompatActivity() {
 
 
     private fun signUpMsg(user: FirebaseUser?) {
-        if (user != null) {
+        user?.let {
             Log.d(TAG, "sign up : this user is exist")
             Toast.makeText(
-                baseContext, "サインアップ完了しました",
+                baseContext, "${user}でサインアップ完了しました",
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -127,38 +128,7 @@ class SignupActivity : AppCompatActivity() {
                 } else {
                     // If sign up fails, display a message to the user.
                     Log.w(TAG, "createUserWithEmail:failure", task.exception)
-                    when (task.exception) {
-                        is FirebaseAuthWeakPasswordException -> {
-                            Log.i(TAG, "the password is not strong enough")
-                            Snackbar.make(binding.root, "脆弱なパスワードです", Snackbar.LENGTH_SHORT).show()
-                        }
-
-                        is FirebaseAuthInvalidCredentialsException -> {
-                            Log.i(TAG, " if the email address is malformed")
-                            Snackbar.make(
-                                binding.root,
-                                "有効なメールアドレスを入力してください",
-                                Snackbar.LENGTH_SHORT
-                            ).show()
-                        }
-
-                        is FirebaseAuthUserCollisionException -> {
-                            Log.i(
-                                TAG,
-                                "there already exists an account with the given email address"
-                            )
-                            Snackbar.make(
-                                binding.root,
-                                "すでに登録されているメールアドレスです",
-                                Snackbar.LENGTH_SHORT
-                            ).show()
-                        }
-
-                        else -> {
-                            Log.e(TAG, "謎のエラー")
-                        }
-                    }
-
+                    checkFirebaseAuthException(task)
                     loadingBar.visibility = ProgressBar.INVISIBLE
                     createAccountBtn.isEnabled = true
 
@@ -168,6 +138,39 @@ class SignupActivity : AppCompatActivity() {
             }
     }
 
+    private fun checkFirebaseAuthException(task: Task<AuthResult>){
+        when (task.exception) {
+            is FirebaseAuthWeakPasswordException -> {
+                Log.i(TAG, "the password is not strong enough")
+                Snackbar.make(binding.root, "脆弱なパスワードです", Snackbar.LENGTH_SHORT).show()
+            }
+
+            is FirebaseAuthInvalidCredentialsException -> {
+                Log.i(TAG, " if the email address is malformed")
+                Snackbar.make(
+                    binding.root,
+                    "有効なメールアドレスを入力してください",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            }
+
+            is FirebaseAuthUserCollisionException -> {
+                Log.i(
+                    TAG,
+                    "there already exists an account with the given email address"
+                )
+                Snackbar.make(
+                    binding.root,
+                    "すでに登録されているメールアドレスです",
+                    Snackbar.LENGTH_SHORT
+                ).show()
+            }
+
+            else -> {
+                Log.e(TAG, "謎のエラー")
+            }
+        }
+    }
     private fun gotoMain() {
         //ホーム画面へ遷移
         val mainIntent = Intent(applicationContext, MainActivity::class.java)
