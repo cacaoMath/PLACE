@@ -19,7 +19,7 @@ enum class EmailValidateStatus {
 fun validatePassword(password: String): PasswordValidateStatus {
     return if (password.isEmpty()) {
         PasswordValidateStatus.EMPTY
-    } else if (password.length < 6) {
+    } else if (password.length < 7) {
         // パスワードは7文字以上ないといけない
         PasswordValidateStatus.TOO_SHORT
     } else {
