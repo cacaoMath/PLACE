@@ -14,8 +14,7 @@ import com.example.place.databinding.ActivitySignupBinding
 import com.example.place.validateEmail
 import com.example.place.validatePassword
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
@@ -130,9 +129,26 @@ class SignupActivity : AppCompatActivity() {
                     } else {
                         // If sign up fails, display a message to the user.
                         Log.w(TAG, "createUserWithEmail:failure", task.exception)
-//                        Toast.makeText(baseContext, "Authentication failed.",
-//                                Toast.LENGTH_SHORT).show()
-                        Snackbar.make(binding.root,"Authentication failed.", Snackbar.LENGTH_SHORT).show()
+                        when(task.exception){
+                             is FirebaseAuthWeakPasswordException -> {
+                                 Log.i(TAG, "the password is not strong enough")
+                                 Snackbar.make(binding.root,"脆弱なパスワードです", Snackbar.LENGTH_SHORT).show()
+                            }
+
+                            is FirebaseAuthInvalidCredentialsException -> {
+                                Log.i(TAG, " if the email address is malformed")
+                                Snackbar.make(binding.root,"有効なメールアドレスを入力してください", Snackbar.LENGTH_SHORT).show()
+                            }
+
+                            is FirebaseAuthUserCollisionException -> {
+                                Log.i(TAG, "there already exists an account with the given email address")
+                                Snackbar.make(binding.root,"すでに登録されているメールアドレスです", Snackbar.LENGTH_SHORT).show()
+                            }
+
+                            else -> {
+                                Log.e(TAG, "謎のエラー")
+                            }
+                        }
 
                         loadingBar.visibility = ProgressBar.INVISIBLE
                         signUpMsg(null)
