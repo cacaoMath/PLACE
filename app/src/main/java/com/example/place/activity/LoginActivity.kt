@@ -8,8 +8,8 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.place.EmailValidate
-import com.example.place.PasswordValidate
+import com.example.place.EmailValidateStatus
+import com.example.place.PasswordValidateStatus
 import com.example.place.databinding.ActivityLoginBinding
 import com.example.place.validateEmail
 import com.example.place.validatePassword
@@ -51,17 +51,17 @@ class LoginActivity : AppCompatActivity() {
             val validatePasswordResult = validatePassword(etUserPassword.text.toString())
 
             when {
-                validateEmailResult == EmailValidate.EMPTY || validatePasswordResult == PasswordValidate.EMPTY -> {
+                validateEmailResult == EmailValidateStatus.EMPTY || validatePasswordResult == PasswordValidateStatus.EMPTY -> {
                     Toast.makeText(
                         baseContext, "入力されていない項目があります", Toast.LENGTH_SHORT
                     ).show()
                 }
-                validateEmailResult == EmailValidate.BAD_ADDRESS -> {
+                validateEmailResult == EmailValidateStatus.BAD_ADDRESS -> {
                     Toast.makeText(
                         baseContext, "有効なメールアドレスではありません", Toast.LENGTH_SHORT
                     ).show()
                 }
-                validatePasswordResult == PasswordValidate.TOO_SHORT -> {
+                validatePasswordResult == PasswordValidateStatus.TOO_SHORT -> {
                     Toast.makeText(
                         baseContext, "パスワードは7文字以上にしてください", Toast.LENGTH_SHORT
                     ).show()

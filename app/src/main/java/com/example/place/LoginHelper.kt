@@ -1,32 +1,32 @@
 package com.example.place
 
-fun validateEmail(email: String): EmailValidate {
+fun validateEmail(email: String): EmailValidateStatus {
     val emailRegex = Regex("^[A-Za-z](.*)(@)(.+)(\\.)(.+)")
     return if (email.isEmpty()) {
-        EmailValidate.EMPTY
+        EmailValidateStatus.EMPTY
     } else if (!email.matches(emailRegex)) {
-        EmailValidate.BAD_ADDRESS
+        EmailValidateStatus.BAD_ADDRESS
     } else {
-        EmailValidate.OK
+        EmailValidateStatus.OK
     }
 }
 
-enum class EmailValidate {
+enum class EmailValidateStatus {
     EMPTY, BAD_ADDRESS, OK
 }
 
 
-fun validatePassword(password: String): PasswordValidate {
+fun validatePassword(password: String): PasswordValidateStatus {
     return if (password.isEmpty()) {
-        PasswordValidate.EMPTY
+        PasswordValidateStatus.EMPTY
     } else if (password.length < 6) {
         // パスワードは7文字以上ないといけない
-        PasswordValidate.TOO_SHORT
+        PasswordValidateStatus.TOO_SHORT
     } else {
-        PasswordValidate.OK
+        PasswordValidateStatus.OK
     }
 }
 
-enum class PasswordValidate {
+enum class PasswordValidateStatus {
     EMPTY, TOO_SHORT, OK
 }
