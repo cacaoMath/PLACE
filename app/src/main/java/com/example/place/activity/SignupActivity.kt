@@ -8,7 +8,9 @@ import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.place.PasswordValidateStatus
 import com.example.place.databinding.ActivitySignupBinding
+import com.example.place.validatePassword
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -39,9 +41,10 @@ class SignupActivity : AppCompatActivity() {
         loadingBar.visibility = ProgressBar.INVISIBLE
 
         createAccountBtn.setOnClickListener {
-            if(binding.etSignupPass.text.toString().length > 6){
+            val signupPassword = binding.etSignupPass.text.toString()
+            if(validatePassword(signupPassword) == PasswordValidateStatus.OK){
                 loadingBar.visibility = ProgressBar.VISIBLE
-                signUp(binding.etSignupEmail.text.toString(), binding.etSignupPass.text.toString())
+                signUp(binding.etSignupEmail.text.toString(), signupPassword)
                 createAccountBtn.isEnabled = false
             }else{
 //                Toast.makeText(baseContext, "パスワードは7文字以上にしてください",
@@ -69,6 +72,7 @@ class SignupActivity : AppCompatActivity() {
     private fun signUp(email :String, password : String){
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
+                    Log.i(TAG, task.toString())
                     if (task.isSuccessful) {
                         // Sign up success, update UI with the signed-in user's information
                         Log.d(TAG, "createUserWithEmail:success")
