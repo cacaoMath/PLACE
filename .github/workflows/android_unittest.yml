@@ -28,6 +28,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      # google-services.jsonのコピー
+      - name: copy google-service
+        env:
+          GOOGLE_SERVICE: ${{ secrets.GOOGLE_SERVICE_JSON }}
+        run: echo $GOOGLE_SERVICE | base64 --decode --ignore-garbage > ./app/google-services.json
+
       # 実行権限付与
       - name: Make gradlew executable
         run: chmod +x ./gradlew
