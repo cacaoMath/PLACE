@@ -8,8 +8,10 @@ import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.place.EmailValidateStatus
 import com.example.place.PasswordValidateStatus
 import com.example.place.databinding.ActivitySignupBinding
+import com.example.place.validateEmail
 import com.example.place.validatePassword
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -42,16 +44,33 @@ class SignupActivity : AppCompatActivity() {
 
         createAccountBtn.setOnClickListener {
             val signupPassword = binding.etSignupPass.text.toString()
-            if(validatePassword(signupPassword) == PasswordValidateStatus.OK){
-                loadingBar.visibility = ProgressBar.VISIBLE
-                signUp(binding.etSignupEmail.text.toString(), signupPassword)
-                createAccountBtn.isEnabled = false
-            }else{
-//                Toast.makeText(baseContext, "パスワードは7文字以上にしてください",
-//                        Toast.LENGTH_SHORT).show()
-                Snackbar.make(binding.root,"パスワードは7文字以上にしてください", Snackbar.LENGTH_SHORT).show()
-            }
+            val signupEmail = binding.etSignupEmail.text.toString()
 
+            val validatePasswordResult = validatePassword(signupPassword)
+            val validateEmailResult = validateEmail(signupEmail)
+
+            when {
+                validateEmailResult == EmailValidateStatus.EMPTY || validatePasswordResult == PasswordValidateStatus.EMPTY -> {
+                    Toast.makeText(
+                        baseContext, "入力されていない項目があります", Toast.LENGTH_SHORT
+                    ).show()
+                }
+                validateEmailResult == EmailValidateStatus.BAD_ADDRESS -> {
+                    Toast.makeText(
+                        baseContext, "有効なメールアドレスではありません", Toast.LENGTH_SHORT
+                    ).show()
+                }
+                validatePasswordResult == PasswordValidateStatus.TOO_SHORT -> {
+                    Toast.makeText(
+                        baseContext, "パスワードは7文字以上にしてください", Toast.LENGTH_SHORT
+                    ).show()
+                }
+                else -> {
+                    loadingBar.visibility = ProgressBar.VISIBLE
+                    signUp(signupEmail, signupPassword)
+                    createAccountBtn.isEnabled = false
+                }
+            }
         }
     }
 
