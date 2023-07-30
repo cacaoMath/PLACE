@@ -8,7 +8,11 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.place.EmailValidate
+import com.example.place.PasswordValidate
 import com.example.place.databinding.ActivityLoginBinding
+import com.example.place.validateEmail
+import com.example.place.validatePassword
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
@@ -147,36 +151,6 @@ class LoginActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun validateEmail(email: String): EmailValidate {
-        val emailRegex = Regex("^[A-Za-z](.*)(@)(.+)(\\.)(.+)")
-        return if (email.isEmpty()) {
-            EmailValidate.EMPTY
-        } else if (!email.matches(emailRegex)) {
-            EmailValidate.BAD_ADDRESS
-        } else {
-            EmailValidate.OK
-        }
-    }
-
-    private enum class EmailValidate {
-        EMPTY, BAD_ADDRESS, OK
-    }
-
-
-    private fun validatePassword(password: String): PasswordValidate {
-        return if (password.isEmpty()) {
-            PasswordValidate.EMPTY
-        } else if (password.length < 6) {
-            // パスワードは7文字以上ないといけない
-            PasswordValidate.TOO_SHORT
-        } else {
-            PasswordValidate.OK
-        }
-    }
-
-    private enum class PasswordValidate {
-        EMPTY, TOO_SHORT, OK
-    }
 
     companion object {
         private const val TAG = "LoginActivity"
