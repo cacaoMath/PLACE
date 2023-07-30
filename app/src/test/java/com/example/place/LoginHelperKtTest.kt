@@ -32,7 +32,7 @@ class LoginHelperKtTest {
         //6文字はだめ
         assertEquals(PasswordValidateStatus.TOO_SHORT, validatePassword("123456"))
         //7文字からOK
-        assertEquals(PasswordValidateStatus.OK, validatePassword("1234567"))
+        assertEquals(PasswordValidateStatus.OK, validatePassword("123456"))
     }
 
     @Test
