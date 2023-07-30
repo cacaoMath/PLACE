@@ -79,11 +79,7 @@ class SignupActivity : AppCompatActivity() {
             Log.d(TAG,"sign up : this user is exist")
             Toast.makeText(baseContext, "サインアップ完了しました",
                     Toast.LENGTH_SHORT).show()
-        }else{
-            Log.d(TAG,"sign up : Error")
-
         }
-
     }
 
 
@@ -151,7 +147,6 @@ class SignupActivity : AppCompatActivity() {
                         }
 
                         loadingBar.visibility = ProgressBar.INVISIBLE
-                        signUpMsg(null)
                         createAccountBtn.isEnabled = true
 
                     }
