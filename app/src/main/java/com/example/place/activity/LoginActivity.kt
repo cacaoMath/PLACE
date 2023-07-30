@@ -42,15 +42,32 @@ class LoginActivity : AppCompatActivity() {
         progressBar.visibility = ProgressBar.INVISIBLE
 
         signInBtn.setOnClickListener {
-            if (validateEmail(etUserEmail.text.toString()) == EmailValidate.OK &&
-                validatePassword(etUserPassword.text.toString()) == PasswordValidate.OK
-            ) {
-                signIn(etUserEmail.text.toString(), etUserPassword.text.toString())
-                signInBtn.isEnabled = false
-                signUpBtn.isEnabled = false
 
+            val validateEmailResult = validateEmail(etUserEmail.text.toString())
+            val validatePasswordResult = validatePassword(etUserPassword.text.toString())
+
+            when {
+                validateEmailResult == EmailValidate.EMPTY || validatePasswordResult == PasswordValidate.EMPTY -> {
+                    Toast.makeText(
+                        baseContext, "入力されていない項目があります", Toast.LENGTH_SHORT
+                    ).show()
+                }
+                validateEmailResult == EmailValidate.BAD_ADDRESS -> {
+                    Toast.makeText(
+                        baseContext, "有効なメールアドレスではありません", Toast.LENGTH_SHORT
+                    ).show()
+                }
+                validatePasswordResult == PasswordValidate.TOO_SHORT -> {
+                    Toast.makeText(
+                        baseContext, "パスワードは7文字以上にしてください", Toast.LENGTH_SHORT
+                    ).show()
+                }
+                else -> {
+                    signIn(etUserEmail.text.toString(), etUserPassword.text.toString())
+                    signInBtn.isEnabled = false
+                    signUpBtn.isEnabled = false
+                }
             }
-
         }
 
         signUpBtn.setOnClickListener {
@@ -133,14 +150,8 @@ class LoginActivity : AppCompatActivity() {
     private fun validateEmail(email: String): EmailValidate {
         val emailRegex = Regex("^[A-Za-z](.*)(@)(.+)(\\.)(.+)")
         return if (email.isEmpty()) {
-            Toast.makeText(
-                baseContext, "メールアドレスを入れてください", Toast.LENGTH_SHORT
-            ).show()
             EmailValidate.EMPTY
         } else if (!email.matches(emailRegex)) {
-            Toast.makeText(
-                baseContext, "メールアドレスは有効なものにしてください", Toast.LENGTH_SHORT
-            ).show()
             EmailValidate.BAD_ADDRESS
         } else {
             EmailValidate.OK
@@ -154,15 +165,9 @@ class LoginActivity : AppCompatActivity() {
 
     private fun validatePassword(password: String): PasswordValidate {
         return if (password.isEmpty()) {
-            Toast.makeText(
-                baseContext, "パスワードを入れてください", Toast.LENGTH_SHORT
-            ).show()
             PasswordValidate.EMPTY
         } else if (password.length < 6) {
             // パスワードは7文字以上ないといけない
-            Toast.makeText(
-                baseContext, "パスワードは7文字以上にしてください", Toast.LENGTH_SHORT
-            ).show()
             PasswordValidate.TOO_SHORT
         } else {
             PasswordValidate.OK
