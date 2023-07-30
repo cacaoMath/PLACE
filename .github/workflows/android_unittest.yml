@@ -28,6 +28,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      # 実行権限付与
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
       # テスト
       - name: Test with Gradle
         run: ./gradlew test --stacktrace
