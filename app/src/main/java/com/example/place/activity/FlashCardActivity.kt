@@ -73,6 +73,7 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener, TextToSpeech.O
         setSupportActionBar(myToolbar)
 
         quizSet = Quiz().GetQuizSet(questionNum, getInstance().quizPattern)
+        cardStackView = flashCardBinding.cardStackView
         tts = TextToSpeech(this,this)
 
         tts.setOnUtteranceProgressListener(object: UtteranceProgressListener() {
@@ -91,9 +92,6 @@ class FlashCardActivity : AppCompatActivity(), CardStackListener, TextToSpeech.O
             }
 
         })
-
-
-        cardStackView = flashCardBinding.cardStackView
 
         cardStackView.layoutManager = CardStackLayoutManager(this,this).apply {
             setOverlayInterpolator(LinearInterpolator())
