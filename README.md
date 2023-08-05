@@ -5,6 +5,10 @@
 # 動作確認環境
 Android10, Android11
 
+# Firebase の設定方法
+
+[firebase 設定](doc/firebase_setting.md)
+
 # アプリ使い方
 ## サインイン　or サインアップ
 <image height="400" src="https://user-images.githubusercontent.com/53263220/106417633-e7feb200-6497-11eb-87c3-c6f800b6ab64.png"> <image height="400" src="https://user-images.githubusercontent.com/53263220/106417635-e92fdf00-6497-11eb-80b2-59d550ef8a5d.png">  
